@@ -12,6 +12,20 @@
   color: #fff;
   padding: 2px;
 }
+.wp-block-create-block-vml-fixtures .fix-header {
+  display: flex;
+  justify-content: center;
+}
+.wp-block-create-block-vml-fixtures .fix-header .fix-header__left,
+.wp-block-create-block-vml-fixtures .fix-header .fix-header__right {
+  flex-grow: 1;
+}
+.wp-block-create-block-vml-fixtures .fix-header .fix-header__fixture .SAI-img {
+  background-image: url(images/SAI-endCap.5f354d60.jpg);
+  background-size: contain;
+  width: 287px;
+  height: 396px;
+}
 .wp-block-create-block-vml-fixtures .endCap .shelf1 {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

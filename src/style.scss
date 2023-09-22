@@ -9,7 +9,20 @@
 	background-color: #21759b;
 	color: #fff;
 	padding: 2px;
-
+	.fix-header {
+		display: flex;
+		justify-content: center;
+		.fix-header__left,
+		.fix-header__right {
+			flex-grow: 1;
+		}
+		.fix-header__fixture .SAI-img {
+			background-image: url(../assets/SAI-endCap.jpg);
+			background-size: contain;
+			width: 287px;
+			height: 396px;
+		}
+	}
 	.endCap {
 		.shelf1 {
 			display: grid;
