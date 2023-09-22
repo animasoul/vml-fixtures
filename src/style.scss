@@ -8,7 +8,7 @@
 .wp-block-create-block-vml-fixtures {
 	background-color: #21759b;
 	color: #fff;
-	padding: 2px;
+	padding: 10px;
 	.fix-header {
 		display: flex;
 		justify-content: center;
@@ -24,14 +24,28 @@
 		}
 	}
 	.endCap {
-		.shelf1 {
+		.shelf {
 			display: grid;
+			height: auto;
+			text-align: center;
+			gap: 15px 15px;
+			img {
+				border: 1px solid transparent;
+			}
+			img:hover {
+				cursor: pointer;
+				border: 1px solid #fff;
+			}
+		}
+		.shelf1 {
 			grid-template-columns: repeat(5, 1fr);
+			grid-template-rows: repeat(2, 1fr);
 			grid-template-rows: 1fr;
-			gap: 0px 15px;
 			grid-auto-flow: row;
-			grid-template-areas: "shelf1-1 shelf1-2 shelf1-3 shelf1-4 shelf1-5";
-			height: 300px;
+			grid-template-areas:
+				"shelf1-1 shelf1-2 shelf1-3 shelf1-4 shelf1-5"
+				"shelf1-6 shelf1-6 shelf1-6 shelf1-6 shelf1-6";
+
 			.shelf1-1 {
 				grid-area: shelf1-1;
 			}
@@ -51,13 +65,14 @@
 			.shelf1-5 {
 				grid-area: shelf1-5;
 			}
+			.shelf1-6 {
+				grid-area: shelf1-6;
+			}
 		}
 		.shelf2 {
-			display: grid;
 			grid-template-columns: 1fr;
 			grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-			gap: 15px 15px;
-			height: 300px;
+
 			.shelf2-1 {
 				grid-area: 1 / 1 / 2 / 2;
 			}
@@ -72,6 +87,64 @@
 			}
 			.shelf2-5 {
 				grid-area: 5 / 1 / 6 / 2;
+			}
+		}
+		.shelf3 {
+			grid-template-columns: 1fr;
+			grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+
+			.shelf3-1 {
+				grid-area: 1 / 1 / 2 / 2;
+			}
+			.shelf3-2 {
+				grid-area: 2 / 1 / 4 / 2;
+			}
+			.shelf3-3 {
+				grid-area: 3 / 1 / 4 / 2;
+			}
+			.shelf3-4 {
+				grid-area: 4 / 1 / 5 / 2;
+			}
+			.shelf3-5 {
+				grid-area: 5 / 1 / 6 / 2;
+			}
+		}
+		.shelf4 {
+			grid-template-columns: repeat(2, 0.3fr 1fr);
+			grid-template-rows: repeat(2, 1fr);
+			grid-template-areas:
+				"shelf4-1 shelf4-2 shelf4-3 shelf4-4"
+				"shelf4-5 shelf4-5 shelf4-5 shelf4-5";
+
+			.shelf4-1 {
+				grid-area: shelf4-1;
+			}
+			.shelf4-2 {
+				grid-template-columns: 1fr;
+				grid-template-rows: 1fr 1fr 1fr 1fr;
+				grid-area: shelf4-2;
+				.shelf4-2-1 {
+					grid-area: 1 / 1 / 2 / 2;
+				}
+				.shelf4-2-2 {
+					grid-area: 3 / 1 / 5 / 2;
+				}
+				.shelf4-2-3 {
+					grid-area: 4 / 1 / 5 / 2;
+				}
+				.shelf4-2-4 {
+					grid-area: 1 / 1 / 2 / 2;
+				}
+			}
+
+			.shelf4-3 {
+				grid-area: shelf4-3;
+			}
+			.shelf4-4 {
+				grid-area: shelf4-4;
+			}
+			.shelf4-5 {
+				grid-area: shelf4-5;
 			}
 		}
 	}
