@@ -1,6 +1,4 @@
 <?php
-$current_user = wp_get_current_user();
-$upload_dir = wp_upload_dir();
 $data = array(
 	'customer'     => $_SESSION['Customer'],
 	'customerName' => $_SESSION['CustomerName'],
@@ -8,11 +6,26 @@ $data = array(
 	'storeName'    => $_SESSION['StoreName'],
 	'status'       => (isset($_SESSION['Part_Status']) ? $_SESSION['Part_Status'] : 'active'),
 	'fixture'      => 'endCap',
-	'uploadsBaseurl' => $upload_dir['baseurl'],
+	'promotion'	   => 'Fall23',
 );
 
 $baseImageUrl= "https://api-test.graphicsystems.com/gsimages/".$data['customer'];
 
+
+// call the API to get the fixture data
+// require_once 'fixtures/classes/Api.class.php';
+
+// Instantiate the VIZMERCH_Custom class
+// $getProducts = new Api();
+
+// $params = array(
+// 	'storeRoot' => $data['customer'],
+// 	'storeCode' => $data['store'],
+// 	'promotion' => $data['promotion'],
+//   );
+// $reponse = $getProducts->make_api_call('GetSephoraProducts', $params, true, 30);
+// var_dump('GetSephoraProducts');
+// var_dump($reponse);
 ?>
 <div <?php echo get_block_wrapper_attributes(); ?>>
     
