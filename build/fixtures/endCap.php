@@ -84,7 +84,7 @@ JSON;
 $shelvesData = json_decode($shelvesData, true);
 $shelvesMapper = new ShelvesMapper();
 $updatedShelvesData = $shelvesMapper->mapDataToShelves($shelvesData, $apiData);
-var_dump(json_encode($updatedShelvesData, true));
+//var_dump(json_encode($updatedShelvesData, true));
 
 
 
