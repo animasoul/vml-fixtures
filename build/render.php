@@ -5,7 +5,7 @@ $data = array(
 	'store'        => $_SESSION['Store'],
 	'storeName'    => $_SESSION['StoreName'],
 	'status'       => (isset($_SESSION['Part_Status']) ? $_SESSION['Part_Status'] : 'active'),
-	'fixture'      => 'endCap',
+	'fixture'      => 'ENDCAP',
 	'promotion'	   => 'Fall23',
 );
 

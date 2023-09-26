@@ -17,38 +17,103 @@ $params = array(
   );
 $apiData = $getProducts->make_api_call('GetSephoraProducts', $params, true, 30);
 
+
 $shelvesData = <<<JSON
 {
     "shelves": [
         {
             "Shelf": 1,
             "items": [
-                {"image": "SAI-Fall23-26.jpg"},
-                {"image": "SAI-Fall23-26.jpg"},
-                {"image": "SAI-Fall23-26.jpg"},
-                {"image": "SAI-Fall23-26.jpg"},
-                {"image": "SAI-Fall23-26.jpg"},
-                {"image": "SAI-Fall23-31.jpg"}
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-83.jpg"
+                },
+                {
+                    "Horizontal": "Right",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-23.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-19.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-26.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-84.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-29.jpg"
+                }
             ]
         },
         {
             "Shelf": 2,
             "items": [
-                {"image": "SAI-Fall23-31.jpg"},
-                {"image": "SAI-Fall23-31.jpg"},
-                {"image": "SAI-Fall23-31.jpg"},
-                {"image": "SAI-Fall23-31.jpg"},
-                {"image": "SAI-Fall23-31.jpg"}
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                }
             ]
         },
         {
             "Shelf": 3,
             "items": [
-                {"image": "SAI-Fall23-36.jpg"},
-                {"image": "SAI-Fall23-36.jpg"},
-                {"image": "SAI-Fall23-36.jpg"},
-                {"image": "SAI-Fall23-36.jpg"},
-                {"image": "SAI-Fall23-36.jpg"}
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                }
             ]
         },
         {
@@ -56,22 +121,54 @@ $shelvesData = <<<JSON
             "custom": true,
             "items": [
                 [
-                    {"image": "SAI-Fall23-37_Thumb.jpg"}
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-37_Thumb.jpg"
+                    }
                 ],
                 [
-                    {"image": "SAI-Fall23-36.jpg"},
-                    {"image": "SAI-Fall23-36.jpg"},
-                    {"image": "SAI-Fall23-36.jpg"},
-                    {"image": "SAI-Fall23-36.jpg"}
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    },
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    },
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    },
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    }
                 ],
                 [
-                    {"image": "SAI-Fall23-89_Thumb.jpg"}
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-89_Thumb.jpg"
+                    }
                 ],
                 [
-                    {"image": "SAI-Fall23-26.jpg"}
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-26.jpg"
+                    }
                 ],
                 [
-                    {"image": "SAI-Fall23-36.jpg"}
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    }
                 ]
             ]
         }

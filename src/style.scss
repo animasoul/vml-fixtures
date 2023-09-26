@@ -8,10 +8,14 @@
 .wp-block-create-block-vml-fixtures {
 	background-color: #21759b;
 	color: #fff;
-	padding: 10px;
+	padding: 20px;
 	.fix-header {
 		display: flex;
 		justify-content: center;
+		flex-direction: column;
+		@media (min-width: 700px) {
+			flex-direction: row;
+		}
 		.fix-header__left,
 		.fix-header__right {
 			flex-grow: 1;
@@ -28,7 +32,7 @@
 			display: grid;
 			height: auto;
 			text-align: center;
-			gap: 15px 15px;
+			gap: 10px 10px;
 			img {
 				border: 1px solid transparent;
 			}
@@ -48,6 +52,7 @@
 
 			.shelf1-1 {
 				grid-area: shelf1-1;
+				padding-top: 15%;
 			}
 
 			.shelf1-2 {
@@ -64,6 +69,7 @@
 
 			.shelf1-5 {
 				grid-area: shelf1-5;
+				padding-top: 15%;
 			}
 			.shelf1-6 {
 				grid-area: shelf1-6;
