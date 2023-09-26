@@ -27,20 +27,20 @@
 			height: 396px;
 		}
 	}
-	.endCap {
-		.shelf {
-			display: grid;
-			height: auto;
-			text-align: center;
-			gap: 10px 10px;
-			img {
-				border: 1px solid transparent;
-			}
-			img:hover {
-				cursor: pointer;
-				border: 1px solid #fff;
-			}
+	.shelf {
+		display: grid;
+		height: auto;
+		text-align: center;
+		gap: 10px 10px;
+		img {
+			border: 1px solid transparent;
 		}
+		img:hover {
+			cursor: pointer;
+			border: 1px solid #fff;
+		}
+	}
+	.endCap {
 		.shelf1 {
 			grid-template-columns: repeat(5, 1fr);
 			grid-template-rows: repeat(2, 1fr);

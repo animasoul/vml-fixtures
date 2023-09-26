@@ -1,0 +1,155 @@
+{
+    "shelves": [
+        {
+            "Shelf": 1,
+            "items": [
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-83.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Lower",
+                    "image": "SAI-Fall23-23.jpg"
+                },
+                {
+                    "Horizontal": "Center",
+                    "Vertical": "Lower",
+                    "image": "SAI-Fall23-19.jpg"
+                },
+                {
+                    "Horizontal": "Right",
+                    "Vertical": "Lower",
+                    "image": "SAI-Fall23-26.jpg"
+                },
+                {
+                    "Horizontal": "Right",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-84.jpg"
+                },
+                {
+                    "Horizontal": "Front",
+                    "Vertical": "-",
+                    "image": "SAI-Fall23-29.jpg"
+                }
+            ]
+        },
+        {
+            "Shelf": 2,
+            "items": [
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-31.jpg"
+                }
+            ]
+        },
+        {
+            "Shelf": 3,
+            "items": [
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                },
+                {
+                    "Horizontal": "Left",
+                    "Vertical": "Middle",
+                    "image": "SAI-Fall23-36.jpg"
+                }
+            ]
+        },
+        {
+            "Shelf": 4,
+            "custom": true,
+            "items": [
+                [
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-37_Thumb.jpg"
+                    }
+                ],
+                [
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    },
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    },
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    },
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    }
+                ],
+                [
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-89_Thumb.jpg"
+                    }
+                ],
+                [
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-26.jpg"
+                    }
+                ],
+                [
+                    {
+                        "Horizontal": "Left",
+                        "Vertical": "Middle",
+                        "image": "SAI-Fall23-36.jpg"
+                    }
+                ]
+            ]
+        }
+    ]
+}

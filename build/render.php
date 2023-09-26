@@ -31,21 +31,30 @@ $baseImageUrl= "https://api-test.graphicsystems.com/gsimages/".$data['customer']
     
         <div class="fix-header">
 			<div class="fix-header__left">
-				<div class="fix-header__customer">
-					Customer: <?php echo esc_html( $data['customer'] ); ?>, <? echo esc_html( $data['customerName']); ?>
-				</div>
-				<div class="fix-header__store">
-					Store: <?php echo esc_html( $data['store'] ); ?>, <? echo esc_html( $data['storeName']); ?>
-				</div>
+				<h3 class="fix-header__customer">
+					Customer: <br />
+					<strong><?php echo esc_html( $data['customer'] ); ?>, <? echo esc_html( $data['customerName']); ?></strong>
+				</h3>
+				<h3 class="fix-header__store">
+					Store: <br />
+					<strong><?php echo esc_html( $data['store'] ); ?>, <? echo esc_html( $data['storeName']); ?></strong>
+				</h3>
 			</div>
 			<div class="fix-header__right">
-				<div class="fix-header__status">
+				<h4 class="fix-header__status">
 					Fixture: <?php echo esc_html( $data['fixture'] ); ?>
-				</div>
+				</h4>
 				<div class="fix-header__fixture">
 					<div class="<?php echo esc_html( $data['customer'] ); ?>-img"></div>
 				</div>
 			</div>
+		</div>
+		<hr />
+		<div class="fix-instructions">
+			<h3 class="fix-instructions__title">Instructions:</h3>
+			<p class="fix-instructions__text">
+				Click on the image to the to view the fixture graphic and order.
+			</p>
 		</div>
 
 		<?php include_once 'fixtures/'.$data['fixture'].'.php'; ?>
