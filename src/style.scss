@@ -8,6 +8,9 @@
 .wp-block-create-block-vml-fixtures {
 	background-color: #21759b;
 	color: #fff;
+	@media (min-width: 700px) {
+		padding: 20px 10%;
+	}
 	padding: 20px;
 	.fix-header {
 		display: flex;
@@ -23,15 +26,39 @@
 		.fix-header__fixture .SAI-img {
 			background-image: url(../assets/SAI-endCap.jpg);
 			background-size: contain;
-			width: 287px;
-			height: 396px;
+			width: 179px;
+			height: 252px;
+		}
+	}
+
+	.shelves-container {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		@media (min-width: 700px) {
+			flex-direction: row;
+		}
+		.shelves-container__left {
+			flex-grow: 1;
+
+			.SAI-img {
+				background-image: url(../assets/SAI-endCap.jpg);
+				background-size: contain;
+				width: 400px;
+				height: 560px;
+				margin-right: 10px;
+			}
+		}
+		.shelves-container__right {
+			flex-grow: 1;
 		}
 	}
 	.shelf {
 		display: grid;
 		height: auto;
 		text-align: center;
-		gap: 10px 10px;
+		gap: 5px 10px;
 		img {
 			border: 1px solid transparent;
 		}
@@ -39,7 +66,21 @@
 			cursor: pointer;
 			border: 1px solid #fff;
 		}
+		dialog::backdrop {
+			background-color: #0d0d0d52;
+		}
+		dialog {
+			background-color: #0d0d0d;
+			color: #fff;
+			border-radius: 10px;
+			padding: 20px;
+			p {
+				text-align: left;
+				line-height: 0.9em;
+			}
+		}
 	}
+
 	.endCap {
 		.shelf1 {
 			grid-template-columns: repeat(5, 1fr);

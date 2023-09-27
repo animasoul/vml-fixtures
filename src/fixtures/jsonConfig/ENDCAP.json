@@ -4,34 +4,76 @@
             "Shelf": 1,
             "items": [
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-83.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-83_Thumb.jpg"
                 },
                 {
+                    "Brand": "SAI",
+                    "Promotion": "Fall23",
+                    "Store": "512",
+                    "Fixture": "ENDCAP",
+                    "Code": "Fall23-24",
+                    "ProductID": 77284,
+                    "TharsternCode": "SAI-FALL23-24",
+                    "Description": "1 Bay EC Shelf 1",
+                    "StockQty": 1,
+                    "Category": "Focus Graphic",
+                    "Bay": "1",
+                    "Shelf": "1",
                     "Horizontal": "Left",
                     "Vertical": "Lower",
-                    "image": "SAI-Fall23-23.jpg"
+                    "URL1": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-24.jpg",
+                    "URL2": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-24_Thumb.jpg",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-24_Thumb.jpg"
                 },
                 {
+                    "Brand": "SAI",
+                    "Promotion": "Fall23",
+                    "Store": "512",
+                    "Fixture": "ENDCAP",
+                    "Code": "Fall23-20",
+                    "ProductID": 77280,
+                    "TharsternCode": "SAI-FALL23-20",
+                    "Description": "1 Bay EC Shelf 1",
+                    "StockQty": 1,
+                    "Category": "Focus Graphic",
+                    "Bay": "1",
+                    "Shelf": "1",
                     "Horizontal": "Center",
                     "Vertical": "Lower",
-                    "image": "SAI-Fall23-19.jpg"
+                    "URL1": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-20.jpg",
+                    "URL2": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-20_Thumb.jpg",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-20_Thumb.jpg"
                 },
                 {
+                    "Brand": "SAI",
+                    "Promotion": "Fall23",
+                    "Store": "512",
+                    "Fixture": "ENDCAP",
+                    "Code": "Fall23-28",
+                    "ProductID": 77288,
+                    "TharsternCode": "SAI-FALL23-28",
+                    "Description": "Shelf 1 Front Mag Strip",
+                    "StockQty": 1,
+                    "Category": "Focus Graphic",
+                    "Bay": "1",
+                    "Shelf": "1",
                     "Horizontal": "Right",
                     "Vertical": "Lower",
-                    "image": "SAI-Fall23-26.jpg"
+                    "URL1": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-28.jpg",
+                    "URL2": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-28_Thumb.jpg",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-28_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Right",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-84.jpg"
+                    "horizontal": "Right",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-84_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Front",
-                    "Vertical": "-",
-                    "image": "SAI-Fall23-29.jpg"
+                    "horizontal": "Front",
+                    "vertical": "-",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-29_Thumb.jpg"
                 }
             ]
         },
@@ -39,29 +81,29 @@
             "Shelf": 2,
             "items": [
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-31.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-31_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-31.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-31_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-31.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-31_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-31.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-31_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-31.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-31_Thumb.jpg"
                 }
             ]
         },
@@ -69,29 +111,29 @@
             "Shelf": 3,
             "items": [
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-36.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-36.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-36.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-36.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                 },
                 {
-                    "Horizontal": "Left",
-                    "Vertical": "Middle",
-                    "image": "SAI-Fall23-36.jpg"
+                    "horizontal": "Left",
+                    "vertical": "Middle",
+                    "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                 }
             ]
         },
@@ -101,52 +143,52 @@
             "items": [
                 [
                     {
-                        "Horizontal": "Left",
-                        "Vertical": "Middle",
-                        "image": "SAI-Fall23-37_Thumb.jpg"
+                        "horizontal": "Left",
+                        "vertical": "Middle",
+                        "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-37_Thumb.jpg"
                     }
                 ],
                 [
                     {
-                        "Horizontal": "Left",
-                        "Vertical": "Middle",
-                        "image": "SAI-Fall23-36.jpg"
+                        "horizontal": "Left",
+                        "vertical": "Middle",
+                        "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                     },
                     {
-                        "Horizontal": "Left",
-                        "Vertical": "Middle",
-                        "image": "SAI-Fall23-36.jpg"
+                        "horizontal": "Left",
+                        "vertical": "Middle",
+                        "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                     },
                     {
-                        "Horizontal": "Left",
-                        "Vertical": "Middle",
-                        "image": "SAI-Fall23-36.jpg"
+                        "horizontal": "Left",
+                        "vertical": "Middle",
+                        "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                     },
                     {
-                        "Horizontal": "Left",
-                        "Vertical": "Middle",
-                        "image": "SAI-Fall23-36.jpg"
+                        "horizontal": "Left",
+                        "vertical": "Middle",
+                        "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                     }
                 ],
                 [
                     {
-                        "Horizontal": "Left",
-                        "Vertical": "Middle",
-                        "image": "SAI-Fall23-89_Thumb.jpg"
+                        "horizontal": "Left",
+                        "vertical": "Middle",
+                        "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-89_Thumb.jpg"
                     }
                 ],
                 [
                     {
-                        "Horizontal": "Left",
-                        "Vertical": "Middle",
-                        "image": "SAI-Fall23-26.jpg"
+                        "horizontal": "Left",
+                        "vertical": "Middle",
+                        "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-26_Thumb.jpg"
                     }
                 ],
                 [
                     {
-                        "Horizontal": "Left",
-                        "Vertical": "Middle",
-                        "image": "SAI-Fall23-36.jpg"
+                        "horizontal": "Left",
+                        "vertical": "Middle",
+                        "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-36_Thumb.jpg"
                     }
                 ]
             ]

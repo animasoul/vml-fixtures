@@ -6,18 +6,15 @@
 class Shelves
 {
     private $config;
-    private $baseImageUrl;
 
     /**
      * Shelves constructor.
      *
      * @param array  $config       The configuration for the shelves.
-     * @param string $baseImageUrl The base URL for item images.
      */
-    public function __construct($config, $baseImageUrl)
+    public function __construct($config)
     {
         $this->config = $config;
-        $this->baseImageUrl = $baseImageUrl;
     }
 
     /**
@@ -34,7 +31,7 @@ class Shelves
         $html = "<div class='endCap'>";
         foreach ($this->config['shelves'] as $shelfIndex => $shelf) {
             $shelfNumber = $shelfIndex + 1;
-            $shelfObject = new Shelf($this->baseImageUrl, $shelfNumber, $shelf);
+            $shelfObject = new Shelf($shelfNumber, $shelf);
             $html .= $shelfObject->generate();
         }
         $html .= "</div>";
@@ -48,20 +45,17 @@ class Shelves
  */
 class Shelf
 {
-    private $baseImageUrl;
     private $shelfNumber;
     private $shelf;
 
     /**
      * Shelf constructor.
      *
-     * @param string $baseImageUrl The base URL for item images.
      * @param int    $shelfNumber  The number of the shelf.
      * @param array  $shelf        The shelf details.
      */
-    public function __construct($baseImageUrl, $shelfNumber, $shelf)
+    public function __construct( $shelfNumber, $shelf)
     {
-        $this->baseImageUrl = $baseImageUrl;
         $this->shelfNumber = $shelfNumber;
         $this->shelf = $shelf;
     }
@@ -73,19 +67,19 @@ class Shelf
      */
     public function generate()
     {
-        $html = "<h3>Shelf {$this->shelfNumber}</h3><hr />";
+        $html = "<h4>Shelf {$this->shelfNumber}</h4><hr />";
         $html .= "<div class='shelf shelf{$this->shelfNumber}'>";
         
         if (!empty($this->shelf['custom'])) {
             foreach ($this->shelf['items'] as $sectionCount => $sectionItems) {
                 $sectionCount++;
-                $shelfSection = new ShelfSection($this->baseImageUrl, $this->shelfNumber, $sectionCount, $sectionItems);
+                $shelfSection = new ShelfSection($this->shelfNumber, $sectionCount, $sectionItems);
                 $html .= "<div class='shelf{$this->shelfNumber}-{$sectionCount}'>"
                       . $shelfSection->generate()
                       . "</div>";
             }
         } else {
-            $shelfSection = new ShelfSection($this->baseImageUrl, $this->shelfNumber, null, $this->shelf['items']);
+            $shelfSection = new ShelfSection($this->shelfNumber, null, $this->shelf['items']);
             $html .= $shelfSection->generate();
         }
         
@@ -100,7 +94,6 @@ class Shelf
  */
 class ShelfSection
 {
-    private $baseImageUrl;
     private $shelfNumber;
     private $sectionCount;
     private $sectionItems;
@@ -108,14 +101,12 @@ class ShelfSection
     /**
      * ShelfSection constructor.
      *
-     * @param string $baseImageUrl The base URL for item images.
      * @param int    $shelfNumber  The number of the shelf.
      * @param int    $sectionCount The count of the section.
      * @param array  $sectionItems The items in the section.
      */
-    public function __construct($baseImageUrl, $shelfNumber, $sectionCount, $sectionItems)
+    public function __construct( $shelfNumber, $sectionCount, $sectionItems)
     {
-        $this->baseImageUrl = $baseImageUrl;
         $this->shelfNumber = $shelfNumber;
         $this->sectionCount = $sectionCount;
         $this->sectionItems = $sectionItems;
@@ -132,7 +123,7 @@ class ShelfSection
         foreach ($this->sectionItems as $itemCount => $item) {
             $itemCount++;
             $sectionClass = $this->sectionCount ? "-{$this->sectionCount}" : '';
-            $shelfItem = new ShelfItem($this->baseImageUrl, $this->shelfNumber, $sectionClass, $itemCount, $item);
+            $shelfItem = new ShelfItem($this->shelfNumber, $sectionClass, $itemCount, $item);
             $html .= $shelfItem->generate();
         }
         return $html;
@@ -145,7 +136,6 @@ class ShelfSection
  */
 class ShelfItem
 {
-    private $baseImageUrl;
     private $shelfNumber;
     private $sectionClass;
     private $itemCount;
@@ -154,15 +144,13 @@ class ShelfItem
     /**
      * ShelfItem constructor.
      *
-     * @param string $baseImageUrl The base URL for item images.
      * @param int    $shelfNumber  The number of the shelf.
      * @param string $sectionClass The class for the shelf section.
      * @param int    $itemCount    The count of the item within the section.
      * @param array  $item         The item details.
      */
-    public function __construct($baseImageUrl, $shelfNumber, $sectionClass, $itemCount, $item)
+    public function __construct($shelfNumber, $sectionClass, $itemCount, $item)
     {
-        $this->baseImageUrl = $baseImageUrl;
         $this->shelfNumber = $shelfNumber;
         $this->sectionClass = $sectionClass;
         $this->itemCount = $itemCount;
@@ -176,9 +164,47 @@ class ShelfItem
      */public function generate()
     {
         $class = "shelf{$this->shelfNumber}{$this->sectionClass}-{$this->itemCount}";
-        $altText = "shelf {$this->shelfNumber} section {$this->sectionClass} item {$this->itemCount} for end cap";
-        $imgSrc = "{$this->baseImageUrl}/Fall23/{$this->item['image']}";
-        
-        return "<div class='{$class}'><img src='{$imgSrc}' alt='{$altText}' /></div>";
+        //check to see if array key exists for URL2 and not empty then loop through all available json data, else use default settings
+        // Check to see if array key exists for URL2 and not empty then loop through all available JSON data, else use default settings
+        if (array_key_exists('URL2', $this->item) && !empty($this->item['URL2'])) {
+            $altText = $this->item['Description'];
+            $imgSrc = "{$this->item['URL2']}";
+            $largeImgSrc = "{$this->item['URL1']}";
+        } else {
+            $altText = "shelf {$this->shelfNumber} section {$this->sectionClass} item {$this->itemCount} for end cap";
+            $imgSrc = "{$this->item['image']}";
+            $largeImgSrc = str_replace('_Thumb', '', $imgSrc);
+        }
+
+        // Prepare the details for the dialog
+        $details = '';
+        foreach ($this->item as $key => $value) {
+            if (!in_array($key, ['URL1', 'URL2', 'image'])) {
+                $details .= "<p><strong>{$key}:</strong> {$value}</p>";
+            }
+        }
+
+        // Create a unique identifier for this dialog
+        $dialogId = "dialog-{$this->shelfNumber}-{$this->sectionClass}-{$this->itemCount}";
+
+        // Return the HTML
+        return "
+            <div class='{$class}'>
+                <img src='{$imgSrc}' alt='{$altText}' onclick='openDialog(\"{$dialogId}\")' />
+                <dialog id='{$dialogId}'>
+                    <img src='{$largeImgSrc}' alt='{$altText}' />
+                    <div>{$details}</div>
+                    <button onclick='closeDialog(\"{$dialogId}\")'>Close</button>
+                </dialog>
+            </div>
+            <script>
+                function openDialog(id) {
+                    document.getElementById(id).showModal();
+                }
+                function closeDialog(id) {
+                    document.getElementById(id).close();
+                }
+            </script>
+        ";
     }
 }

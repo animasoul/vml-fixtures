@@ -1,31 +1,59 @@
 <?php
-$data = array(
-	'customer'     => $_SESSION['Customer'],
-	'customerName' => $_SESSION['CustomerName'],
-	'store'        => $_SESSION['Store'],
-	'storeName'    => $_SESSION['StoreName'],
-	'status'       => (isset($_SESSION['Part_Status']) ? $_SESSION['Part_Status'] : 'active'),
-	'fixture'      => 'ENDCAP',
-	'promotion'	   => 'Fall23',
-);
 
-$baseImageUrl= "https://api-test.graphicsystems.com/gsimages/".$data['customer'];
+require_once 'fixtures/classes/Shelves.class.php';
+require_once 'fixtures/classes/ShelvesMapper.class.php';
+require_once 'fixtures/classes/Api.class.php';
 
+class FixtureRenderer {
+    private $api;
+    
+    public function __construct() {
+        $this->api = new Api();
+    }
+    
+    public function getDataParams() {
+        $data = array(
+            'customer'     => $_SESSION['Customer'],
+            'customerName' => $_SESSION['CustomerName'],
+            'store'        => $_SESSION['Store'],
+            'storeName'    => $_SESSION['StoreName'],
+            'status'       => (isset($_SESSION['Part_Status']) ? $_SESSION['Part_Status'] : 'active'),
+            'fixture'      => 'ENDCAP',
+            'promotion'    => 'Fall23',
+        );
 
-// call the API to get the fixture data
-// require_once 'fixtures/classes/Api.class.php';
+        $params = array(
+            'storeRoot' => $data['customer'],
+            'storeCode' => $data['store'],
+            'promotion' => $data['promotion'],
+        );
+        
+        return [$data, $params];
+    }
+    
+    public function fetchApiData($params) {
+        return $this->api->make_api_call('GetSephoraProducts', $params, true, 30);
+    }
 
-// Instantiate the VIZMERCH_Custom class
-// $getProducts = new Api();
+    public function fetchShelvesData() {
+        $json_url = plugins_url( 'fixtures/jsonConfig/ENDCAP.json', __FILE__ );
+        $shelvesData = file_get_contents($json_url);
+        return json_decode($shelvesData, true);
+    }
+}
 
-// $params = array(
-// 	'storeRoot' => $data['customer'],
-// 	'storeCode' => $data['store'],
-// 	'promotion' => $data['promotion'],
-//   );
-// $reponse = $getProducts->make_api_call('GetSephoraProducts', $params, true, 30);
-// var_dump('GetSephoraProducts');
-// var_dump($reponse);
+$renderer = new FixtureRenderer();
+list($data, $params) = $renderer->getDataParams();
+$apiData = $renderer->fetchApiData($params);
+$shelvesData = $renderer->fetchShelvesData();
+
+$shelvesMapper = new ShelvesMapper();
+$updatedShelvesData = $shelvesMapper->mapDataToShelves($shelvesData, $apiData);
+
+if (json_last_error() !== JSON_ERROR_NONE) {
+    die('Error decoding JSON: ' . json_last_error_msg());
+}
+
 ?>
 <div <?php echo get_block_wrapper_attributes(); ?>>
     
@@ -56,7 +84,15 @@ $baseImageUrl= "https://api-test.graphicsystems.com/gsimages/".$data['customer']
 				Click on the image to the to view the fixture graphic and order.
 			</p>
 		</div>
-
-		<?php include_once 'fixtures/'.$data['fixture'].'.php'; ?>
+		<div class="shelves-container">
+			<div class="shelves-container__left">
+				<div class="<?php echo esc_html( $data['customer'] ); ?>-img"></div>
+			</div>
+			<div class="shelves-container__right">
+				<?php $shelves = new Shelves($shelvesData);
+						echo $shelves->generate();
+				?>
+			</div>
+		</div>
     </div>
 
