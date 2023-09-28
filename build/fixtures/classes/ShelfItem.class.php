@@ -28,7 +28,7 @@ class Dialog {
                 <div>{$this->details}</div>
                 <div class='dialog-buttons'>
                     <button onclick='closeDialog(\"{$this->dialogId}\")' class='close-dialog'>Close</button>
-                    <button class='add-cart'>Add to Cart</button>
+                    <button class='add-cart'>Add item to Cart</button>
                 </div>
             </dialog>
             <script>
@@ -85,7 +85,6 @@ class ShelfItem
      */public function generate()
     {
         $class = "shelf{$this->shelfNumber}{$this->sectionClass}-{$this->itemCount}";
-        //check to see if array key exists for URL2 and not empty then loop through all available json data, else use default settings
         // Check to see if array key exists for URL2 and not empty then loop through all available JSON data, else use default settings
         if (array_key_exists('URL2', $this->item) && !empty($this->item['URL2'])) {
             $altText = $this->item['Description'];
@@ -95,6 +94,7 @@ class ShelfItem
             $altText = "shelf {$this->shelfNumber} section {$this->sectionClass} item {$this->itemCount} for end cap";
             $imgSrc = "{$this->item['image']}";
             $largeImgSrc = str_replace('_Thumb', '', $imgSrc);
+            $imgSrc = str_replace('_Thumb', '', $imgSrc);
         }
 
         // Prepare the details for the dialog

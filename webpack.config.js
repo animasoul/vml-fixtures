@@ -11,6 +11,7 @@ module.exports = {
 		new CopyWebpackPlugin({
 			patterns: [
 				{ from: "src/fixtures/jsonConfig", to: "fixtures/jsonConfig" },
+				{ from: "assets/images", to: "images" },
 			],
 		}),
 	],

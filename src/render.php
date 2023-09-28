@@ -32,7 +32,7 @@ class FixtureRenderer {
     }
     
     public function fetchApiData($params) {
-        return $this->api->make_api_call('GetSephoraProducts', $params, true, 30);
+        return $this->api->make_api_call('GetSephoraProducts', $params, false, 30);
     }
 
     public function fetchShelvesData() {
@@ -57,41 +57,24 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 ?>
 <div <?php echo get_block_wrapper_attributes(); ?>>
     
-        <div class="fix-header">
-			<div class="fix-header__left">
-				<h3 class="fix-header__customer">
-					Customer: <br />
-					<strong><?php echo esc_html( $data['customer'] ); ?>, <? echo esc_html( $data['customerName']); ?></strong>
-				</h3>
-				<h3 class="fix-header__store">
-					Store: <br />
-					<strong><?php echo esc_html( $data['store'] ); ?>, <? echo esc_html( $data['storeName']); ?></strong>
-				</h3>
-			</div>
-			<div class="fix-header__right">
-				<h4 class="fix-header__status">
-					Fixture: <?php echo esc_html( $data['fixture'] ); ?>
-				</h4>
-				<div class="fix-header__fixture">
-					<div class="<?php echo esc_html( $data['customer'] ); ?>-img"></div>
-				</div>
-			</div>
-		</div>
-		<hr />
+        
 		<div class="fix-instructions">
+			<h3 class="fix-header__status">
+					Fixture: <?php echo esc_html( $data['fixture'] ); ?>
+				</h3>
 			<h3 class="fix-instructions__title">Instructions:</h3>
 			<p class="fix-instructions__text">
-				Click on the image to the to view the fixture graphic and order.
+				Click on a specific image to view the fixture graphic and order new/replacement.
 			</p>
 		</div>
 		<div class="shelves-container" id="topdf">
 			<div class="shelves-container__left">
-				<div class="<?php echo esc_html( $data['customer'] ); ?>-img"></div>
-			</div>
-			<div class="shelves-container__right">
 				<?php $shelves = new Shelves($shelvesData);
 						echo $shelves->generate();
 				?>
+			</div>
+			<div class="shelves-container__right">
+				<div class="<?php echo esc_html( $data['customer'] ); ?>-img"></div>
 			</div>
 		</div>
     </div>

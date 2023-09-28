@@ -36,6 +36,7 @@ class Shelves
             $shelfObject = new Shelf($shelfNumber, $shelf);
             $html .= $shelfObject->generate();
         }
+        $html .= "<button class='fixture-tocart__btn'>Add ALL Shelf items to Cart</button>";
         $html .= "</div>";
         return $html;
     }
@@ -69,7 +70,10 @@ class Shelf
      */
     public function generate()
     {
-        $html = "<h4>Shelf {$this->shelfNumber}</h4>";
+        $html = "<div class='shelf-title'>";
+        $html .= "<h3>Shelf {$this->shelfNumber}</h3>";
+        $html .= "<button class='shelf-tocart__btn shelf{$this->shelfNumber}__btn'>Add ALL Shelf {$this->shelfNumber} items to Cart</button>";
+        $html .= "</div>";
         $html .= "<div class='shelf shelf{$this->shelfNumber}'>";
         
         if (!empty($this->shelf['custom'])) {
@@ -84,7 +88,6 @@ class Shelf
             $shelfSection = new ShelfSection($this->shelfNumber, null, $this->shelf['items']);
             $html .= $shelfSection->generate();
         }
-        
         $html .= "</div>";
         return $html;
     }
