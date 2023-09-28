@@ -9,7 +9,7 @@
 	background-color: #21759b;
 	color: #fff;
 	@media (min-width: 700px) {
-		padding: 20px 10%;
+		padding: 20px 5%;
 	}
 	padding: 20px;
 	.fix-header {
@@ -30,12 +30,15 @@
 			height: 252px;
 		}
 	}
-
+	h4 {
+		margin-bottom: 8px;
+	}
 	.shelves-container {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
+
 		@media (min-width: 700px) {
 			flex-direction: row;
 		}
@@ -52,13 +55,20 @@
 		}
 		.shelves-container__right {
 			flex-grow: 1;
+			border: 1px solid #fff;
+			border-radius: 3px;
+			background-color: #8682bd;
+			padding: 0 10px;
 		}
 	}
+
 	.shelf {
 		display: grid;
 		height: auto;
 		text-align: center;
 		gap: 5px 10px;
+		border-bottom: 1px solid #fff;
+
 		img {
 			border: 1px solid transparent;
 		}
@@ -67,7 +77,12 @@
 			border: 1px solid #fff;
 		}
 		dialog::backdrop {
-			background-color: #0d0d0d52;
+			background-color: #0a090952;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
 		}
 		dialog {
 			background-color: #0d0d0d;
@@ -78,9 +93,15 @@
 				text-align: left;
 				line-height: 0.9em;
 			}
+			.dialog-buttons {
+				display: flex;
+				justify-content: space-between;
+			}
 		}
 	}
-
+	.shelf:last-of-type {
+		border-bottom: none;
+	}
 	.endCap {
 		.shelf1 {
 			grid-template-columns: repeat(5, 1fr);
@@ -119,42 +140,10 @@
 		.shelf2 {
 			grid-template-columns: 1fr;
 			grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-
-			.shelf2-1 {
-				grid-area: 1 / 1 / 2 / 2;
-			}
-			.shelf2-2 {
-				grid-area: 2 / 1 / 4 / 2;
-			}
-			.shelf2-3 {
-				grid-area: 3 / 1 / 4 / 2;
-			}
-			.shelf2-4 {
-				grid-area: 4 / 1 / 5 / 2;
-			}
-			.shelf2-5 {
-				grid-area: 5 / 1 / 6 / 2;
-			}
 		}
 		.shelf3 {
 			grid-template-columns: 1fr;
 			grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-
-			.shelf3-1 {
-				grid-area: 1 / 1 / 2 / 2;
-			}
-			.shelf3-2 {
-				grid-area: 2 / 1 / 4 / 2;
-			}
-			.shelf3-3 {
-				grid-area: 3 / 1 / 4 / 2;
-			}
-			.shelf3-4 {
-				grid-area: 4 / 1 / 5 / 2;
-			}
-			.shelf3-5 {
-				grid-area: 5 / 1 / 6 / 2;
-			}
 		}
 		.shelf4 {
 			grid-template-columns: repeat(2, 0.3fr 1fr);
