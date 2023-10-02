@@ -8,12 +8,16 @@ class Dialog {
     private $largeImgSrc;
     private $altText;
     private $details;
+    private $productCode;
+    private $productId;
 
-    public function __construct($dialogId, $largeImgSrc, $altText, $details) {
+    public function __construct($dialogId, $largeImgSrc, $altText, $details, $productCode, $productId) {
         $this->dialogId = $dialogId;
         $this->largeImgSrc = $largeImgSrc;
         $this->altText = $altText;
         $this->details = $details;
+        $this->productCode = $productCode;
+        $this->productId = $productId;
     }
 
     /**
@@ -28,8 +32,13 @@ class Dialog {
                 <div>{$this->details}</div>
                 <div class='dialog-buttons'>
                     <button onclick='closeDialog(\"{$this->dialogId}\")' class='close-dialog'>Close</button>
-                    <button class='add-cart'>Add item to Cart</button>
+                    <button type='submit' class='add-cart' onclick='handleAddToCart(event)' data-product-code='{$this->productCode}' data-product-id='{$this->productId}'>
+                        <span class='btnSubmit-text'>Add item to cart</span>
+                        <span class='js-loadingMsg' aria-live='assertive' data-loading-msg='Adding to cart, wait...'></span>
+                    </button>
                 </div>
+                <div class='addToCart-success' style='display:none'>Item added to cart successfully!</div>
+                <div class='addToCart-fail' style='display:none'>There has been a problem, Item not added!!!</div>
             </dialog>
             <script>
                 function openDialog(id) {
@@ -108,7 +117,10 @@ class ShelfItem
         // Create a unique identifier for this dialog
         $dialogId = "dialog{$this->shelfNumber}{$this->sectionClass}-{$this->itemCount}";
 
-        $dialog = new Dialog($dialogId, $largeImgSrc, $altText, $details);
+        $productCode = isset($this->item['Code']) ? $this->item['Code'] : '';
+        $productId = isset($this->item['ProductID']) ? $this->item['ProductID'] : '';
+
+        $dialog = new Dialog($dialogId, $largeImgSrc, $altText, $details, $productCode, $productId);
 
         // Return the HTML
         return "

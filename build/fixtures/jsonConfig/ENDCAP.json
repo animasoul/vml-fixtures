@@ -6,6 +6,8 @@
                 {
                     "horizontal": "Left",
                     "vertical": "Middle",
+                    "ProductID": 77309,
+                    "Code": "SAI-FALL23-49",
                     "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-83_Thumb.jpg"
                 },
                 {
@@ -68,11 +70,15 @@
                 {
                     "horizontal": "Right",
                     "vertical": "Middle",
+                    "ProductID": 77309,
+                    "Code": "SAI-FALL23-49",
                     "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-84_Thumb.jpg"
                 },
                 {
                     "horizontal": "Front",
                     "vertical": "-",
+                    "ProductID": 77309,
+                    "Code": "SAI-FALL23-49",
                     "image": "https://api.graphicsystems.com/gsimages/SAI/Fall23/SAI-Fall23-29_Thumb.jpg"
                 }
             ]

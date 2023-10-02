@@ -20,6 +20,21 @@ class Shelves
     }
 
     /**
+     * Gets the product info for the shelves.
+     *
+     * @return array The product info.
+     */
+    public function getProductInfo() {
+        $productInfo = [];
+        foreach ($this->config['shelves'] as $shelfIndex => $shelf) {
+            $shelfNumber = $shelfIndex + 1;
+            $shelfObject = new Shelf($shelfNumber, $shelf);
+            $productInfo = array_merge($productInfo, $shelfObject->getProductInfo());
+        }
+        return $productInfo;
+    }
+
+    /**
      * Generates the HTML for all the shelves.
      *
      * @return string The HTML string.
@@ -30,13 +45,22 @@ class Shelves
             die('Invalid configuration: Missing or invalid "shelves" key');
         }
 
+        $productInfo = json_encode($this->getProductInfo());
+
         $html = "<div class='fixture endCap'>";
         foreach ($this->config['shelves'] as $shelfIndex => $shelf) {
             $shelfNumber = $shelfIndex + 1;
             $shelfObject = new Shelf($shelfNumber, $shelf);
             $html .= $shelfObject->generate();
         }
-        $html .= "<button class='fixture-tocart__btn'>Add ALL Shelf items to Cart</button>";
+        $html .= "</div>";
+        $html .= "<div class='shelf-title footer-tocart'>";
+        $html .= "<button type='submit' onclick='handleAddShelfToCart($productInfo)' class='fixture-tocart__btn'>";
+        $html .= "      <span class='btnSubmit-text'>Add ALL Shelf items to Cart</span>
+                        <span class='js-loadingMsg' aria-live='assertive' data-loading-msg='Adding to cart, wait...'></span>
+                    </button>
+                <div class='addToCart-success' style='display:none'>Item added to cart successfully!</div>
+                <div class='addToCart-fail' style='display:none'>There has been a problem, Item not added!!!</div>";
         $html .= "</div>";
         return $html;
     }
@@ -64,16 +88,41 @@ class Shelf
     }
 
     /**
+     * Gets the product info for the shelf.
+     *
+     * @return array The product info.
+     */
+    public function getProductInfo() {
+        $productInfo = [];
+        if (!empty($this->shelf['custom'])) {
+            foreach ($this->shelf['items'] as $sectionItems) {
+                $shelfSection = new ShelfSection($this->shelfNumber, null, $sectionItems);
+                $productInfo = array_merge($productInfo, $shelfSection->getProductInfo());
+            }
+        } else {
+            $shelfSection = new ShelfSection($this->shelfNumber, null, $this->shelf['items']);
+            $productInfo = $shelfSection->getProductInfo();
+        }
+        return $productInfo;
+    }
+    
+    /**
      * Generates the HTML for the shelf.
      *
      * @return string The HTML string.
      */
     public function generate()
     {
+        $productInfo = json_encode($this->getProductInfo());
         $html = "<div class='shelf-title'>";
         $html .= "<h3>Shelf {$this->shelfNumber}</h3>";
-        $html .= "<button class='shelf-tocart__btn shelf{$this->shelfNumber}__btn'>Add ALL Shelf {$this->shelfNumber} items to Cart</button>";
-        $html .= "</div>";
+        $html .= "<button type='submit' onclick='handleAddShelfToCart($productInfo)' class='shelf-tocart__btn shelf{$this->shelfNumber}__btn'>";
+        $html .= "      <span class='btnSubmit-text'>Add ALL Shelf {$this->shelfNumber} items to Cart</span>
+                        <span class='js-loadingMsg' aria-live='assertive' data-loading-msg='Adding to cart, wait...'></span>
+                    </button>
+                <div class='addToCart-success' style='display:none'>Item added to cart successfully!</div>
+                <div class='addToCart-fail' style='display:none'>There has been a problem, Item not added!!!</div>
+                </div>";
         $html .= "<div class='shelf shelf{$this->shelfNumber}'>";
         
         if (!empty($this->shelf['custom'])) {
@@ -115,6 +164,27 @@ class ShelfSection
         $this->shelfNumber = $shelfNumber;
         $this->sectionCount = $sectionCount;
         $this->sectionItems = $sectionItems;
+    }
+
+    /**
+     * Gets the product info for the section.
+     *
+     * @return array The product info.
+     */
+    public function getProductInfo() {
+        $productInfo = [];
+        foreach ($this->sectionItems as $item) {
+            $productCode = isset($item['Code']) ? $item['Code'] : '';
+            $productId = isset($item['ProductID']) ? $item['ProductID'] : '';
+            if ($productCode && $productId) {
+                $productInfo[] = [
+                    'product_id' => $productId,
+                    'product_code' => $productCode,
+                    'qty' => 1
+                ];
+            }
+        }
+        return $productInfo;
     }
 
     /**

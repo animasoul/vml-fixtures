@@ -46,9 +46,14 @@ $renderer = new FixtureRenderer();
 list($data, $params) = $renderer->getDataParams();
 $apiData = $renderer->fetchApiData($params);
 $shelvesData = $renderer->fetchShelvesData();
+usort($apiData, function($a, $b) {
+    return $a['Shelf'] <=> $b['Shelf'];
+});
+// var_dump(json_encode($apiData));
 
 $shelvesMapper = new ShelvesMapper();
 $updatedShelvesData = $shelvesMapper->mapDataToShelves($shelvesData, $apiData);
+// var_dump(json_encode($updatedShelvesData));
 
 if (json_last_error() !== JSON_ERROR_NONE) {
     die('Error decoding JSON: ' . json_last_error_msg());
@@ -67,7 +72,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 				Click on a specific image to view the fixture graphic and order new/replacement.
 			</p>
 		</div>
-		<div class="shelves-container" id="topdf">
+		<div class="shelves-container" id="topdf" data-ajax-url="<?php echo admin_url('admin-ajax.php'); ?>">
 			<div class="shelves-container__left">
 				<?php $shelves = new Shelves($shelvesData);
 						echo $shelves->generate();
