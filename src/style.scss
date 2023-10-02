@@ -35,10 +35,6 @@
 			background 0.2s ease,
 			color 0.2s ease,
 			box-shadow 0.2s ease;
-		&:hover {
-			background: rgba(0, 118, 255, 0.9);
-			box-shadow: 0 6px 20px rgb(0 118 255 / 23%);
-		}
 		&:disabled {
 			background: #4e4e4e;
 			color: #eaeaea;

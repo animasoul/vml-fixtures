@@ -69,7 +69,7 @@ class Shelves
         }
         $html .= "</div>";
         $html .= "<div class='shelf-title footer-tocart common-container'>";
-        $html .= "<button type='submit' onclick='handleAddShelfToCart($productInfo)' class='fixture-tocart__btn'>";
+        $html .= "<button type='submit' onclick='handleAddShelfToCart($productInfo)' class='fixture-tocart__btn add-cart'>";
         $html .= "      <span class='btnSubmit-text'>Add ALL Shelf items to Cart</span>
                         <span class='js-loadingMsg' aria-live='assertive' data-loading-msg='Adding to cart, wait...'></span>
                     </button>
@@ -131,7 +131,7 @@ class Shelf
         $productInfo = json_encode($this->getProductInfo());
         $html = "<div class='shelf-title common-container'>";
         $html .= "<h3>Shelf {$this->shelfNumber}</h3>";
-        $html .= "<button type='submit' onclick='handleAddShelfToCart($productInfo)' class='shelf-tocart__btn shelf{$this->shelfNumber}__btn'>";
+        $html .= "<button type='submit' onclick='handleAddShelfToCart($productInfo)' class='shelf-tocart__btn add-cart shelf{$this->shelfNumber}__btn'>";
         $html .= "      <span class='btnSubmit-text'>Add ALL Shelf {$this->shelfNumber} items to Cart</span>
                         <span class='js-loadingMsg' aria-live='assertive' data-loading-msg='Adding to cart, wait...'></span>
                     </button>
