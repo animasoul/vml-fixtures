@@ -1,23 +1,30 @@
 <?php
 /**
  * Class Dialog
- * Handles the generation and behavior of dialogs.
+ * Handles the generation of dialogs.
  */
 class Dialog {
-    private $dialogId;
-    private $largeImgSrc;
-    private $altText;
-    private $details;
-    private $productCode;
-    private $productId;
+    private string $dialogId;
+    private string $largeImgSrc;
+    private string $altText;
+    private string $details;
+    private string $productCode;
+    private string $productId;
 
-    public function __construct($dialogId, $largeImgSrc, $altText, $details, $productCode, $productId) {
-        $this->dialogId = $dialogId;
-        $this->largeImgSrc = $largeImgSrc;
-        $this->altText = $altText;
+    public function __construct(
+        string $dialogId,
+        string $largeImgSrc,
+        string $altText,
+        string $details,
+        string $productCode,
+        string $productId
+    ) {
+        $this->dialogId = htmlspecialchars($dialogId);
+        $this->largeImgSrc = htmlspecialchars($largeImgSrc);
+        $this->altText = htmlspecialchars($altText);
         $this->details = $details;
-        $this->productCode = $productCode;
-        $this->productId = $productId;
+        $this->productCode = htmlspecialchars($productCode);
+        $this->productId = htmlspecialchars($productId);
     }
 
     /**
@@ -25,38 +32,22 @@ class Dialog {
      *
      * @return string The HTML string.
      */
-    public function generate() {
-        return "
-            <dialog id='{$this->dialogId}'>
-                <img src='{$this->largeImgSrc}' alt='{$this->altText}' />
-                <div>{$this->details}</div>
-                <div class='dialog-buttons'>
-                    <button onclick='closeDialog(\"{$this->dialogId}\")' class='close-dialog'>Close</button>
-                    <button type='submit' class='add-cart' onclick='handleAddToCart(event)' data-product-code='{$this->productCode}' data-product-id='{$this->productId}'>
-                        <span class='btnSubmit-text'>Add item to cart</span>
-                        <span class='js-loadingMsg' aria-live='assertive' data-loading-msg='Adding to cart, wait...'></span>
+    public function generate(): string
+    {
+        return '
+            <dialog id="' . $this->dialogId . '">
+                <img src="' . $this->largeImgSrc . '" alt="' . $this->altText . '" />
+                <div>' . $this->details . '</div>
+                <div class="dialog-buttons common-container">
+                    <button onclick="closeDialog(\'' . $this->dialogId . '\')" class="close-dialog">Close</button>
+                    <button type="submit" class="add-cart" onclick="handleAddToCart(event)" data-product-code="' . $this->productCode . '" data-product-id="' . $this->productId . '">
+                        <span class="btnSubmit-text">Add item to cart</span>
+                        <span class="js-loadingMsg" aria-live="assertive" data-loading-msg="Adding to cart, wait..."></span>
                     </button>
+                    <div class="addToCart-success" style="display:none">Item added to cart successfully!</div>
+                    <div class="addToCart-fail" style="display:none">There has been a problem, Item not added!!!</div>
                 </div>
-                <div class='addToCart-success' style='display:none'>Item added to cart successfully!</div>
-                <div class='addToCart-fail' style='display:none'>There has been a problem, Item not added!!!</div>
-            </dialog>
-            <script>
-                function openDialog(id) {
-                    document.getElementById(id).showModal();
-                }
-
-                function closeDialog(id) {
-                    document.getElementById(id).close();
-                }
-
-                /* Handle clicks on the backdrop */
-                document.addEventListener('click', function(e) {
-                    if (e.target instanceof HTMLDialogElement && e.target.open) {
-                        closeDialog(e.target.id);
-                    }
-                }, false);
-            </script>
-        ";
+            </dialog>';
     }
 }
 
@@ -64,12 +55,11 @@ class Dialog {
  * Class ShelfItem
  * Represents a single item on a shelf.
  */
-class ShelfItem
-{
-    private $shelfNumber;
-    private $sectionClass;
-    private $itemCount;
-    private $item;
+class ShelfItem {
+    private int $shelfNumber;
+    private string $sectionClass;
+    private int $itemCount;
+    private array $item;
 
     /**
      * ShelfItem constructor.
@@ -79,8 +69,7 @@ class ShelfItem
      * @param int    $itemCount    The count of the item within the section.
      * @param array  $item         The item details.
      */
-    public function __construct($shelfNumber, $sectionClass, $itemCount, $item)
-    {
+    public function __construct(int $shelfNumber, string $sectionClass, int $itemCount, array $item) {
         $this->shelfNumber = $shelfNumber;
         $this->sectionClass = $sectionClass;
         $this->itemCount = $itemCount;
@@ -91,22 +80,23 @@ class ShelfItem
      * Generates the HTML for the shelf item.
      *
      * @return string The HTML string.
-     */public function generate()
+     * @throws InvalidArgumentException If mandatory data is missing or invalid.
+     */
+    public function generate(): string
     {
         $class = "shelf{$this->shelfNumber}{$this->sectionClass}-{$this->itemCount}";
-        // Check to see if array key exists for URL2 and not empty then loop through all available JSON data, else use default settings
+
         if (array_key_exists('URL2', $this->item) && !empty($this->item['URL2'])) {
             $altText = $this->item['Description'];
             $imgSrc = "{$this->item['URL2']}";
             $largeImgSrc = "{$this->item['URL1']}";
         } else {
             $altText = "shelf {$this->shelfNumber} section {$this->sectionClass} item {$this->itemCount} for end cap";
-            $imgSrc = "{$this->item['image']}";
+            $imgSrc = $this->item['image'] ?? '';
             $largeImgSrc = str_replace('_Thumb', '', $imgSrc);
             $imgSrc = str_replace('_Thumb', '', $imgSrc);
         }
 
-        // Prepare the details for the dialog
         $details = '';
         foreach ($this->item as $key => $value) {
             if (!in_array($key, ['URL1', 'URL2', 'image'])) {
@@ -114,15 +104,16 @@ class ShelfItem
             }
         }
 
-        // Create a unique identifier for this dialog
         $dialogId = "dialog{$this->shelfNumber}{$this->sectionClass}-{$this->itemCount}";
+        $productCode = $this->item['Code'] ?? '';
+        $productId = $this->item['ProductID'] ?? '';
 
-        $productCode = isset($this->item['Code']) ? $this->item['Code'] : '';
-        $productId = isset($this->item['ProductID']) ? $this->item['ProductID'] : '';
+        if(empty($imgSrc)) {
+            throw new InvalidArgumentException('Image source cannot be empty.');
+        }
 
         $dialog = new Dialog($dialogId, $largeImgSrc, $altText, $details, $productCode, $productId);
 
-        // Return the HTML
         return "
             <div class='{$class}'>
                 <img src='{$imgSrc}' alt='{$altText}' onclick='openDialog(\"{$dialogId}\")' />

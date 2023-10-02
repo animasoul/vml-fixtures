@@ -2,19 +2,26 @@
 require_once 'ShelfItem.class.php';
 
 /**
+ * Custom exception class for handling invalid configuration.
+ */
+class InvalidConfigurationException extends Exception
+{
+}
+
+/**
  * Class Shelves
  * Represents a collection of shelves.
  */
 class Shelves
 {
-    private $config;
+    private array $config;
 
     /**
      * Shelves constructor.
      *
      * @param array  $config       The configuration for the shelves.
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         $this->config = $config;
     }
@@ -24,7 +31,8 @@ class Shelves
      *
      * @return array The product info.
      */
-    public function getProductInfo() {
+    public function getProductInfo(): array 
+    {
         $productInfo = [];
         foreach ($this->config['shelves'] as $shelfIndex => $shelf) {
             $shelfNumber = $shelfIndex + 1;
@@ -39,10 +47,16 @@ class Shelves
      *
      * @return string The HTML string.
      */
-    public function generate()
+    /**
+     * Generates the HTML for all the shelves.
+     *
+     * @return string The HTML string.
+     * @throws InvalidConfigurationException If the shelves configuration is invalid.
+     */
+    public function generate(): string
     {
         if (!isset($this->config['shelves']) || !is_array($this->config['shelves'])) {
-            die('Invalid configuration: Missing or invalid "shelves" key');
+            throw new InvalidConfigurationException('Invalid configuration: Missing or invalid "shelves" key');
         }
 
         $productInfo = json_encode($this->getProductInfo());
@@ -54,7 +68,7 @@ class Shelves
             $html .= $shelfObject->generate();
         }
         $html .= "</div>";
-        $html .= "<div class='shelf-title footer-tocart'>";
+        $html .= "<div class='shelf-title footer-tocart common-container'>";
         $html .= "<button type='submit' onclick='handleAddShelfToCart($productInfo)' class='fixture-tocart__btn'>";
         $html .= "      <span class='btnSubmit-text'>Add ALL Shelf items to Cart</span>
                         <span class='js-loadingMsg' aria-live='assertive' data-loading-msg='Adding to cart, wait...'></span>
@@ -72,8 +86,8 @@ class Shelves
  */
 class Shelf
 {
-    private $shelfNumber;
-    private $shelf;
+    private int $shelfNumber;
+    private array $shelf;
 
     /**
      * Shelf constructor.
@@ -81,7 +95,7 @@ class Shelf
      * @param int    $shelfNumber  The number of the shelf.
      * @param array  $shelf        The shelf details.
      */
-    public function __construct( $shelfNumber, $shelf)
+    public function __construct(int $shelfNumber, array $shelf)
     {
         $this->shelfNumber = $shelfNumber;
         $this->shelf = $shelf;
@@ -92,7 +106,8 @@ class Shelf
      *
      * @return array The product info.
      */
-    public function getProductInfo() {
+    public function getProductInfo(): array 
+    {
         $productInfo = [];
         if (!empty($this->shelf['custom'])) {
             foreach ($this->shelf['items'] as $sectionItems) {
@@ -111,10 +126,10 @@ class Shelf
      *
      * @return string The HTML string.
      */
-    public function generate()
+    public function generate(): string 
     {
         $productInfo = json_encode($this->getProductInfo());
-        $html = "<div class='shelf-title'>";
+        $html = "<div class='shelf-title common-container'>";
         $html .= "<h3>Shelf {$this->shelfNumber}</h3>";
         $html .= "<button type='submit' onclick='handleAddShelfToCart($productInfo)' class='shelf-tocart__btn shelf{$this->shelfNumber}__btn'>";
         $html .= "      <span class='btnSubmit-text'>Add ALL Shelf {$this->shelfNumber} items to Cart</span>
@@ -148,9 +163,9 @@ class Shelf
  */
 class ShelfSection
 {
-    private $shelfNumber;
-    private $sectionCount;
-    private $sectionItems;
+    private int $shelfNumber;
+    private ?int $sectionCount;
+    private array $sectionItems;
 
     /**
      * ShelfSection constructor.
@@ -159,7 +174,7 @@ class ShelfSection
      * @param int    $sectionCount The count of the section.
      * @param array  $sectionItems The items in the section.
      */
-    public function __construct( $shelfNumber, $sectionCount, $sectionItems)
+    public function __construct(int $shelfNumber, ?int $sectionCount, array $sectionItems)
     {
         $this->shelfNumber = $shelfNumber;
         $this->sectionCount = $sectionCount;
@@ -171,7 +186,7 @@ class ShelfSection
      *
      * @return array The product info.
      */
-    public function getProductInfo() {
+    public function getProductInfo(): array {
         $productInfo = [];
         foreach ($this->sectionItems as $item) {
             $productCode = isset($item['Code']) ? $item['Code'] : '';
@@ -192,7 +207,7 @@ class ShelfSection
      *
      * @return string The HTML string.
      */
-    public function generate()
+    public function generate(): string 
     {
         $html = '';
         foreach ($this->sectionItems as $itemCount => $item) {
