@@ -9,12 +9,17 @@
 	h4 {
 		margin-bottom: 8px;
 	}
-	.addToCart-success {
+	.addToCart-success,
+	.addToCart-fail {
 		margin-bottom: 10px;
+		color: green;
+		flex-basis: 100%;
+		text-align: right;
+	}
+	.addToCart-success {
 		color: green;
 	}
 	.addToCart-fail {
-		margin-bottom: 10px;
 		color: red;
 	}
 	button {
@@ -83,6 +88,7 @@
 		display: flex;
 		flex-direction: row;
 		margin: 10px 0;
+		flex-wrap: wrap;
 		h3 {
 			flex-grow: 1;
 			margin: 0 0 10px 0;
@@ -160,6 +166,7 @@
 				.dialog-buttons {
 					display: flex;
 					justify-content: space-between;
+					flex-wrap: wrap;
 				}
 			}
 		}

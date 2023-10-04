@@ -40,7 +40,7 @@ class Dialog {
                 <div>' . $this->details . '</div>
                 <div class="dialog-buttons common-container">
                     <button onclick="closeDialog(\'' . $this->dialogId . '\')" class="close-dialog">Close</button>
-                    <button type="submit" class="add-cart" onclick="handleAddToCart(event)" data-product-code="' . $this->productCode . '" data-product-id="' . $this->productId . '">
+                    <button type="submit" class="add-cart" data-product-code="' . $this->productCode . '" data-product-id="' . $this->productId . '">
                         <span class="btnSubmit-text">Add item to cart</span>
                         <span class="js-loadingMsg" aria-live="assertive" data-loading-msg="Adding to cart, wait..."></span>
                     </button>

@@ -48,9 +48,7 @@ jQuery(function ($) {
 		$.ajax({
 			url: ajax_url,
 			type: "POST",
-			contentType: "application/json",
-			dataType: "json",
-			data: JSON.stringify(data),
+			data: $.param(data),
 		})
 			.done(function (data) {
 				console.log("Request successful, received data:", data); // log the success data
