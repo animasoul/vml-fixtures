@@ -1,1 +1,249 @@
-.wp-block-create-block-vml-fixtures h4{margin-bottom:8px}.wp-block-create-block-vml-fixtures .addToCart-fail,.wp-block-create-block-vml-fixtures .addToCart-success{color:green;flex-basis:100%;margin-bottom:10px;text-align:right}.wp-block-create-block-vml-fixtures .addToCart-success{color:green}.wp-block-create-block-vml-fixtures .addToCart-fail{color:red}.wp-block-create-block-vml-fixtures button{background-color:#0070f3;border:none;border-radius:7px;box-shadow:0 4px 14px 0 rgba(0,118,255,.39);color:#fff;cursor:pointer;display:inline-block;font-size:16px;font-weight:400;height:45px;line-height:45px;outline:0;padding:0 15px;transition:background .2s ease,color .2s ease,box-shadow .2s ease}.wp-block-create-block-vml-fixtures button:disabled{background:#4e4e4e;box-shadow:none;color:#eaeaea;cursor:not-allowed}.wp-block-create-block-vml-fixtures button[aria-disabled=true]{cursor:not-allowed;opacity:.7}.wp-block-create-block-vml-fixtures button:after{color:#fff;content:"";opacity:0;transition:opacity .25s}.wp-block-create-block-vml-fixtures button[data-loading=true]{color:#fff;pointer-events:none}.wp-block-create-block-vml-fixtures button[data-loading=true]:after{animation:rotate .75s linear infinite;opacity:1}.wp-block-create-block-vml-fixtures button[data-loading=true] .btnSubmit-text{display:none}.wp-block-create-block-vml-fixtures .shelf-title{display:flex;flex-direction:row;flex-wrap:wrap;margin:10px 0 5px}.wp-block-create-block-vml-fixtures .shelf-title h3{flex-grow:1;margin:0 0 10px}.wp-block-create-block-vml-fixtures .shelves-container{align-items:center;display:flex;flex-direction:column;justify-content:center;margin-bottom:2rem}@media(min-width:700px){.wp-block-create-block-vml-fixtures .shelves-container{flex-direction:row}}.wp-block-create-block-vml-fixtures .shelves-container .shelves-container__left{border:1px solid #000;border-radius:3px;flex-grow:1;padding:0 10px 10px}.wp-block-create-block-vml-fixtures .shelves-container .shelves-container__right{flex-grow:1}.wp-block-create-block-vml-fixtures .shelves-container .shelves-container__right .SAI-img{background-image:url(images/SAI-endCap.5f354d60.jpg);background-size:contain;height:560px;margin-left:10px;width:400px}.wp-block-create-block-vml-fixtures .fixture button.fixture-tocart__btn{display:block;margin:0 auto 20px}.wp-block-create-block-vml-fixtures .fixture .shelf{border-bottom:1px solid #000;display:grid;gap:5px 10px;height:auto;padding-bottom:2rem;text-align:center}.wp-block-create-block-vml-fixtures .fixture .shelf img{border:1px solid transparent;height:100%;-o-object-fit:contain;object-fit:contain;width:100%}.wp-block-create-block-vml-fixtures .fixture .shelf img:hover{border:1px solid #000;cursor:pointer}.wp-block-create-block-vml-fixtures .fixture .shelf dialog::backdrop{background-color:rgba(10,9,9,.322);bottom:0;left:0;position:fixed;right:0;top:0}.wp-block-create-block-vml-fixtures .fixture .shelf dialog{background-color:#0d0d0d;border-radius:10px;color:#fff;padding:20px}.wp-block-create-block-vml-fixtures .fixture .shelf dialog p{line-height:.9em;text-align:left}.wp-block-create-block-vml-fixtures .fixture .shelf dialog .dialog-buttons{display:flex;flex-wrap:wrap;justify-content:space-between}.wp-block-create-block-vml-fixtures .fixture .shelf:last-of-type{border-bottom:none}.wp-block-create-block-vml-fixtures .fixture .shelf1{grid-auto-flow:row;grid-template-areas:"shelf1-1 shelf1-2 shelf1-3 shelf1-4 shelf1-5" "shelf1-6 shelf1-6 shelf1-6 shelf1-6 shelf1-6";grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,1fr);grid-template-rows:1fr}.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-1{grid-area:shelf1-1;-ms-grid-column:1;-ms-grid-row:1}.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-2{grid-area:shelf1-2;-ms-grid-column:2;-ms-grid-row:1}.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-3{grid-area:shelf1-3;-ms-grid-column:3;-ms-grid-row:1}.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-4{grid-area:shelf1-4;-ms-grid-column:4;-ms-grid-row:1}.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-5{grid-area:shelf1-5;-ms-grid-column:5;-ms-grid-row:1}.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-6{-ms-grid-column-span:5;grid-area:shelf1-6;-ms-grid-column:1;-ms-grid-row:2}.wp-block-create-block-vml-fixtures .fixture .shelf2,.wp-block-create-block-vml-fixtures .fixture .shelf3{grid-template-columns:1fr;grid-template-rows:1fr 1fr 1fr 1fr 1fr}.wp-block-create-block-vml-fixtures .fixture .shelf4{grid-template-areas:"shelf4-1 shelf4-2 shelf4-3 shelf4-4" "shelf4-5 shelf4-5 shelf4-5 shelf4-5";grid-template-columns:repeat(4,1fr);grid-template-rows:1fr .3fr}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-1{grid-area:shelf4-1;-ms-grid-column:1;-ms-grid-row:1}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2{grid-area:shelf4-2;-ms-grid-column:2;-ms-grid-row:1;grid-template-columns:1fr;grid-template-rows:1fr 1fr 1fr 1fr}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 .shelf4-2-1{grid-area:1/1/2/2}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 .shelf4-2-2{grid-area:3/1/5/2}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 .shelf4-2-3{grid-area:4/1/5/2}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 .shelf4-2-4{grid-area:1/1/2/2}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-3{grid-area:shelf4-3;-ms-grid-column:3;-ms-grid-row:1}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-4{grid-area:shelf4-4;-ms-grid-column:4;-ms-grid-row:1}.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-5{-ms-grid-column-span:4;grid-area:shelf4-5;-ms-grid-column:1;-ms-grid-row:2}
+/*!***************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/style.scss ***!
+  \***************************************************************************************************************************************************************************************************************************************/
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.wp-block-create-block-vml-fixtures h4 {
+  margin-bottom: 8px;
+}
+.wp-block-create-block-vml-fixtures .addToCart-success,
+.wp-block-create-block-vml-fixtures .addToCart-fail {
+  margin-bottom: 10px;
+  color: green;
+  flex-basis: 100%;
+  text-align: right;
+}
+.wp-block-create-block-vml-fixtures .addToCart-success {
+  color: green;
+}
+.wp-block-create-block-vml-fixtures .addToCart-fail {
+  color: red;
+}
+.wp-block-create-block-vml-fixtures button {
+  display: inline-block;
+  outline: 0;
+  cursor: pointer;
+  border: none;
+  padding: 0 15px;
+  height: 45px;
+  line-height: 45px;
+  border-radius: 7px;
+  background-color: #0070f3;
+  color: white;
+  font-weight: 400;
+  font-size: 16px;
+  box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39);
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.wp-block-create-block-vml-fixtures button:disabled {
+  background: #4e4e4e;
+  color: #eaeaea;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.wp-block-create-block-vml-fixtures button[aria-disabled=true] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.wp-block-create-block-vml-fixtures button::after {
+  content: "";
+  opacity: 0;
+  transition: opacity 250ms;
+  color: #fff;
+}
+.wp-block-create-block-vml-fixtures button[data-loading=true] {
+  color: #fff;
+  pointer-events: none;
+}
+.wp-block-create-block-vml-fixtures button[data-loading=true]::after {
+  opacity: 1;
+  animation: rotate 750ms linear infinite;
+}
+.wp-block-create-block-vml-fixtures button[data-loading=true] .btnSubmit-text {
+  display: none;
+}
+.wp-block-create-block-vml-fixtures .shelf-title {
+  display: flex;
+  flex-direction: row;
+  margin: 10px 0;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+.wp-block-create-block-vml-fixtures .shelf-title h3 {
+  flex-grow: 1;
+  margin: 0 0 10px 0;
+}
+.wp-block-create-block-vml-fixtures .shelves-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+@media (min-width: 700px) {
+  .wp-block-create-block-vml-fixtures .shelves-container {
+    flex-direction: row;
+  }
+}
+.wp-block-create-block-vml-fixtures .shelves-container .shelves-container__left {
+  flex-grow: 1;
+  border: 1px solid #000;
+  border-radius: 3px;
+  padding: 0 10px 10px 10px;
+}
+.wp-block-create-block-vml-fixtures .shelves-container .shelves-container__right {
+  flex-grow: 1;
+}
+.wp-block-create-block-vml-fixtures .shelves-container .shelves-container__right .SAI-img {
+  background-image: url(images/SAI-endCap.5f354d60.jpg);
+  background-size: contain;
+  width: 400px;
+  height: 560px;
+  margin-left: 10px;
+}
+.wp-block-create-block-vml-fixtures .fixture button.fixture-tocart__btn {
+  margin: 0px auto 20px auto;
+  display: block;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf {
+  display: grid;
+  height: auto;
+  text-align: center;
+  gap: 5px 10px;
+  border-bottom: 1px solid #000;
+  padding-bottom: 2rem;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf img {
+  border: 1px solid transparent;
+  -o-object-fit: contain;
+     object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf img:hover {
+  cursor: pointer;
+  border: 1px solid #000;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf dialog::backdrop {
+  background-color: rgba(10, 9, 9, 0.3215686275);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf dialog {
+  background-color: #0d0d0d;
+  color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf dialog p {
+  text-align: left;
+  line-height: 0.9em;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf dialog .dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf:last-of-type {
+  border-bottom: none;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf1 {
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+  grid-auto-flow: row;
+  grid-template-areas: "shelf1-1 shelf1-2 shelf1-3 shelf1-4 shelf1-5" "shelf1-6 shelf1-6 shelf1-6 shelf1-6 shelf1-6";
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-1 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  grid-area: shelf1-1;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-2 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  grid-area: shelf1-2;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-3 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+  grid-area: shelf1-3;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-4 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 4;
+  grid-area: shelf1-4;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-5 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 5;
+  grid-area: shelf1-5;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf1 .shelf1-6 {
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 5;
+  grid-area: shelf1-6;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf2 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf3 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1fr 0.3fr;
+  grid-template-areas: "shelf4-1 shelf4-2 shelf4-3 shelf4-4" "shelf4-5 shelf4-5 shelf4-5 shelf4-5";
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-1 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  grid-area: shelf4-1;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-area: shelf4-2;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 .shelf4-2-1 {
+  grid-area: 1/1/2/2;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 .shelf4-2-2 {
+  grid-area: 3/1/5/2;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 .shelf4-2-3 {
+  grid-area: 4/1/5/2;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-2 .shelf4-2-4 {
+  grid-area: 1/1/2/2;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-3 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 3;
+  grid-area: shelf4-3;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-4 {
+  -ms-grid-row: 1;
+  -ms-grid-column: 4;
+  grid-area: shelf4-4;
+}
+.wp-block-create-block-vml-fixtures .fixture .shelf4 .shelf4-5 {
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 4;
+  grid-area: shelf4-5;
+}
+
+/*# sourceMappingURL=style-index.css.map*/
