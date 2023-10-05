@@ -22,6 +22,7 @@
  * @see https://developer.wordpress.org/reference/functions/register_block_type/
  */
 function create_block_vml_fixtures_block_init() {
-	register_block_type( __DIR__ . '/build' );
+	register_block_type( __DIR__ . '/build/stores' );
+	register_block_type( __DIR__ . '/build/admin' );
 }
 add_action( 'init', 'create_block_vml_fixtures_block_init' );

@@ -2,7 +2,7 @@
 
 require_once 'fixtures/classes/Shelves.class.php';
 require_once 'fixtures/classes/ShelvesMapper.class.php';
-require_once 'fixtures/classes/Api.class.php';
+require_once plugin_dir_path(__FILE__) . '../helpers/Api.class.php';
 
 class FixtureRenderer
 {

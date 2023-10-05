@@ -10,8 +10,12 @@ module.exports = {
 		...(defaultConfig.plugins || []),
 		new CopyWebpackPlugin({
 			patterns: [
-				{ from: "src/fixtures/jsonConfig", to: "fixtures/jsonConfig" },
+				{
+					from: "src/stores/fixtures/jsonConfig",
+					to: "stores/fixtures/jsonConfig",
+				},
 				{ from: "assets/images", to: "images" },
+				{ from: "assets/helpers", to: "helpers" },
 			],
 		}),
 	],

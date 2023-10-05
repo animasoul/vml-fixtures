@@ -1,20 +1,20 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "create-block/vml-fixtures",
+  "name": "vml-fixtures/admin",
   "version": "0.1.0",
-  "title": "VM Logistics Fixtures Dynamic",
+  "title": "VM Logistics Fixtures for Admin",
   "category": "widgets",
   "icon": "smiley",
-  "description": "VM Logistics Fixtures Dynamic Block",
+  "description": "VM Logistics Fixtures Admin Block",
   "example": {},
   "supports": {
     "html": false
   },
-  "textdomain": "vml-fixtures",
+  "textdomain": "vml-fixtures-admin",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",
-  "render": "file:./render.php",
+  "render": "file:./admin.php",
   "viewScript": "file:./view.js"
 }

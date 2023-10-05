@@ -1,9 +1,9 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 var __webpack_exports__ = {};
-/*!*********************!*\
-  !*** ./src/view.js ***!
-  \*********************/
+/*!****************************!*\
+  !*** ./src/stores/view.js ***!
+  \****************************/
 
 
 jQuery(function ($) {
