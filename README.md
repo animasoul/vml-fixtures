@@ -11,7 +11,7 @@
 
 ## Description
 
-This plugin compliments current plugins made for CM Logistics Wordpress website to manage the graphics for the various customers/stores
+This plugin compliments current plugins made for VM Logistics Wordpress website to manage the graphics for the various customers/stores
 
 This plugin provides a graphical representation/interface of the physical fixtures present in the stores for clients to order new graphics.
 
