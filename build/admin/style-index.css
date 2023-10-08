@@ -1,1 +1,62 @@
-.wp-block-vml-fixtures-admin{background-color:#f3f3f3;border:1px solid #ccc;margin-bottom:20px;padding:20px}.wp-block-vml-fixtures-admin .shelf{border:1px solid #ccc;display:flex;flex-wrap:wrap;justify-content:space-between}.wp-block-vml-fixtures-admin .shelf .item{border:1px solid #000;margin:.5em 0;position:relative}.wp-block-vml-fixtures-admin .shelf .item .smallp{font-size:.8em;line-height:.8em;margin:0}.wp-block-vml-fixtures-admin .shelf .item .details{background-color:#333;border-radius:4px;color:#fff;display:none;left:.5em;opacity:0;padding:10px;position:absolute;top:.5em;transition:opacity .3s;width:-moz-max-content;width:max-content;z-index:10}.wp-block-vml-fixtures-admin .shelf .item:hover .details{display:block;opacity:1}
+/*!*********************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/admin/style.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************/
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.wp-block-vml-fixtures-admin {
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.wp-block-vml-fixtures-admin .shelf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  align-items: center;
+  justify-content: center;
+}
+.wp-block-vml-fixtures-admin .shelf h2 {
+  flex-basis: 100%;
+}
+.wp-block-vml-fixtures-admin .shelf .item-group {
+  margin: 0 0.5em;
+}
+.wp-block-vml-fixtures-admin .shelf .item-group .item {
+  border: 1px solid #000;
+  position: relative;
+  margin: 0.5em auto;
+  background-size: cover;
+}
+.wp-block-vml-fixtures-admin .shelf .item-group .item .smallp {
+  font-size: 0.8em;
+  margin: 0;
+  line-height: 0.8em;
+}
+.wp-block-vml-fixtures-admin .shelf .item-group .item .details {
+  opacity: 0;
+  transition: opacity 0.3s;
+  background-color: #333;
+  color: #fff;
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+  width: -moz-max-content;
+  width: max-content; /* Let the width adjust according to content */
+  z-index: 10; /* To ensure it appears above other elements */
+  padding: 10px;
+  border-radius: 4px; /* Optional rounded corners */
+  display: none; /* Initially hide it */
+  font-size: 0.8em;
+}
+.wp-block-vml-fixtures-admin .shelf .item-group .item:hover .details {
+  opacity: 1;
+  display: block; /* Show on hover */
+}
+
+/*# sourceMappingURL=style-index.css.map*/

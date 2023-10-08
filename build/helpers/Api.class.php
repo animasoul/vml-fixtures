@@ -48,7 +48,15 @@ class Api {
         ]);
 
         if (is_wp_error($response)) {
-            $this->log_msg("Error returned from make_api_call($function, timeout=$timeout)\n" . print_r($response, true));
+            $error_message = $response->get_error_message();
+            $this->log_msg("Error returned from make_api_call($function, timeout=$timeout): $error_message");
+            return [];  // Return empty array in case of error
+        }
+
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code !== 200) {
+            $this->log_msg("HTTP error code $response_code returned from make_api_call($function, timeout=$timeout)");
+            return [];  // Return empty array in case of HTTP error
         }
 
         $data = json_decode(json_decode($response['body'])->d, true);  // True forces it to an Associative Array
