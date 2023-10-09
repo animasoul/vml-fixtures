@@ -16,12 +16,14 @@
 .wp-block-vml-fixtures-admin .shelf {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   border: 1px solid #ccc;
   align-items: center;
   justify-content: center;
 }
 .wp-block-vml-fixtures-admin .shelf h2 {
+  flex-basis: 100%;
+}
+.wp-block-vml-fixtures-admin .shelf .group-position-8-2 {
   flex-basis: 100%;
 }
 .wp-block-vml-fixtures-admin .shelf .item-group {

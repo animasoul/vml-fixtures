@@ -92,7 +92,13 @@ class ApiDataOrganiser {
                 $shelf = $item[self::SHELF_KEY] ?? '';
                 $horizontal = $item[self::HORIZONTAL_KEY] ?? '';
 
-                $faceDataGroups[$shelf][$horizontal][] = $item;
+                // Special case for shelf 8, vertical 2. which goes at the top of the array
+                $vertical = $item[self::VERTICAL_KEY] ?? '';
+                if ($horizontal === '8' && $vertical === '2') {
+                    $faceDataGroups[$shelf][0.5][] = $item;
+                } else {
+                    $faceDataGroups[$shelf][$horizontal][] = $item;
+                }
             }
         }
 

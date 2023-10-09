@@ -13,15 +13,18 @@
 	.shelf {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-between;
 		border: 1px solid #ccc;
 		align-items: center;
 		justify-content: center;
 		h2 {
 			flex-basis: 100%;
 		}
+		.group-position-8-2 {
+			flex-basis: 100%;
+		}
 		.item-group {
 			margin: 0 0.5em;
+
 			.item {
 				border: 1px solid #000;
 				position: relative;

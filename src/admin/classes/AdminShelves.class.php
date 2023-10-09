@@ -90,7 +90,21 @@ class AdminShelves {
      */
     private static function renderItemGroup($itemGroup): string {
         $items = is_array($itemGroup) ? $itemGroup : [$itemGroup];
-        return "<div class='item-group'>" . array_reduce($items, function ($carry, $item) {
+        
+        // special case where horizontal=8 and vertical=2 (top of shelf) for css targeting
+        $positionClass = '';
+
+        foreach ($items as $item) {
+            $horizontalValue = self::safeGet($item, self::HORIZONTAL);
+            $verticalValue = self::safeGet($item, self::VERTICAL);
+
+            if ($horizontalValue == 8 && $verticalValue == 2) {
+                $positionClass = ' group-position-8-2';
+                break;
+            }
+        }
+
+        return "<div class='item-group{$positionClass}'>" . array_reduce($items, function ($carry, $item) {
             return $carry . self::renderItemDiv($item);
         }, '') . "</div>";
     }
@@ -106,8 +120,9 @@ class AdminShelves {
         $details = self::formatDetails($item);
         $productID = htmlspecialchars(self::safeGet($item, self::PRODUCT_ID), ENT_QUOTES);
         $image = 'background-image:url('.htmlspecialchars(self::safeGet($item, self::URL1), ENT_QUOTES).');';
+        $position = htmlspecialchars(self::safeGet($item, self::HORIZONTAL), ENT_QUOTES) . '-' . htmlspecialchars(self::safeGet($item, self::VERTICAL), ENT_QUOTES);
 
-        return "<div class='item' data-product-id='{$productID}' style='width:{$details[self::WIDTH]}em;height:{$details[self::HEIGHT]}em;{$image}'>
+        return "<div class='item position-{$position}' data-product-id='{$productID}' style='width:{$details[self::WIDTH]}em;height:{$details[self::HEIGHT]}em;{$image}'>
             <p class='smallp'>{$details[self::DESCRIPTION]}</p>
             <div class='details'>{$details['formatted']}</div>
         </div>";
