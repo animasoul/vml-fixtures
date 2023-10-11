@@ -33,7 +33,7 @@ add_action('wp_ajax_get_sorted_data', 'wp_ajax_get_sorted_data_callback');
 function wp_ajax_get_sorted_data_callback() {
     // Ensure the API and organizer classes are included
     //require_once 'Api.class.php';
-    require_once plugin_dir_path(__FILE__) . '/assets/helpers/ApiDataOrganiser.class.php';
+    require_once plugin_dir_path(__FILE__) . '/build/helpers/ApiDataOrganiser.class.php';
 
     // Create an instance of the ApiDataOrganiser class
     $organiser = new ApiDataOrganiser();
