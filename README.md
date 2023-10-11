@@ -5,15 +5,19 @@
 **Contributors:** Abel Rogers  
 **Tags:** block  
 **Tested up to:** 6.1  
-**Stable tag:** 0.1.0  
+**Stable tag:** 0.2.0  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
+
+## This plugin is custom for a client and will not work out-of-the-box for any website
 
 ## Description
 
 This plugin compliments current plugins made for VM Logistics Wordpress website to manage the graphics for the various customers/stores
 
 This plugin provides a graphical representation/interface of the physical fixtures present in the stores for clients to order new graphics.
+
+Multiple Gutenburg blocks are used for various requirements
 
 ## Installation
 

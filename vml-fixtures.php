@@ -26,3 +26,22 @@ function create_block_vml_fixtures_block_init() {
 	register_block_type( __DIR__ . '/build/admin' );
 }
 add_action( 'init', 'create_block_vml_fixtures_block_init' );
+
+// Register the AJAX action for authenticated users
+add_action('wp_ajax_get_sorted_data', 'wp_ajax_get_sorted_data_callback');
+
+function wp_ajax_get_sorted_data_callback() {
+    // Ensure the API and organizer classes are included
+    //require_once 'Api.class.php';
+    require_once plugin_dir_path(__FILE__) . '/assets/helpers/ApiDataOrganiser.class.php';
+
+    // Create an instance of the ApiDataOrganiser class
+    $organiser = new ApiDataOrganiser();
+
+    // Get the sorted data
+    $params = $organiser->getDataParams();
+    $sortedData = $organiser->sortApiData($params);
+
+    // Return the sorted data as a JSON response
+    wp_send_json($sortedData);
+}
