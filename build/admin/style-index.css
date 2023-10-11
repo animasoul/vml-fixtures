@@ -13,6 +13,9 @@
   padding: 20px;
   margin-bottom: 20px;
 }
+.wp-block-vml-fixtures-admin .loading {
+  width: 100%;
+}
 .wp-block-vml-fixtures-admin .shelf {
   display: flex;
   flex-wrap: wrap;

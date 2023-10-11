@@ -1,5 +1,13 @@
 import { render, useEffect, useState } from "@wordpress/element";
+import PropagateLoader from "react-spinners/PropagateLoader";
 import FaceDataDisplay from "./components/FaceDataDisplay";
+
+const override = {
+	display: "block",
+	margin: "0 auto",
+	width: "max-content",
+	padding: "20px 0",
+};
 
 async function fetchDataFromServer() {
 	try {
@@ -46,7 +54,12 @@ function FrontendApp() {
 	}, []);
 
 	if (loading) {
-		return <div>Loading content...</div>;
+		return (
+			<div className="loading">
+				Loading fixture...
+				<PropagateLoader color="#008fca" cssOverride={override} />
+			</div>
+		);
 	}
 
 	if (error) {

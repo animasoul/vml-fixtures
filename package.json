@@ -17,5 +17,8 @@
 	"devDependencies": {
 		"@wordpress/scripts": "^26.13.0",
 		"copy-webpack-plugin": "^11.0.0"
+	},
+	"dependencies": {
+		"react-spinners": "^0.13.8"
 	}
 }

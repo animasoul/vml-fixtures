@@ -10,6 +10,9 @@
 	border: 1px solid #ccc;
 	padding: 20px;
 	margin-bottom: 20px;
+	.loading {
+		width: 100%;
+	}
 	.shelf {
 		display: flex;
 		flex-wrap: wrap;
