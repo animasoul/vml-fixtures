@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { Tooltip } from "react-tooltip";
 
 /**
  * Utility to safely get a value from an object.
@@ -36,6 +37,7 @@ function Item({ item }) {
 	return (
 		<div
 			className={`item position-${position}`}
+			data-tooltip-id={`my-tooltip-html-prop-${details.TharsternCode}`}
 			data-product-id={details.ProductID}
 			style={{
 				width: `${details.Width}em`,
@@ -44,7 +46,8 @@ function Item({ item }) {
 			}}
 		>
 			<p className="smallp">{details.Description}</p>
-			<div className="details">
+
+			<Tooltip id={`my-tooltip-html-prop-${details.TharsternCode}`}>
 				{Object.keys(details).map((key) =>
 					key !== "formatted" ? (
 						<p key={key}>
@@ -52,7 +55,7 @@ function Item({ item }) {
 						</p>
 					) : null,
 				)}
-			</div>
+			</Tooltip>
 		</div>
 	);
 }
