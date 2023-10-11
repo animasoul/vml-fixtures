@@ -69,10 +69,9 @@ function ItemGroup({ items }) {
 
 	itemsArray.forEach((item) => {
 		const horizontalValue = safeGet(item, "Horizontal");
-		const verticalValue = safeGet(item, "Vertical");
 
-		if (horizontalValue == 8 && verticalValue == 2) {
-			positionClass = " group-position-8-2";
+		if (horizontalValue == 8) {
+			positionClass = " group-position-8";
 		}
 	});
 

@@ -77,9 +77,8 @@ function ItemGroup({
   let positionClass = "";
   itemsArray.forEach(item => {
     const horizontalValue = safeGet(item, "Horizontal");
-    const verticalValue = safeGet(item, "Vertical");
-    if (horizontalValue == 8 && verticalValue == 2) {
-      positionClass = " group-position-8-2";
+    if (horizontalValue == 8) {
+      positionClass = " group-position-8";
     }
   });
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -1342,47 +1341,56 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+async function fetchDataFromServer() {
+  try {
+    const response = await fetch("/wp-admin/admin-ajax.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        action: "get_sorted_data"
+      })
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch data. Status code: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    // Logging the error for debugging (optional)
+    console.error("Error occurred while fetching data:", error.message);
+
+    // Rethrow the error to be handled by calling function
+    throw error;
+  }
+}
 function FrontendApp() {
-  console.log("FrontendApp");
   const [data, setData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)({
     panelData: [],
     faceData: []
   });
   const [loading, setLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(true);
+  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/wp-admin/admin-ajax.php", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: new URLSearchParams({
-            action: "get_sorted_data"
-          })
-        });
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const fetchedData = await response.json();
-        setData(fetchedData);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchDataFromServer().then(fetchedData => {
+      setData(fetchedData);
+      setLoading(false);
+    }).catch(err => {
+      console.error("Error fetching data:", err);
+      setLoading(false);
+      setError(err);
+    });
   }, []);
   if (loading) {
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "Loading content...");
+  }
+  if (error) {
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "Error loading data. Please try again later.");
   }
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_2__["default"], {
     faceData: data.faceData
   }));
 }
-
-// When the script runs, look for your block's placeholder and mount your React component.
 const appRoot = document.querySelector(".wp-block-vml-fixtures-admin");
 if (appRoot) {
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.render)((0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(React.StrictMode, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(FrontendApp, null)), appRoot);
