@@ -138,6 +138,38 @@ ItemGroup.propTypes = {
 
 /***/ }),
 
+/***/ "./src/components/Loader.js":
+/*!**********************************!*\
+  !*** ./src/components/Loader.js ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_spinners_PropagateLoader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-spinners/PropagateLoader */ "./node_modules/react-spinners/PropagateLoader.js");
+/* harmony import */ var react_spinners_PropagateLoader__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_spinners_PropagateLoader__WEBPACK_IMPORTED_MODULE_1__);
+
+
+function Loader() {
+  const override = {
+    display: "block",
+    margin: "0 auto",
+    width: "max-content",
+    padding: "20px 0"
+  };
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "loading"
+  }, "Loading fixture...", (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)((react_spinners_PropagateLoader__WEBPACK_IMPORTED_MODULE_1___default()), {
+    color: "#008fca",
+    cssOverride: override
+  }));
+}
+/* harmony default export */ __webpack_exports__["default"] = (Loader);
+
+/***/ }),
+
 /***/ "./src/components/Shelf.js":
 /*!*********************************!*\
   !*** ./src/components/Shelf.js ***!
@@ -3754,21 +3786,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_spinners_PropagateLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-spinners/PropagateLoader */ "./node_modules/react-spinners/PropagateLoader.js");
-/* harmony import */ var react_spinners_PropagateLoader__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_spinners_PropagateLoader__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/FaceDataDisplay */ "./src/components/FaceDataDisplay.js");
-/* harmony import */ var _services_dataService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/dataService */ "./src/services/dataService.js");
+/* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Loader */ "./src/components/Loader.js");
+/* harmony import */ var _components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/FaceDataDisplay */ "./src/components/FaceDataDisplay.js");
+/* harmony import */ var _services_dataService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/dataService */ "./src/services/dataService.js");
 
 
 
 
 
-const override = {
-  display: "block",
-  margin: "0 auto",
-  width: "max-content",
-  padding: "20px 0"
-};
 function FrontendApp() {
   const [data, setData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)({
     panelData: [],
@@ -3777,7 +3802,7 @@ function FrontendApp() {
   const [loading, setLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(true);
   const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    (0,_services_dataService__WEBPACK_IMPORTED_MODULE_3__["default"])().then(fetchedData => {
+    (0,_services_dataService__WEBPACK_IMPORTED_MODULE_4__["default"])().then(fetchedData => {
       setData(fetchedData);
       setLoading(false);
     }).catch(err => {
@@ -3787,17 +3812,12 @@ function FrontendApp() {
     });
   }, []);
   if (loading) {
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: "loading"
-    }, "Loading fixture...", (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)((react_spinners_PropagateLoader__WEBPACK_IMPORTED_MODULE_4___default()), {
-      color: "#008fca",
-      cssOverride: override
-    }));
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_Loader__WEBPACK_IMPORTED_MODULE_2__["default"], null);
   }
   if (error) {
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "Error loading data. Please try again later.");
   }
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_3__["default"], {
     faceData: data.faceData
   }));
 }
