@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import Shelf from "./Shelf";
 
-function FaceDataDisplay({ faceData }) {
+function FaceDataDisplay({ faceData, context }) {
 	if (!Array.isArray(faceData)) return null;
 
 	return (
@@ -9,7 +9,7 @@ function FaceDataDisplay({ faceData }) {
 			<h2>Face</h2>
 			{faceData.map((shelfData) => {
 				const shelfKey = Object.keys(shelfData)[0]; // Assuming the shelfKey is unique
-				return <Shelf key={shelfKey} shelfData={shelfData} />;
+				return <Shelf key={shelfKey} shelfData={shelfData} context={context} />;
 			})}
 		</div>
 	);

@@ -2,10 +2,10 @@ import PropTypes from "prop-types";
 import { extractShelfNumber } from "../utilities/utilities";
 import ItemGroup from "../components/ItemGroup";
 
-function Shelf({ shelfData }) {
+function Shelf({ shelfData, context }) {
 	if (!shelfData || typeof shelfData !== "object") return null;
 
-	const shelfKey = Object.keys(shelfData)[0];
+	let shelfKey = Object.keys(shelfData)[0];
 	const horizontalData = shelfData[shelfKey];
 
 	return (
@@ -18,6 +18,7 @@ function Shelf({ shelfData }) {
 					<ItemGroup
 						items={items}
 						key={data.someUniqueId || `${horizontalKey}-${shelfKey}`}
+						context={context}
 					/>
 				);
 			})}

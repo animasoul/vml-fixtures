@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 import { safeGet } from "../utilities/utilities";
 
-function Item({ item }) {
+function Item({ item, context }) {
 	// It's good to assert the type of props at the start of components
 	if (!item || typeof item !== "object") return null;
 

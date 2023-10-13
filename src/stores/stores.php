@@ -42,6 +42,7 @@ class FixtureRenderer
     public function fetchShelvesData(): array
     {
         $json_url = plugins_url('fixtures/jsonConfig/ENDCAP.json', __FILE__);
+       
         $shelvesData = file_get_contents($json_url);
         if ($shelvesData === false) {
             throw new RuntimeException("Failed to fetch data from $json_url");
