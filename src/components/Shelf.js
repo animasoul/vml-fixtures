@@ -10,7 +10,7 @@ function Shelf({ shelfData }) {
 
 	return (
 		<div className={`shelf shelf-${extractShelfNumber(shelfKey)}`}>
-			<h2>{shelfKey}</h2>
+			<h3>{shelfKey}</h3>
 			{horizontalData.map((data, horizontalIndex) => {
 				const horizontalKey = Object.keys(data)[0];
 				const items = data[horizontalKey];

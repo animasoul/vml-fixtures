@@ -6,12 +6,22 @@
  */
 
 .wp-block-vml-fixtures-admin {
-	background-color: #f3f3f3;
-	border: 1px solid #ccc;
-	padding: 20px;
-	margin-bottom: 20px;
+	// background-color: #f3f3f3;
+	// border: 1px solid #ccc;
+	// padding: 20px;
+	// margin-bottom: 20px;
 	.loading {
 		width: 100%;
+	}
+	.admin-fixture {
+		display: flex;
+		gap: 1em;
+		.face-data-display {
+			flex: 2;
+		}
+		.panel-data-display {
+			flex: 1;
+		}
 	}
 	.shelf {
 		display: flex;
@@ -19,14 +29,15 @@
 		border: 1px solid #ccc;
 		align-items: center;
 		justify-content: center;
-		h2 {
+		h3 {
 			flex-basis: 100%;
+			margin: 0 0 0 0.2em;
 		}
 		.group-position-8 {
 			flex-basis: 100%;
 		}
 		.item-group {
-			margin: 0 0.5em;
+			margin: 0 0.2em;
 
 			.item {
 				border: 1px solid #000;

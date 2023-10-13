@@ -17,18 +17,21 @@ function Item({ item }) {
 
 	const position = `${details.Horizontal}-${details.Vertical}`;
 
+	const halfWidth = details.Width / 1.4;
+	const halfHeight = details.Height / 1.4;
+
 	return (
 		<div
 			className={`item position-${position}`}
 			data-tooltip-id={`my-tooltip-html-prop-${details.TharsternCode}`}
 			data-product-id={details.ProductID}
 			style={{
-				width: `${details.Width}em`,
-				height: `${details.Height}em`,
+				width: `${halfWidth}em`,
+				height: `${halfHeight}em`,
 				backgroundImage: `url(${safeGet(item, "URL1")})`,
 			}}
 		>
-			<p className="smallp">{details.Description}</p>
+			{/* <p className="smallp">{details.Description}</p> */}
 
 			<Tooltip id={`my-tooltip-html-prop-${details.TharsternCode}`}>
 				{Object.keys(details).map((key) =>

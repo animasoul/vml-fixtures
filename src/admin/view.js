@@ -29,19 +29,20 @@ function FrontendApp() {
 		return <div>Error loading data. Please try again later.</div>;
 	}
 
-	return (
-		<div>
-			<FaceDataDisplay faceData={data.faceData} />
-		</div>
-	);
+	return <FaceDataDisplay faceData={data.faceData} />;
 }
 
 const appRoot = document.querySelector(".wp-block-vml-fixtures-admin");
 if (appRoot) {
 	render(
-		<React.StrictMode>
-			<FrontendApp />
-		</React.StrictMode>,
+		<div className="admin-fixture">
+			<React.StrictMode>
+				<FrontendApp />
+			</React.StrictMode>
+			<div className="panel-data-display">
+				<h2>Panel</h2>
+			</div>
+		</div>,
 		appRoot,
 	);
 }

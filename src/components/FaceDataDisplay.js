@@ -6,6 +6,7 @@ function FaceDataDisplay({ faceData }) {
 
 	return (
 		<div className="face-data-display">
+			<h2>Face</h2>
 			{faceData.map((shelfData) => {
 				const shelfKey = Object.keys(shelfData)[0]; // Assuming the shelfKey is unique
 				return <Shelf key={shelfKey} shelfData={shelfData} />;
