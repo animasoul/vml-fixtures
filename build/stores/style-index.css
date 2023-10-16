@@ -13,10 +13,7 @@
   flex-wrap: wrap;
 }
 
-.wp-block-vml-fixtures-store .loading {
-  width: 100%;
-}
-.wp-block-vml-fixtures-store button {
+button.addToCartBtn {
   display: inline-block;
   outline: 0;
   cursor: pointer;
@@ -32,11 +29,15 @@
   box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39);
   transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
-.wp-block-vml-fixtures-store button:disabled {
+button.addToCartBtn:disabled {
   background: #4e4e4e;
   color: #eaeaea;
   box-shadow: none;
   cursor: not-allowed;
+}
+
+.wp-block-vml-fixtures-store .loading {
+  width: 100%;
 }
 .wp-block-vml-fixtures-store .store-fixture {
   display: flex;
@@ -88,6 +89,11 @@
   font-size: 0.8em;
   margin: 0;
   line-height: 0.8em;
+}
+.wp-block-vml-fixtures-store .shelf .item-group .item:hover {
+  cursor: pointer;
+  border-color: #0070f3;
+  opacity: 70%;
 }
 
 /*# sourceMappingURL=style-index.css.map*/

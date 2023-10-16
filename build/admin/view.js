@@ -57,7 +57,8 @@ function AddButton({
   };
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     onClick: handleClick,
-    disabled: loading
+    disabled: loading,
+    className: "addToCartBtn"
   }, loading ? "Adding to Cart..." : text), error && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
     style: {
       color: "red"

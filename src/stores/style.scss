@@ -9,36 +9,37 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 }
+button.addToCartBtn {
+	display: inline-block;
+	outline: 0;
+	cursor: pointer;
+	border: none;
+	padding: 0 15px;
+	height: 45px;
+	line-height: 45px;
+	border-radius: 7px;
+	background-color: #0070f3;
+	color: white;
+	font-weight: 400;
+	font-size: 16px;
+	box-shadow: 0 4px 14px 0 rgb(0 118 255 / 39%);
+	transition:
+		background 0.2s ease,
+		color 0.2s ease,
+		box-shadow 0.2s ease;
+	&:disabled {
+		background: #4e4e4e;
+		color: #eaeaea;
+		box-shadow: none;
+		cursor: not-allowed;
+	}
+}
 
 .wp-block-vml-fixtures-store {
 	.loading {
 		width: 100%;
 	}
-	button {
-		display: inline-block;
-		outline: 0;
-		cursor: pointer;
-		border: none;
-		padding: 0 15px;
-		height: 45px;
-		line-height: 45px;
-		border-radius: 7px;
-		background-color: #0070f3;
-		color: white;
-		font-weight: 400;
-		font-size: 16px;
-		box-shadow: 0 4px 14px 0 rgb(0 118 255 / 39%);
-		transition:
-			background 0.2s ease,
-			color 0.2s ease,
-			box-shadow 0.2s ease;
-		&:disabled {
-			background: #4e4e4e;
-			color: #eaeaea;
-			box-shadow: none;
-			cursor: not-allowed;
-		}
-	}
+
 	.store-fixture {
 		display: flex;
 		gap: 1em;
@@ -90,6 +91,11 @@
 					font-size: 0.8em;
 					margin: 0;
 					line-height: 0.8em;
+				}
+				&:hover {
+					cursor: pointer;
+					border-color: #0070f3;
+					opacity: 70%;
 				}
 			}
 		}
