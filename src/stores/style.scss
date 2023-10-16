@@ -4,23 +4,15 @@
  *
  * Replace them with your own styles or remove the file completely.
  */
+.modal-buttons {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
 
-.wp-block-vml-fixtures-stores {
-	h4 {
-		margin-bottom: 8px;
-	}
-	.addToCart-success,
-	.addToCart-fail {
-		margin-bottom: 10px;
-		color: green;
-		flex-basis: 100%;
-		text-align: right;
-	}
-	.addToCart-success {
-		color: green;
-	}
-	.addToCart-fail {
-		color: red;
+.wp-block-vml-fixtures-store {
+	.loading {
+		width: 100%;
 	}
 	button {
 		display: inline-block;
@@ -46,211 +38,59 @@
 			box-shadow: none;
 			cursor: not-allowed;
 		}
-		&[aria-disabled="true"] {
-			opacity: 0.7;
-			cursor: not-allowed;
+	}
+	.store-fixture {
+		display: flex;
+		gap: 1em;
+		.face-data-display {
+			flex: 2;
 		}
-
-		// loading indicator
-		&::after {
-			content: "";
-			// position: absolute;
-			// display: block;
-			// width: 0.7em;
-			// height: 0.7em;
-			// top: calc(50% - 0.5em);
-			// left: calc(50% - 0.5em);
-			// border: 2px var(--btnTxt);
-			// border-bottom-color: transparent;
-			// border-left-color: transparent;
-			// border-style: solid;
-			// border-radius: 50%;
-			opacity: 0;
-			transition: opacity 250ms;
-			color: #fff;
-		}
-
-		&[data-loading="true"] {
-			color: #fff;
-			pointer-events: none;
-
-			&::after {
-				opacity: 1;
-				animation: rotate 750ms linear infinite;
-			}
-
-			.btnSubmit-text {
-				display: none;
-			}
+		.panel-data-display {
+			flex: 1;
 		}
 	}
+
 	.shelf-title {
 		display: flex;
 		flex-direction: row;
-		margin: 10px 0;
+		margin: 0.2em;
 		flex-wrap: wrap;
 		h3 {
 			flex-grow: 1;
-			margin: 0 0 10px 0;
+			margin: 0;
 		}
 		margin-bottom: 5px;
 	}
-	.shelves-container {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-direction: column;
-		margin-bottom: 2rem;
-
-		@media (min-width: 700px) {
-			flex-direction: row;
-		}
-		.shelves-container__left {
-			flex-grow: 1;
-			border: 1px solid #000;
-			border-radius: 3px;
-			padding: 0 10px 10px 10px;
-		}
-		.shelves-container__right {
-			flex-grow: 1;
-			.SAI-img {
-				background-image: url(../../assets/SAI-endCap.jpg);
-				background-size: contain;
-				width: 400px;
-				height: 560px;
-				margin-left: 10px;
-			}
-		}
+	.face-shelf {
+		border: 1px solid #ccc;
+		margin-bottom: 0.5em;
+	}
+	.footer-btn button {
+		display: block;
+		margin: 1em auto;
 	}
 
-	.fixture {
-		button.fixture-tocart__btn {
-			margin: 0px auto 20px auto;
-			display: block;
+	.shelf {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		.group-position-8 {
+			flex-basis: 100%;
 		}
-		.shelf {
-			display: grid;
-			height: auto;
-			text-align: center;
-			gap: 5px 10px;
-			border-bottom: 1px solid #000;
-			padding-bottom: 2rem;
+		.item-group {
+			margin: 0 0.2em;
 
-			img {
-				border: 1px solid transparent;
-				object-fit: contain;
-				width: 100%;
-				height: 100%;
-			}
-			img:hover {
-				cursor: pointer;
+			.item {
 				border: 1px solid #000;
-			}
-			dialog::backdrop {
-				background-color: #0a090952;
-				position: fixed;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-			}
-			dialog {
-				background-color: #0d0d0d;
-				color: #fff;
-				border-radius: 10px;
-				padding: 20px;
-				p {
-					text-align: left;
-					line-height: 0.9em;
+				margin: 0.5em auto;
+				background-size: cover;
+
+				.smallp {
+					font-size: 0.8em;
+					margin: 0;
+					line-height: 0.8em;
 				}
-				.dialog-buttons {
-					display: flex;
-					justify-content: space-between;
-					flex-wrap: wrap;
-				}
-			}
-		}
-		.shelf:last-of-type {
-			border-bottom: none;
-		}
-		.shelf1 {
-			grid-template-columns: repeat(5, 1fr);
-			grid-template-rows: repeat(2, 1fr);
-			grid-template-rows: 1fr;
-			grid-auto-flow: row;
-			grid-template-areas:
-				"shelf1-1 shelf1-2 shelf1-3 shelf1-4 shelf1-5"
-				"shelf1-6 shelf1-6 shelf1-6 shelf1-6 shelf1-6";
-
-			.shelf1-1 {
-				grid-area: shelf1-1;
-				// padding-top: 15%;
-			}
-
-			.shelf1-2 {
-				grid-area: shelf1-2;
-			}
-
-			.shelf1-3 {
-				grid-area: shelf1-3;
-			}
-
-			.shelf1-4 {
-				grid-area: shelf1-4;
-			}
-
-			.shelf1-5 {
-				grid-area: shelf1-5;
-				// padding-top: 15%;
-			}
-			.shelf1-6 {
-				grid-area: shelf1-6;
-			}
-		}
-		.shelf2 {
-			grid-template-columns: 1fr;
-			grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-		}
-		.shelf3 {
-			grid-template-columns: 1fr;
-			grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
-		}
-		.shelf4 {
-			grid-template-columns: repeat(4, 1fr);
-			grid-template-rows: 1fr 0.3fr;
-			grid-template-areas:
-				"shelf4-1 shelf4-2 shelf4-3 shelf4-4"
-				"shelf4-5 shelf4-5 shelf4-5 shelf4-5";
-
-			.shelf4-1 {
-				grid-area: shelf4-1;
-			}
-			.shelf4-2 {
-				grid-template-columns: 1fr;
-				grid-template-rows: 1fr 1fr 1fr 1fr;
-				grid-area: shelf4-2;
-				.shelf4-2-1 {
-					grid-area: 1 / 1 / 2 / 2;
-				}
-				.shelf4-2-2 {
-					grid-area: 3 / 1 / 5 / 2;
-				}
-				.shelf4-2-3 {
-					grid-area: 4 / 1 / 5 / 2;
-				}
-				.shelf4-2-4 {
-					grid-area: 1 / 1 / 2 / 2;
-				}
-			}
-
-			.shelf4-3 {
-				grid-area: shelf4-3;
-			}
-			.shelf4-4 {
-				grid-area: shelf4-4;
-			}
-			.shelf4-5 {
-				grid-area: shelf4-5;
 			}
 		}
 	}

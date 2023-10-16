@@ -19,6 +19,7 @@
 		"copy-webpack-plugin": "^11.0.0"
 	},
 	"dependencies": {
+		"react-modal": "^3.16.1",
 		"react-spinners": "^0.13.8",
 		"react-tooltip": "^5.21.5"
 	}
