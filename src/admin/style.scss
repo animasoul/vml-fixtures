@@ -35,10 +35,24 @@
 			flex: 1;
 		}
 	}
+	.shelf-title {
+		display: flex;
+		flex-direction: row;
+		margin: 0.2em;
+		flex-wrap: wrap;
+		h3 {
+			flex-grow: 1;
+			margin: 0;
+		}
+		margin-bottom: 5px;
+	}
+	.face-shelf {
+		border: 1px solid #ccc;
+		margin-bottom: 0.5em;
+	}
 	.shelf {
 		display: flex;
 		flex-wrap: wrap;
-		border: 1px solid #ccc;
 		align-items: center;
 		justify-content: center;
 		h3 {
