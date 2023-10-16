@@ -16,6 +16,6 @@ export async function addSingleProductToCart(itemDetails) {
 		const result = await addToCart([productInfo]); // Passing as an array since `addToCart` likely expects an array.
 		return result;
 	} catch (error) {
-		throw new Error(`Error adding single product to cart: ${error.message}`);
+		throw new Error(`Error adding single item to cart: ${error.message}`);
 	}
 }

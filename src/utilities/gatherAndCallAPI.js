@@ -12,7 +12,7 @@ export async function gatherProductInfoAndCallAPI(parentElement) {
 
 	// Validate if any product elements exist.
 	if (!productElements.length) {
-		throw new Error("No product elements found.");
+		throw new Error("No item elements found.");
 	}
 
 	const productInfoArray = [];
@@ -32,13 +32,13 @@ export async function gatherProductInfoAndCallAPI(parentElement) {
 
 	// If for some reason no valid products were found.
 	if (!productInfoArray.length) {
-		throw new Error("No valid products found.");
+		throw new Error("No valid items found.");
 	}
 
 	try {
 		const result = await addToCart(productInfoArray);
 		return result;
 	} catch (error) {
-		throw new Error(`Error adding products to cart: ${error.message}`);
+		throw new Error(`Error adding items to cart: ${error.message}`);
 	}
 }

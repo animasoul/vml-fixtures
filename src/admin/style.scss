@@ -6,10 +6,22 @@
  */
 
 .wp-block-vml-fixtures-admin {
-	// background-color: #f3f3f3;
-	// border: 1px solid #ccc;
-	// padding: 20px;
-	// margin-bottom: 20px;
+	.buttons-row {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		column-gap: 1em;
+		button {
+			flex: 1;
+			&.activeBtn {
+				color: #fff;
+				background-color: #c36;
+				text-decoration: none;
+
+				outline: 5px auto -webkit-focus-ring-color;
+			}
+		}
+	}
 	.loading {
 		width: 100%;
 	}
