@@ -8,12 +8,18 @@ function timeout(duration, message) {
 }
 
 export async function addToCart(productInfoArray) {
-	const data = {
-		action: "vizmerch_add_to_cart",
-		products: productInfoArray,
-	};
+	function serializeProducts(products) {
+		return products
+			.map(
+				(product, index) =>
+					`products[${index}][product_id]=${product.product_id}&products[${index}][product_code]=${product.product_code}&products[${index}][qty]=${product.qty}`,
+			)
+			.join("&");
+	}
 
-	console.log("Sending request with data:", data);
+	const serializedProducts = serializeProducts(productInfoArray);
+
+	const formData = `action=vizmerch_add_to_cart&${serializedProducts}`;
 
 	try {
 		// Using Promise.race to race between fetch and timeout
@@ -23,7 +29,7 @@ export async function addToCart(productInfoArray) {
 				headers: {
 					"Content-Type": "application/x-www-form-urlencoded",
 				},
-				body: new URLSearchParams(data).toString(),
+				body: formData,
 			}),
 			timeout(10000, "Request timed out after 10 seconds, please try again"),
 		]);
