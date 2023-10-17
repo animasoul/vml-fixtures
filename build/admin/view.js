@@ -266,28 +266,22 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+// Item Component
+// Represents an individual item with its details and behavior based on the context.
+
 function Item({
   item,
   context,
   type
 }) {
-  // State to control modal visibility
   const [showModal, setShowModal] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-
-  // Open the modal
-  const handleOpenModal = () => {
-    setShowModal(true);
+  const handleItemClick = () => {
+    if (context === "store") setShowModal(true);
   };
 
-  // Close the modal
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
-  // Check if the provided item is valid
+  // Check for valid item
   if (!item || typeof item !== "object") return null;
-
-  // Extract details from the item object
   const details = {
     Description: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Description"),
     Width: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Width"),
@@ -299,58 +293,54 @@ function Item({
     Horizontal: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Horizontal"),
     Vertical: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Vertical")
   };
+  const tooltipId = `my-tooltip-html-prop-${details.TharsternCode}`;
   const position = `${details.Horizontal}-${details.Vertical}`;
-  let halfWidth = details.Width / 1.4;
-  let halfHeight = details.Height / 1.4;
-  if (type === "panel") {
-    halfWidth = details.Width / 2;
-    halfHeight = details.Height / 2;
-  }
+  let halfWidth = details.Width / (type === "panel" ? 2 : 1.4);
+  let halfHeight = details.Height / (type === "panel" ? 2 : 1.4);
+  const itemStyle = {
+    cursor: "pointer",
+    width: `${halfWidth}em`,
+    height: `${halfHeight}em`,
+    backgroundImage: `url(${(0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "URL1")})`
+  };
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `item position-${position}`,
-    "data-tooltip-id": `my-tooltip-html-prop-${details.TharsternCode}`,
+    "data-tooltip-id": tooltipId,
     "data-product-id": details.ProductID,
     "data-product-code": details.Code,
-    onClick: () => {
-      if (context === "store") handleOpenModal();
-    },
-    style: {
-      cursor: "pointer",
-      width: `${halfWidth}em`,
-      height: `${halfHeight}em`,
-      backgroundImage: `url(${(0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "URL1")})`
-    }
+    onClick: handleItemClick,
+    style: itemStyle
   }, type === "panel" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
     className: "smallp"
   }, details.Description), context === "admin" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react_tooltip__WEBPACK_IMPORTED_MODULE_1__.Tooltip, {
-    id: `my-tooltip-html-prop-${details.TharsternCode}`
-  }, Object.keys(details).map(key => key !== "formatted" ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
+    id: tooltipId
+  }, Object.entries(details).map(([key, value]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
     key: key
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, key, ":"), " ", details[key]) : null)), context === "store" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_ItemModal__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, key, ":"), " ", value))), context === "store" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_ItemModal__WEBPACK_IMPORTED_MODULE_3__["default"], {
     modalId: `modal-${details.TharsternCode}`,
     largeImgSrc: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "URL1"),
     details: details,
-    isOpen: showModal // Passing down the state
-    ,
-    onClose: handleCloseModal // Passing down the method to close the modal
+    isOpen: showModal,
+    onClose: () => setShowModal(false)
   }));
 }
-
 Item.propTypes = {
   item: prop_types__WEBPACK_IMPORTED_MODULE_4___default().shape({
     Description: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string),
     Width: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().number),
     Height: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().number),
-    TharsternCode: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string),
-    ProductID: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string),
+    TharsternCode: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string).isRequired,
+    ProductID: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string).isRequired,
     Code: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string),
     StockQty: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().number),
-    Horizontal: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string),
-    Vertical: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string),
-    URL1: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string)
+    Horizontal: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string).isRequired,
+    Vertical: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string).isRequired,
+    URL1: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string).isRequired
   }).isRequired,
-  context: prop_types__WEBPACK_IMPORTED_MODULE_4___default().oneOf(["admin", "store"]).isRequired
+  context: prop_types__WEBPACK_IMPORTED_MODULE_4___default().oneOf(["admin", "store"]).isRequired,
+  type: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string) // Specify possible values if they're known
 };
+
 /* harmony default export */ __webpack_exports__["default"] = (Item);
 
 /***/ }),
@@ -370,6 +360,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Item__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Item */ "./src/components/Item.js");
 /* harmony import */ var _utilities_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utilities/utilities */ "./src/utilities/utilities.js");
 
+// ItemGroup Component
+// Represents a group of items. Assigns position classes based on item properties.
+
 
 
 
@@ -378,27 +371,29 @@ function ItemGroup({
   context,
   type
 }) {
+  // Validate items prop
   if (!items) return null;
   const itemsArray = Array.isArray(items) ? items : [items];
-  let positionClass = "";
-  itemsArray.forEach(item => {
-    const horizontalValue = (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Horizontal");
-    if (horizontalValue == 8) {
-      positionClass = " group-position-8";
-    }
-  });
+
+  // Check if any item in the itemsArray has a horizontal value of 8
+  const hasPosition8 = itemsArray.some(item => (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Horizontal") == 8);
+  const positionClass = hasPosition8 ? " group-position-8" : "";
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `item-group${positionClass}`
   }, itemsArray.map(item => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_Item__WEBPACK_IMPORTED_MODULE_1__["default"], {
     item: item,
-    key: item.ProductID,
+    key: item.ProductID || item.someOtherUniqueId,
     context: context,
     type: type
   })));
 }
 ItemGroup.propTypes = {
-  items: prop_types__WEBPACK_IMPORTED_MODULE_3___default().oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_3___default().arrayOf((prop_types__WEBPACK_IMPORTED_MODULE_3___default().object)), (prop_types__WEBPACK_IMPORTED_MODULE_3___default().object)]).isRequired
+  items: prop_types__WEBPACK_IMPORTED_MODULE_3___default().oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_3___default().arrayOf((prop_types__WEBPACK_IMPORTED_MODULE_3___default().object)), (prop_types__WEBPACK_IMPORTED_MODULE_3___default().object)]).isRequired,
+  context: (prop_types__WEBPACK_IMPORTED_MODULE_3___default().string),
+  // Make sure to define what possible values 'context' can have, if known
+  type: (prop_types__WEBPACK_IMPORTED_MODULE_3___default().string) // Same goes for 'type'
 };
+
 /* harmony default export */ __webpack_exports__["default"] = (ItemGroup);
 
 /***/ }),
@@ -625,6 +620,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_ItemGroup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/ItemGroup */ "./src/components/ItemGroup.js");
 /* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
 
+// Shelf Component
+// Represents a shelf in a store with items and provides an option to add all items to the cart.
+
 
 
 
@@ -636,18 +634,29 @@ function Shelf({
   context
 }) {
   const shelfRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-  if (!shelfData || typeof shelfData !== "object") return null;
+
+  // Check for valid shelfData
+  if (!shelfData || typeof shelfData !== "object" || !Object.keys(shelfData).length) {
+    return null;
+  }
   const handleAddAllShelfItems = async () => {
-    const shelfElement = shelfRef.current;
-    if (shelfElement) {
-      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__.gatherProductInfoAndCallAPI)(shelfElement);
+    try {
+      const shelfElement = shelfRef.current;
+      if (shelfElement) {
+        await (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__.gatherProductInfoAndCallAPI)(shelfElement);
+      } else {
+        throw new Error(`Unable to locate items for shelf ${shelfKey} to add to cart.`);
+      }
+    } catch (error) {
+      console.error("Error in handleAddAllShelfItems:", error);
+      // Handle or show error message as required
     }
-    throw new Error(`Unable to locate items for shelf ${shelfKey} to add to cart.`);
   };
-  let shelfKey = Object.keys(shelfData)[0];
+
+  const shelfKey = Object.keys(shelfData)?.[0];
   const horizontalData = shelfData[shelfKey];
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "face-shelf face-shelf-${extractShelfNumber(shelfKey)}"
+    className: `face-shelf face-shelf-${(0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.extractShelfNumber)(shelfKey)}`
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "shelf-title common-container"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, shelfKey), context === "store" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_AddButton__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -657,11 +666,11 @@ function Shelf({
     className: `shelf shelf-${(0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.extractShelfNumber)(shelfKey)}`,
     ref: shelfRef
   }, horizontalData.map((data, horizontalIndex) => {
-    const horizontalKey = Object.keys(data)[0];
+    const horizontalKey = Object.keys(data)?.[0];
     const items = data[horizontalKey];
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ItemGroup__WEBPACK_IMPORTED_MODULE_3__["default"], {
       items: items,
-      key: data.someUniqueId || `${horizontalKey}-${shelfKey}`,
+      key: data.someUniqueId || `${horizontalKey}-${horizontalIndex}`,
       context: context,
       type: "shelf"
     });
@@ -669,9 +678,8 @@ function Shelf({
 }
 Shelf.propTypes = {
   shelfData: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().object).isRequired,
-  context: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string) // Adding context to propTypes for clarity and type safety
+  context: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string).isRequired
 };
-
 /* harmony default export */ __webpack_exports__["default"] = (Shelf);
 
 /***/ }),

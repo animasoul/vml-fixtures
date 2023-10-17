@@ -4,24 +4,19 @@ import { Tooltip } from "react-tooltip";
 import { safeGet } from "../utilities/utilities";
 import ItemModal from "./ItemModal";
 
+// Item Component
+// Represents an individual item with its details and behavior based on the context.
+
 function Item({ item, context, type }) {
-	// State to control modal visibility
 	const [showModal, setShowModal] = useState(false);
 
-	// Open the modal
-	const handleOpenModal = () => {
-		setShowModal(true);
+	const handleItemClick = () => {
+		if (context === "store") setShowModal(true);
 	};
 
-	// Close the modal
-	const handleCloseModal = () => {
-		setShowModal(false);
-	};
-
-	// Check if the provided item is valid
+	// Check for valid item
 	if (!item || typeof item !== "object") return null;
 
-	// Extract details from the item object
 	const details = {
 		Description: safeGet(item, "Description"),
 		Width: safeGet(item, "Width"),
@@ -34,52 +29,45 @@ function Item({ item, context, type }) {
 		Vertical: safeGet(item, "Vertical"),
 	};
 
+	const tooltipId = `my-tooltip-html-prop-${details.TharsternCode}`;
 	const position = `${details.Horizontal}-${details.Vertical}`;
-	let halfWidth = details.Width / 1.4;
-	let halfHeight = details.Height / 1.4;
-	if (type === "panel") {
-		halfWidth = details.Width / 2;
-		halfHeight = details.Height / 2;
-	}
+	let halfWidth = details.Width / (type === "panel" ? 2 : 1.4);
+	let halfHeight = details.Height / (type === "panel" ? 2 : 1.4);
+
+	const itemStyle = {
+		cursor: "pointer",
+		width: `${halfWidth}em`,
+		height: `${halfHeight}em`,
+		backgroundImage: `url(${safeGet(item, "URL1")})`,
+	};
 
 	return (
 		<div
 			className={`item position-${position}`}
-			data-tooltip-id={`my-tooltip-html-prop-${details.TharsternCode}`}
+			data-tooltip-id={tooltipId}
 			data-product-id={details.ProductID}
 			data-product-code={details.Code}
-			onClick={() => {
-				if (context === "store") handleOpenModal();
-			}}
-			style={{
-				cursor: "pointer",
-				width: `${halfWidth}em`,
-				height: `${halfHeight}em`,
-				backgroundImage: `url(${safeGet(item, "URL1")})`,
-			}}
+			onClick={handleItemClick}
+			style={itemStyle}
 		>
 			{type === "panel" && <p className="smallp">{details.Description}</p>}
-			{/* Optionally display item details for admin context */}
 			{context === "admin" && (
-				<Tooltip id={`my-tooltip-html-prop-${details.TharsternCode}`}>
-					{Object.keys(details).map((key) =>
-						key !== "formatted" ? (
-							<p key={key}>
-								<strong>{key}:</strong> {details[key]}
-							</p>
-						) : null,
-					)}
+				<Tooltip id={tooltipId}>
+					{Object.entries(details).map(([key, value]) => (
+						<p key={key}>
+							<strong>{key}:</strong> {value}
+						</p>
+					))}
 				</Tooltip>
 			)}
 
-			{/* Display the modal if context is "store" */}
 			{context === "store" && (
 				<ItemModal
 					modalId={`modal-${details.TharsternCode}`}
 					largeImgSrc={safeGet(item, "URL1")}
 					details={details}
-					isOpen={showModal} // Passing down the state
-					onClose={handleCloseModal} // Passing down the method to close the modal
+					isOpen={showModal}
+					onClose={() => setShowModal(false)}
 				/>
 			)}
 		</div>
@@ -91,15 +79,16 @@ Item.propTypes = {
 		Description: PropTypes.string,
 		Width: PropTypes.number,
 		Height: PropTypes.number,
-		TharsternCode: PropTypes.string,
-		ProductID: PropTypes.string,
+		TharsternCode: PropTypes.string.isRequired,
+		ProductID: PropTypes.string.isRequired,
 		Code: PropTypes.string,
 		StockQty: PropTypes.number,
-		Horizontal: PropTypes.string,
-		Vertical: PropTypes.string,
-		URL1: PropTypes.string,
+		Horizontal: PropTypes.string.isRequired,
+		Vertical: PropTypes.string.isRequired,
+		URL1: PropTypes.string.isRequired,
 	}).isRequired,
 	context: PropTypes.oneOf(["admin", "store"]).isRequired,
+	type: PropTypes.string, // Specify possible values if they're known
 };
 
 export default Item;

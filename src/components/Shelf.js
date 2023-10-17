@@ -1,3 +1,6 @@
+// Shelf Component
+// Represents a shelf in a store with items and provides an option to add all items to the cart.
+
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import AddButton from "./AddButton";
@@ -8,24 +11,36 @@ import { gatherProductInfoAndCallAPI } from "../utilities/gatherAndCallAPI";
 function Shelf({ shelfData, context }) {
 	const shelfRef = useRef(null);
 
-	if (!shelfData || typeof shelfData !== "object") return null;
+	// Check for valid shelfData
+	if (
+		!shelfData ||
+		typeof shelfData !== "object" ||
+		!Object.keys(shelfData).length
+	) {
+		return null;
+	}
 
 	const handleAddAllShelfItems = async () => {
-		const shelfElement = shelfRef.current;
-
-		if (shelfElement) {
-			return gatherProductInfoAndCallAPI(shelfElement);
+		try {
+			const shelfElement = shelfRef.current;
+			if (shelfElement) {
+				await gatherProductInfoAndCallAPI(shelfElement);
+			} else {
+				throw new Error(
+					`Unable to locate items for shelf ${shelfKey} to add to cart.`,
+				);
+			}
+		} catch (error) {
+			console.error("Error in handleAddAllShelfItems:", error);
+			// Handle or show error message as required
 		}
-		throw new Error(
-			`Unable to locate items for shelf ${shelfKey} to add to cart.`,
-		);
 	};
 
-	let shelfKey = Object.keys(shelfData)[0];
+	const shelfKey = Object.keys(shelfData)?.[0];
 	const horizontalData = shelfData[shelfKey];
 
 	return (
-		<div className="face-shelf face-shelf-${extractShelfNumber(shelfKey)}">
+		<div className={`face-shelf face-shelf-${extractShelfNumber(shelfKey)}`}>
 			<div className="shelf-title common-container">
 				<h3>{shelfKey}</h3>
 				{context === "store" && (
@@ -40,12 +55,12 @@ function Shelf({ shelfData, context }) {
 				ref={shelfRef}
 			>
 				{horizontalData.map((data, horizontalIndex) => {
-					const horizontalKey = Object.keys(data)[0];
+					const horizontalKey = Object.keys(data)?.[0];
 					const items = data[horizontalKey];
 					return (
 						<ItemGroup
 							items={items}
-							key={data.someUniqueId || `${horizontalKey}-${shelfKey}`}
+							key={data.someUniqueId || `${horizontalKey}-${horizontalIndex}`}
 							context={context}
 							type="shelf"
 						/>
@@ -58,7 +73,7 @@ function Shelf({ shelfData, context }) {
 
 Shelf.propTypes = {
 	shelfData: PropTypes.object.isRequired,
-	context: PropTypes.string, // Adding context to propTypes for clarity and type safety
+	context: PropTypes.string.isRequired,
 };
 
 export default Shelf;
