@@ -38,8 +38,8 @@ function Item({ item, context, type }) {
 	let halfWidth = details.Width / 1.4;
 	let halfHeight = details.Height / 1.4;
 	if (type === "panel") {
-		halfWidth = details.Width / 1.7;
-		halfHeight = details.Height / 1.7;
+		halfWidth = details.Width / 2;
+		halfHeight = details.Height / 2;
 	}
 
 	return (
