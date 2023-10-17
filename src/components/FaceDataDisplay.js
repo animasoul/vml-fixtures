@@ -35,7 +35,7 @@ function FaceDataDisplay({ faceData, context }) {
 				<div className="footer-btn">
 					<AddButton
 						onClickHandler={handleAddAllFixtureClick}
-						text="Add All Fixture items to cart"
+						text="Add All Shelf items to cart"
 					/>
 				</div>
 			)}

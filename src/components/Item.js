@@ -4,7 +4,7 @@ import { Tooltip } from "react-tooltip";
 import { safeGet } from "../utilities/utilities";
 import ItemModal from "./ItemModal";
 
-function Item({ item, context }) {
+function Item({ item, context, type }) {
 	// State to control modal visibility
 	const [showModal, setShowModal] = useState(false);
 
@@ -35,8 +35,12 @@ function Item({ item, context }) {
 	};
 
 	const position = `${details.Horizontal}-${details.Vertical}`;
-	const halfWidth = details.Width / 1.4;
-	const halfHeight = details.Height / 1.4;
+	let halfWidth = details.Width / 1.4;
+	let halfHeight = details.Height / 1.4;
+	if (type === "panel") {
+		halfWidth = details.Width / 1.7;
+		halfHeight = details.Height / 1.7;
+	}
 
 	return (
 		<div
@@ -54,6 +58,7 @@ function Item({ item, context }) {
 				backgroundImage: `url(${safeGet(item, "URL1")})`,
 			}}
 		>
+			{type === "panel" && <p className="smallp">{details.Description}</p>}
 			{/* Optionally display item details for admin context */}
 			{context === "admin" && (
 				<Tooltip id={`my-tooltip-html-prop-${details.TharsternCode}`}>

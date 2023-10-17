@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import Item from "./Item";
 import { safeGet } from "../utilities/utilities";
 
-function ItemGroup({ items, context }) {
+function ItemGroup({ items, context, type }) {
 	if (!items) return null;
 
 	const itemsArray = Array.isArray(items) ? items : [items];
@@ -19,7 +19,7 @@ function ItemGroup({ items, context }) {
 	return (
 		<div className={`item-group${positionClass}`}>
 			{itemsArray.map((item) => (
-				<Item item={item} key={item.ProductID} context={context} />
+				<Item item={item} key={item.ProductID} context={context} type={type} />
 			))}
 		</div>
 	);

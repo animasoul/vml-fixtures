@@ -9,7 +9,6 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 }
-
 button.addToCartBtn {
 	display: inline-block;
 	outline: 0;
@@ -77,27 +76,27 @@ button.addToCartBtn {
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: center;
-		.group-position-8 {
-			flex-basis: 100%;
-		}
-		.item-group {
-			margin: 0 0.2em;
+	}
+	.group-position-8 {
+		flex-basis: 100%;
+	}
+	.item-group {
+		margin: 0 0.2em;
 
-			.item {
-				border: 1px solid #000;
-				margin: 0.5em auto;
-				background-size: cover;
+		.item {
+			border: 1px solid #000;
+			margin: 0.5em auto;
+			background-size: cover;
 
-				.smallp {
-					font-size: 0.8em;
-					margin: 0;
-					line-height: 0.8em;
-				}
-				&:hover {
-					cursor: pointer;
-					border-color: #0070f3;
-					opacity: 70%;
-				}
+			.smallp {
+				font-size: 0.8em;
+				margin: 0;
+				line-height: 0.8em;
+			}
+			&:hover {
+				cursor: pointer;
+				border-color: #0070f3;
+				opacity: 70%;
 			}
 		}
 	}

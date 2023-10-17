@@ -47,6 +47,7 @@ function Shelf({ shelfData, context }) {
 							items={items}
 							key={data.someUniqueId || `${horizontalKey}-${shelfKey}`}
 							context={context}
+							type="shelf"
 						/>
 					);
 				})}

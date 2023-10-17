@@ -19,15 +19,12 @@ function RootApp() {
 				</button>
 				<button onClick={() => handleButtonClick("param2")}>SOTF</button>
 				<button onClick={() => handleButtonClick("param3")}>Button 3</button>
+				<button onClick={() => handleButtonClick("param4")}>Button 4</button>
 			</div>
-			<div className="admin-fixture">
-				<React.StrictMode>
-					<FrontendApp context="admin" selectedParam={selectedParam} />
-				</React.StrictMode>
-				<div className="panel-data-display">
-					<h2>Panel</h2>
-				</div>
-			</div>
+
+			<React.StrictMode>
+				<FrontendApp context="admin" selectedParam={selectedParam} />
+			</React.StrictMode>
 		</div>
 	);
 }

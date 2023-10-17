@@ -2,6 +2,7 @@ import { useEffect, useState } from "@wordpress/element";
 import Loader from "../components/Loader";
 import FaceDataDisplay from "../components/FaceDataDisplay";
 import fetchDataFromServer from "../services/dataService";
+import PanelDataDisplay from "./PanelDataDisplay";
 
 function FrontendApp({ context }) {
 	const [data, setData] = useState({ panelData: [], faceData: [] });
@@ -29,7 +30,12 @@ function FrontendApp({ context }) {
 		return <div>Error loading data. Please try again later.</div>;
 	}
 
-	return <FaceDataDisplay faceData={data.faceData} context={context} />;
+	return (
+		<div className={`${context}-fixture`}>
+			<FaceDataDisplay faceData={data.faceData} context={context} />
+			<PanelDataDisplay panelData={data.panelData} context={context} />
+		</div>
+	);
 }
 
 export default FrontendApp;
