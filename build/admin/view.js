@@ -233,13 +233,13 @@ function FrontendApp({
   }
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `${context}-fixture`
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_3__["default"], {
+  }, data.faceData.length > 0 ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_3__["default"], {
     faceData: data.faceData,
     context: context
-  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_PanelDataDisplay__WEBPACK_IMPORTED_MODULE_5__["default"], {
+  }) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "No Face Data available."), data.panelData.length > 0 ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_PanelDataDisplay__WEBPACK_IMPORTED_MODULE_5__["default"], {
     panelData: data.panelData,
     context: context
-  }));
+  }) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "No Panel Data available."));
 }
 /* harmony default export */ __webpack_exports__["default"] = (FrontendApp);
 

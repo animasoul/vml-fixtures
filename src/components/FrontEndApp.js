@@ -32,8 +32,17 @@ function FrontendApp({ context }) {
 
 	return (
 		<div className={`${context}-fixture`}>
-			<FaceDataDisplay faceData={data.faceData} context={context} />
-			<PanelDataDisplay panelData={data.panelData} context={context} />
+			{data.faceData.length > 0 ? (
+				<FaceDataDisplay faceData={data.faceData} context={context} />
+			) : (
+				<div>No Face Data available.</div>
+			)}
+
+			{data.panelData.length > 0 ? (
+				<PanelDataDisplay panelData={data.panelData} context={context} />
+			) : (
+				<div>No Panel Data available.</div>
+			)}
 		</div>
 	);
 }
