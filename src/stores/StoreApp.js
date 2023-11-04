@@ -2,19 +2,19 @@ import React, { useState } from "@wordpress/element";
 import FrontendApp from "../components/FrontEndApp";
 import PromotionsList from "../components/PromotionsList";
 
-function RootApp() {
+function StoreApp() {
 	const [selectedPromotion, setSelectedPromotion] = useState(null);
 
 	return (
-		<div className="admin-fixture-wrapper">
+		<div className="store-fixture-wrapper">
 			<PromotionsList
 				onPromotionSelect={setSelectedPromotion}
 				selectedPromotion={selectedPromotion}
 			/>
 
-			<FrontendApp context="admin" selectedPromotion={selectedPromotion} />
+			<FrontendApp context="store" selectedPromotion={selectedPromotion} />
 		</div>
 	);
 }
 
-export default RootApp;
+export default StoreApp;

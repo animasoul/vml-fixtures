@@ -24,11 +24,14 @@ class ApiDataOrganiser {
      *
      * @return array Associative array of data parameters.
      */
-    public function getDataParams(): array {
+    public function getDataParams($promotion = ''): array {
+
+        // Default to a fallback promotion value if none is provided
+        $promotion = empty($promotion) ? 'Fall23' : $promotion;
         return [
             'storeRoot' => $_SESSION['Customer'] ?? '',
             'storeCode' => $_SESSION['Store'] ?? '',
-            'promotion' => 'Fall23',
+            'promotion' => $promotion,
         ];
     }
 
@@ -42,7 +45,7 @@ class ApiDataOrganiser {
      */
     public function sortApiData(array $params): array {
         // Fetch data from the API.
-        $data = $this->api->make_api_call('GetSephoraProducts', $params, false, 30);
+        $data = $this->api->make_api_call('GetSephoraProducts', $params, true, 30);
 
         if (isset($data['error'])) {
             // Handle the error (e.g. return an error message)

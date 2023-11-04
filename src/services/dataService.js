@@ -1,13 +1,31 @@
-async function fetchDataFromServer() {
+async function fetchDataFromServer(
+	action,
+	promotion = null,
+	filter = null,
+	return_json = "false",
+) {
 	try {
+		const params = new URLSearchParams({ action: action });
+
+		// If the filter is provided and is not null, append it to the params
+		if (filter !== null) {
+			// Assuming 'filter' is the correct parameter name expected by your API.
+			// You might need to adjust it based on the actual API requirement.
+			// For example, if filter should be an object with keys and values, you'll need to iterate over the entries and append them to params.
+			params.append("filter", filter);
+		}
+		if (promotion !== null) {
+			params.append("promotion", promotion);
+		}
+		if (return_json !== null) {
+			params.append("json", return_json);
+		}
 		const response = await fetch("/wp-admin/admin-ajax.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
-			body: new URLSearchParams({
-				action: "get_sorted_data",
-			}),
+			body: params,
 		});
 
 		if (!response.ok) {

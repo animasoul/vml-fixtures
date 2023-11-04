@@ -4,31 +4,35 @@ import FaceDataDisplay from "../components/FaceDataDisplay";
 import fetchDataFromServer from "../services/dataService";
 import PanelDataDisplay from "./PanelDataDisplay";
 
-function FrontendApp({ context }) {
+function FrontendApp({ context, selectedPromotion }) {
 	const [data, setData] = useState({ panelData: [], faceData: [] });
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
-		fetchDataFromServer()
-			.then((fetchedData) => {
-				setData(fetchedData);
-				setLoading(false);
-			})
-			.catch((err) => {
-				console.error("Error fetching data:", err);
-				setLoading(false);
-				setError(err);
-			});
-	}, []);
+		if (selectedPromotion) {
+			setLoading(true);
+			fetchDataFromServer("get_sorted_data", selectedPromotion)
+				.then((fetchedData) => {
+					setData(fetchedData);
+				})
+				.catch((err) => {
+					console.error("Error fetching sorted data:", err);
+					setError(err);
+				})
+				.finally(() => {
+					setLoading(false);
+				});
+		}
+	}, [selectedPromotion]);
 
-	if (loading) {
-		return <Loader />;
-	}
+	// Function to handle promotion selection
+	const handlePromotionSelect = (promotionTitle) => {
+		setSelectedPromotion(promotionTitle);
+	};
 
-	if (error) {
-		return <div>Error loading data. Please try again later.</div>;
-	}
+	if (loading) return <Loader />;
+	if (error) return <div>Error loading data. Please try again later.</div>;
 
 	return (
 		<div className={`${context}-fixture`}>

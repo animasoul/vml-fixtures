@@ -35,11 +35,14 @@ function wp_ajax_get_sorted_data_callback() {
     //require_once 'Api.class.php';
     require_once plugin_dir_path(__FILE__) . '/build/helpers/ApiDataOrganiser.class.php';
 
+    // Retrieve the 'promotion' value from the POST data
+    $promotion = isset($_POST['promotion']) ? sanitize_text_field($_POST['promotion']) : '';
+
     // Create an instance of the ApiDataOrganiser class
     $organiser = new ApiDataOrganiser();
 
     // Get the sorted data
-    $params = $organiser->getDataParams();
+    $params = $organiser->getDataParams($promotion);
     $sortedData = $organiser->sortApiData($params);
 
     // Return the sorted data as a JSON response
