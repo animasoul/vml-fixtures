@@ -43,7 +43,7 @@ function PromotionsList({ onPromotionSelect }) {
 					localStorage.setItem("lastSelectedPromotion", defaultSelection);
 				}
 			} else {
-				fetchDataFromServer("vizmerch_list_promotions", null, null, "true")
+				fetchDataFromServer("vizmerch_list_promotions", null, "active", "true")
 					.then((fetchedData) => {
 						const reversedData = [...fetchedData].reverse();
 						const dataToCache = {

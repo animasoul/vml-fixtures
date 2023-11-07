@@ -1,3 +1,14 @@
+/**
+ * Fetches data from the server with specified action and optional parameters.
+ *
+ * @param {Object} params - The parameters object.
+ * @param {string} params.action - The action parameter to be sent to the server.
+ * @param {?string} [params.promotion=null] - Optional. The promotion identifier.
+ * @param {?string} [params.filter=null] - Optional. The filter criteria.
+ * @param {string} [params.return_json='false'] - Determines if the server will return JSON or another format.
+ * @returns {Promise<Object>} A promise that resolves with the JSON response from the server.
+ * @throws {Error} Throws an error if the fetch operation fails or if the response can't be parsed as JSON.
+ */
 async function fetchDataFromServer(
 	action,
 	promotion = null,
@@ -9,9 +20,6 @@ async function fetchDataFromServer(
 
 		// If the filter is provided and is not null, append it to the params
 		if (filter !== null) {
-			// Assuming 'filter' is the correct parameter name expected by your API.
-			// You might need to adjust it based on the actual API requirement.
-			// For example, if filter should be an object with keys and values, you'll need to iterate over the entries and append them to params.
 			params.append("filter", filter);
 		}
 		if (promotion !== null) {

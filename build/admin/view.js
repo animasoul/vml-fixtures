@@ -210,7 +210,7 @@ function FrontendApp({
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     if (selectedPromotion) {
       setLoading(true);
-      (0,_services_dataService__WEBPACK_IMPORTED_MODULE_4__["default"])("get_sorted_data", selectedPromotion).then(fetchedData => {
+      (0,_services_dataService__WEBPACK_IMPORTED_MODULE_4__["default"])("get_sorted_data", selectedPromotion, "active").then(fetchedData => {
         setData(fetchedData);
       }).catch(err => {
         console.error("Error fetching sorted data:", err);
@@ -669,7 +669,7 @@ function PromotionsList({
           localStorage.setItem("lastSelectedPromotion", defaultSelection);
         }
       } else {
-        (0,_services_dataService__WEBPACK_IMPORTED_MODULE_2__["default"])("vizmerch_list_promotions", null, null, "true").then(fetchedData => {
+        (0,_services_dataService__WEBPACK_IMPORTED_MODULE_2__["default"])("vizmerch_list_promotions", null, "active", "true").then(fetchedData => {
           const reversedData = [...fetchedData].reverse();
           const dataToCache = {
             data: reversedData,
@@ -819,16 +819,37 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 const API_ENDPOINT = "/wp-admin/admin-ajax.php";
 
-// Helper function for timeout
+/**
+ * Enforces a timeout for a promise.
+ *
+ * @param {number} duration - The timeout duration in milliseconds.
+ * @param {string} message - The error message to reject with after the timeout.
+ * @returns {Promise<void>} A promise that will reject with the error after the specified duration.
+ */
 function timeout(duration, message) {
   return new Promise((resolve, reject) => {
     setTimeout(() => reject(new Error(message)), duration);
   });
 }
+
+/**
+ * Serializes the product information for the request.
+ *
+ * @param {Array<Object>} products - Array of product information objects.
+ * @returns {string} The serialized product string for the request.
+ */
+function serializeProducts(products) {
+  return products.map((product, index) => `products[${index}][product_id]=${product.product_id}&products[${index}][product_code]=${product.product_code}&products[${index}][qty]=${product.qty}`).join("&");
+}
+
+/**
+ * Adds an array of products to the cart.
+ *
+ * @param {Array<Object>} productInfoArray - An array of objects containing product information. Each object should have product_id, product_code, and qty properties.
+ * @returns {Promise<Object>} A promise that resolves with the result of the add to cart operation.
+ * @throws {Error} Throws an error if the request fails or the server responds with an error.
+ */
 async function addToCart(productInfoArray) {
-  function serializeProducts(products) {
-    return products.map((product, index) => `products[${index}][product_id]=${product.product_id}&products[${index}][product_code]=${product.product_code}&products[${index}][qty]=${product.qty}`).join("&");
-  }
   const serializedProducts = serializeProducts(productInfoArray);
   const formData = `action=vizmerch_add_to_cart&${serializedProducts}`;
   try {
@@ -867,6 +888,17 @@ async function addToCart(productInfoArray) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/**
+ * Fetches data from the server with specified action and optional parameters.
+ *
+ * @param {Object} params - The parameters object.
+ * @param {string} params.action - The action parameter to be sent to the server.
+ * @param {?string} [params.promotion=null] - Optional. The promotion identifier.
+ * @param {?string} [params.filter=null] - Optional. The filter criteria.
+ * @param {string} [params.return_json='false'] - Determines if the server will return JSON or another format.
+ * @returns {Promise<Object>} A promise that resolves with the JSON response from the server.
+ * @throws {Error} Throws an error if the fetch operation fails or if the response can't be parsed as JSON.
+ */
 async function fetchDataFromServer(action, promotion = null, filter = null, return_json = "false") {
   try {
     const params = new URLSearchParams({
@@ -875,9 +907,6 @@ async function fetchDataFromServer(action, promotion = null, filter = null, retu
 
     // If the filter is provided and is not null, append it to the params
     if (filter !== null) {
-      // Assuming 'filter' is the correct parameter name expected by your API.
-      // You might need to adjust it based on the actual API requirement.
-      // For example, if filter should be an object with keys and values, you'll need to iterate over the entries and append them to params.
       params.append("filter", filter);
     }
     if (promotion !== null) {
@@ -922,6 +951,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _services_addToCart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/addToCart */ "./src/services/addToCart.js");
 
+
+/**
+ * Adds a single product to the cart.
+ *
+ * @param {Object} itemDetails - An object containing details about the item. Must include `ProductID` and `Code`.
+ * @returns {Promise<Object>} A promise that resolves with the result of the add to cart operation.
+ * @throws {Error} Throws an error if the input is invalid or if there is an error in adding the product to the cart.
+ */
 async function addSingleProductToCart(itemDetails) {
   // Validate the input.
   if (!itemDetails?.ProductID || !itemDetails?.Code) {
@@ -930,12 +967,14 @@ async function addSingleProductToCart(itemDetails) {
   const productInfo = {
     product_id: itemDetails.ProductID,
     product_code: itemDetails.Code,
-    qty: 1
+    qty: 1 // Quantity is set to 1 since this is for a single product
   };
+
   try {
     const result = await (0,_services_addToCart__WEBPACK_IMPORTED_MODULE_0__.addToCart)([productInfo]); // Passing as an array since `addToCart` likely expects an array.
     return result;
   } catch (error) {
+    // Here, we include the original error message for more detailed information about the failure
     throw new Error(`Error adding single item to cart: ${error.message}`);
   }
 }
@@ -955,6 +994,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _services_addToCart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/addToCart */ "./src/services/addToCart.js");
 
+
+/**
+ * Gathers product information from the DOM and calls the API to add products to the cart.
+ *
+ * @param {Element} parentElement - The parent DOM element containing product data attributes.
+ * @returns {Promise<Object>} A promise that resolves with the result of the add to cart operation.
+ * @throws {Error} Throws an error if the parent element is invalid, no items are found, or there's an error in the API call.
+ */
 async function gatherProductInfoAndCallAPI(parentElement) {
   // Validate if the parentElement is a valid DOM element.
   if (!(parentElement instanceof Element)) {
@@ -970,11 +1017,13 @@ async function gatherProductInfoAndCallAPI(parentElement) {
   productElements.forEach(element => {
     const productId = element.getAttribute("data-product-id");
     const productCode = element.getAttribute("data-product-code");
+
+    // Assuming each product has a quantity of 1
     if (productId && productCode) {
       productInfoArray.push({
         product_id: productId,
         product_code: productCode,
-        qty: 1
+        qty: 1 // Default quantity is set to 1
       });
     }
   });
@@ -987,6 +1036,7 @@ async function gatherProductInfoAndCallAPI(parentElement) {
     const result = await (0,_services_addToCart__WEBPACK_IMPORTED_MODULE_0__.addToCart)(productInfoArray);
     return result;
   } catch (error) {
+    // Propagate the detailed error message up to the caller
     throw new Error(`Error adding items to cart: ${error.message}`);
   }
 }

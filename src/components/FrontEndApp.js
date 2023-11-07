@@ -12,7 +12,7 @@ function FrontendApp({ context, selectedPromotion }) {
 	useEffect(() => {
 		if (selectedPromotion) {
 			setLoading(true);
-			fetchDataFromServer("get_sorted_data", selectedPromotion)
+			fetchDataFromServer("get_sorted_data", selectedPromotion, "active")
 				.then((fetchedData) => {
 					setData(fetchedData);
 				})
