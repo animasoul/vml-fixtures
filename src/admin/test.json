@@ -1,0 +1,2914 @@
+{
+	"US-Jeff-3": [
+		{
+			"fixture_type": "1BAY",
+			"region": "US",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "4",
+			"vertical": "6",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				}
+			],
+			"code": "Jeff-USCA-3",
+			"needed": 462,
+			"extra": 24,
+			"total": 486,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US", "CA"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"CA-Jeff-3": [
+		{
+			"fixture_type": "1BAY",
+			"region": "CA",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "4",
+			"vertical": "6",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				}
+			],
+			"code": "Jeff-USCA-3",
+			"needed": 462,
+			"extra": 24,
+			"total": 486,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US", "CA"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"QC-Jeff-4": [
+		{
+			"fixture_type": "1BAY",
+			"region": "QC",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "4",
+			"vertical": "6",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "6"
+				}
+			],
+			"code": "Jeff-QC-4",
+			"needed": 3,
+			"extra": 5,
+			"total": 8,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["QC"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"CA-Jeff-5": [
+		{
+			"fixture_type": "1BAY",
+			"region": "CA",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "6",
+			"vertical": "3",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				}
+			],
+			"code": "Jeff-CAQC-5",
+			"needed": 96,
+			"extra": 5,
+			"total": 101,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["CA", "QC"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		},
+		{
+			"fixture_type": "1BAY",
+			"region": "CA",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "3",
+			"vertical": "3",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				}
+			],
+			"code": "Jeff-CAQC-5",
+			"needed": 96,
+			"extra": 5,
+			"total": 101,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["CA", "QC"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"QC-Jeff-5": [
+		{
+			"fixture_type": "1BAY",
+			"region": "QC",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "6",
+			"vertical": "3",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				}
+			],
+			"code": "Jeff-CAQC-5",
+			"needed": 96,
+			"extra": 5,
+			"total": 101,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["CA", "QC"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		},
+		{
+			"fixture_type": "1BAY",
+			"region": "QC",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "3",
+			"vertical": "3",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				}
+			],
+			"code": "Jeff-CAQC-5",
+			"needed": 96,
+			"extra": 5,
+			"total": 101,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["CA", "QC"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"US-Jeff-6": [
+		{
+			"fixture_type": "1BAY",
+			"region": "US",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "6",
+			"vertical": "3",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				}
+			],
+			"code": "Jeff-US-6",
+			"needed": 834,
+			"extra": 42,
+			"total": 876,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		},
+		{
+			"fixture_type": "1BAY",
+			"region": "US",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "3",
+			"vertical": "3",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "6",
+					"vertical": "3"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "3",
+					"vertical": "3"
+				}
+			],
+			"code": "Jeff-US-6",
+			"needed": 834,
+			"extra": 42,
+			"total": 876,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"US-Jeff-7": [
+		{
+			"fixture_type": "1BAY",
+			"region": "US",
+			"bay": "1",
+			"shelf": "2",
+			"horizontal": "8",
+			"vertical": "2",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				}
+			],
+			"code": "Jeff-ALL-7",
+			"needed": 465,
+			"extra": 24,
+			"total": 489,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US", "CA", "QC"],
+			"product_type": "Shelf Strip",
+			"product_id": "24",
+			"width": "37.093",
+			"height": "2.195",
+			"material": "10mil Satin Photo Paper",
+			"finishing": "lam both sides 10 mil HardGuard, mount to 36.843x1.5 3/16\" foam core",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"CA-Jeff-7": [
+		{
+			"fixture_type": "1BAY",
+			"region": "CA",
+			"bay": "1",
+			"shelf": "2",
+			"horizontal": "8",
+			"vertical": "2",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				}
+			],
+			"code": "Jeff-ALL-7",
+			"needed": 465,
+			"extra": 24,
+			"total": 489,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US", "CA", "QC"],
+			"product_type": "Shelf Strip",
+			"product_id": "24",
+			"width": "37.093",
+			"height": "2.195",
+			"material": "10mil Satin Photo Paper",
+			"finishing": "lam both sides 10 mil HardGuard, mount to 36.843x1.5 3/16\" foam core",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"QC-Jeff-7": [
+		{
+			"fixture_type": "1BAY",
+			"region": "QC",
+			"bay": "1",
+			"shelf": "2",
+			"horizontal": "8",
+			"vertical": "2",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "2",
+					"horizontal": "8",
+					"vertical": "2"
+				}
+			],
+			"code": "Jeff-ALL-7",
+			"needed": 465,
+			"extra": 24,
+			"total": 489,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US", "CA", "QC"],
+			"product_type": "Shelf Strip",
+			"product_id": "24",
+			"width": "37.093",
+			"height": "2.195",
+			"material": "10mil Satin Photo Paper",
+			"finishing": "lam both sides 10 mil HardGuard, mount to 36.843x1.5 3/16\" foam core",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"US-Jeff-8": [
+		{
+			"fixture_type": "1BAY",
+			"region": "US",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "4",
+			"vertical": "7",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				}
+			],
+			"code": "Jeff-ALL-8",
+			"needed": 465,
+			"extra": 24,
+			"total": 489,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US", "CA", "QC"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"CA-Jeff-8": [
+		{
+			"fixture_type": "1BAY",
+			"region": "CA",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "4",
+			"vertical": "7",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				}
+			],
+			"code": "Jeff-ALL-8",
+			"needed": 465,
+			"extra": 24,
+			"total": 489,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US", "CA", "QC"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	],
+	"QC-Jeff-8": [
+		{
+			"fixture_type": "1BAY",
+			"region": "QC",
+			"bay": "1",
+			"shelf": "1",
+			"horizontal": "4",
+			"vertical": "7",
+			"positions": [
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "ENDCAP",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1BAY(SOTF-T)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "US",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "CA",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				},
+				{
+					"fixture_type": "1LINEAR(SOTF)",
+					"region": "QC",
+					"bay": "1",
+					"shelf": "1",
+					"horizontal": "4",
+					"vertical": "7"
+				}
+			],
+			"code": "Jeff-ALL-8",
+			"needed": 465,
+			"extra": 24,
+			"total": 489,
+			"fixture_types": [
+				"1BAY",
+				"1BAY(SOTF)",
+				"1BAY(SOTF-T)",
+				"1LINEAR",
+				"1LINEAR(SOTF)",
+				"ENDCAP",
+				"ENDCAP(SOTF)"
+			],
+			"regions": ["US", "CA", "QC"],
+			"product_type": "Button",
+			"product_id": "9",
+			"width": "2.599",
+			"height": "3.1145",
+			"material": ".020 PETG",
+			"finishing": "",
+			"sides": "1",
+			"images": "1"
+		}
+	]
+}
