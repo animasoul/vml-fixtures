@@ -9,11 +9,12 @@
  */
 .wp-block-vml-fixtures-admin .buttons-row {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
   -moz-column-gap: 1em;
        column-gap: 1em;
   row-gap: 1em;
+  list-style: none;
+  margin-top: 1em;
 }
 .wp-block-vml-fixtures-admin button {
   flex: 1;
@@ -32,7 +33,7 @@
   gap: 1em;
 }
 .wp-block-vml-fixtures-admin .admin-fixture .face-data-display {
-  flex: 2;
+  flex: 1.5;
 }
 .wp-block-vml-fixtures-admin .admin-fixture .panel-data-display {
   flex: 1;
@@ -69,9 +70,9 @@
   margin: 0 0.2em;
 }
 .wp-block-vml-fixtures-admin .item-group .item {
-  border: 1px solid #000;
   margin: 0.5em auto;
   background-size: cover;
+  text-align: center;
 }
 .wp-block-vml-fixtures-admin .item-group .item .smallp {
   font-size: 0.8em;
@@ -82,7 +83,6 @@
   display: flex;
   flex-direction: column;
   padding: 0.2em;
-  border: 1px solid #ccc;
 }
 
 /*# sourceMappingURL=style-index.css.map*/

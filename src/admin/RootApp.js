@@ -19,7 +19,13 @@
 
 // export default RootApp;
 
-import React, { useState, useEffect, useMemo } from "@wordpress/element";
+import React, {
+	useState,
+	useEffect,
+	useMemo,
+	useRef,
+} from "@wordpress/element";
+import { Tooltip } from "react-tooltip";
 import { fetchOptionData } from "../services/getOptionService";
 
 const RootApp = () => {
@@ -34,10 +40,15 @@ const RootApp = () => {
 			try {
 				const jsonData = await fetchOptionData();
 				setData(jsonData);
-				const firstFixtureType = getUniqueValues(jsonData, "fixture_type")[0];
-				setSelectedFixtureType(firstFixtureType);
-				const firstRegion = getUniqueValues(jsonData, "region")[0];
-				setSelectedRegion(firstRegion);
+				const fixtureTypes = getUniqueValues(jsonData, "fixture_type");
+				const regions = getUniqueValues(jsonData, "region");
+
+				// Set the initial selections to the last elements of the arrays
+				const initialFixtureType = fixtureTypes[fixtureTypes.length - 1];
+				const initialRegion = regions[regions.length - 1];
+
+				setSelectedFixtureType(initialFixtureType);
+				setSelectedRegion(initialRegion);
 			} catch (error) {
 				setError(error.message);
 			} finally {
@@ -90,6 +101,11 @@ const RootApp = () => {
 		let shelves = {}; // Object to hold shelves data
 		let shelfP = []; // Array to hold shelf 'P' data
 
+		const sortHorizontalValues = (a, b) => {
+			const order = ["LS", "M", "RS"];
+			return order.indexOf(a) - order.indexOf(b);
+		};
+
 		// Iterate over each SKU object in final_skus
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
@@ -125,35 +141,90 @@ const RootApp = () => {
 		// console.log("Shelf P data:", shelfP); // Debugging log
 
 		// Function to render shelf data
-		const renderShelf = (positions, shelfLabel) => (
-			<div key={shelfLabel}>
-				{shelfLabel === "P" ? null : <h4>Shelf {shelfLabel}</h4>}
+		const renderShelf = (positions, shelfLabel) => {
+			// Step 1: Group by horizontal value
+			let groupedByHorizontal = positions.reduce((acc, item) => {
+				let horizontal = item.horizontal;
+				if (!acc[horizontal]) {
+					acc[horizontal] = [];
+				}
+				acc[horizontal].push(item);
+				return acc;
+			}, {});
 
-				{positions.map((item, index) => (
-					<div key={index}>
-						<p>SKU: {item.code}</p>
-						<img
-							src={`${data.ImageURL}${item.code}.jpg`}
-							alt={`SKU ${item.code}`}
-							width={item.width * 30}
-							height={item.height * 30}
-						/>
-						{/* Render other item properties as needed */}
+			// Step 2 & 3: Sort groups by horizontal and items within by vertical
+			let sortedGroupKeys = Object.keys(groupedByHorizontal).sort(
+				(a, b) => a - b,
+			);
+			sortedGroupKeys.forEach((horizontal) => {
+				groupedByHorizontal[horizontal].sort((a, b) => a.vertical - b.vertical);
+			});
+			// Adjust sorting for 'P' shelf if horizontal values are not numeric
+			if (shelfLabel === "P") {
+				sortedGroupKeys.sort(sortHorizontalValues);
+			}
+
+			// Step 4: Render
+			return (
+				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
+					<div className="shelf-title common-container">
+						{shelfLabel === "P" ? null : <h3>Shelf {shelfLabel}</h3>}
 					</div>
-				))}
-			</div>
-		);
+					<div className={`shelf shelf-${shelfLabel}`}>
+						{sortedGroupKeys.map((horizontal) => (
+							<div className="item-group" key={horizontal}>
+								{groupedByHorizontal[horizontal].map((item, index) => (
+									<>
+										<div
+											className={`item position-${item.horizontal}-${item.vertical}`}
+											key={index}
+										>
+											<img
+												src={`${data.ImageURL}${item.code}.jpg`}
+												alt={`SKU ${item.code}`}
+												width={item.width * 5}
+												height={item.height * 5}
+												data-tooltip-id={item.code}
+											/>
+										</div>
+										<Tooltip id={item.code}>
+											<p>SKU: {item.code}</p>
+											<p>Horizontal: {item.horizontal}</p>
+											<p>Vertical: {item.vertical}</p>
+											<p>Finishing: {item.finishing}</p>
+											<p>Material: {item.material}</p>
+											<p>Product ID: {item.product_id}</p>
+											<p>Product Type: {item.product_type}</p>
+											<p>Width: {item.width}</p>
+											<p>Height: {item.height}</p>
+										</Tooltip>
+									</>
+								))}
+							</div>
+						))}
+					</div>
+				</div>
+			);
+		};
 
 		return (
-			<div>
-				<h2>{selectedFixtureType}</h2>
-				<h3>Front</h3>
-				{Object.entries(shelves).map(([shelfLabel, positions]) =>
-					renderShelf(positions, shelfLabel),
-				)}
-				<h3>Panel</h3>
-				{shelfP.length > 0 && renderShelf(shelfP, "P")}
-			</div>
+			<>
+				<h2>
+					{selectedFixtureType} - {selectedRegion}
+				</h2>
+				<div className="admin-fixture">
+					<div className="face-data-display">
+						<h3>Front</h3>
+						{Object.entries(shelves).map(([shelfLabel, positions]) =>
+							renderShelf(positions, shelfLabel),
+						)}
+					</div>
+					<div className="panel-data-display">
+						<h3>Panel</h3>
+						{shelfP.length > 0 && renderShelf(shelfP, "P")}
+					</div>
+				</div>
+			</>
 		);
 	};
 	// Debug: Output raw data and selected values
@@ -174,22 +245,36 @@ const RootApp = () => {
 	}
 
 	return (
-		<div>
-			<div>
-				{uniqueFixtureTypes.map((type) => (
-					<button key={type} onClick={() => setSelectedFixtureType(type)}>
-						{type}
-					</button>
-				))}
-			</div>
-			{selectedFixtureType && (
-				<div>
-					{uniqueRegions.map((region) => (
-						<button key={region} onClick={() => setSelectedRegion(region)}>
-							{region}
+		<div className="fixture-select">
+			<h4>Select Fixture</h4>
+			<ul className="buttons-row">
+				{[...uniqueFixtureTypes].reverse().map((type) => (
+					<li key={type}>
+						<button
+							onClick={() => setSelectedFixtureType(type)}
+							className={selectedFixtureType === type ? "activeBtn" : ""}
+						>
+							{type}
 						</button>
-					))}
-				</div>
+					</li>
+				))}
+			</ul>
+			{selectedFixtureType && (
+				<>
+					<h4>Select Region</h4>
+					<ul className="buttons-row">
+						{[...uniqueRegions].reverse().map((region) => (
+							<li key={region}>
+								<button
+									onClick={() => setSelectedRegion(region)}
+									className={selectedRegion === region ? "activeBtn" : ""}
+								>
+									{region}
+								</button>
+							</li>
+						))}
+					</ul>
+				</>
 			)}
 			{processAndDisplayData()}
 		</div>
