@@ -42,6 +42,7 @@ export async function gatherProductInfoAndCallAPI(parentElement) {
 	if (!productInfoArray.length) {
 		throw new Error("No valid items found.");
 	}
+	console.log("productInfoArray", productInfoArray);
 
 	try {
 		const result = await addToCart(productInfoArray);

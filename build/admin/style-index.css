@@ -19,11 +19,10 @@
 .wp-block-vml-fixtures-admin button {
   flex: 1;
 }
-.wp-block-vml-fixtures-admin button.activeBtn {
+.wp-block-vml-fixtures-admin button.ui-checkboxradio-label.ui-state-active {
+  background-color: #008fca !important;
+  border-color: #0061a7 !important;
   color: #fff;
-  background-color: #c36;
-  text-decoration: none;
-  outline: 5px auto -webkit-focus-ring-color;
 }
 .wp-block-vml-fixtures-admin .loading {
   width: 100%;

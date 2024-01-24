@@ -16,12 +16,10 @@
 	}
 	button {
 		flex: 1;
-		&.activeBtn {
+		&.ui-checkboxradio-label.ui-state-active {
+			background-color: #008fca !important;
+			border-color: #0061a7 !important;
 			color: #fff;
-			background-color: #c36;
-			text-decoration: none;
-
-			outline: 5px auto -webkit-focus-ring-color;
 		}
 	}
 	.loading {

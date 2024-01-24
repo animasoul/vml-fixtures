@@ -1,30 +1,7 @@
-// import React, { useState } from "@wordpress/element";
-// import FrontendApp from "../components/FrontEndApp";
-// import PromotionsList from "../components/PromotionsList";
-
-// function RootApp() {
-// 	const [selectedPromotion, setSelectedPromotion] = useState(null);
-
-// 	return (
-// 		<div className="admin-fixture-wrapper">
-// 			<PromotionsList
-// 				onPromotionSelect={setSelectedPromotion}
-// 				selectedPromotion={selectedPromotion}
-// 			/>
-
-// 			<FrontendApp context="admin" selectedPromotion={selectedPromotion} />
-// 		</div>
-// 	);
-// }
-
-// export default RootApp;
-
-import React, {
-	useState,
-	useEffect,
-	useMemo,
-	useRef,
-} from "@wordpress/element";
+// Desc: Root component for admin app
+import Loader from "../components/Loader";
+import React, { useState, useEffect, useMemo } from "@wordpress/element";
+import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
 import { fetchOptionData } from "../services/getOptionService";
 
@@ -34,23 +11,31 @@ const RootApp = () => {
 	const [error, setError] = useState(null);
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
+	// State for modal
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [selectedImageUrl, setSelectedImageUrl] = useState(null);
 
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				const jsonData = await fetchOptionData();
-				setData(jsonData);
-				const fixtureTypes = getUniqueValues(jsonData, "fixture_type");
-				const regions = getUniqueValues(jsonData, "region");
+				const response = await fetchOptionData();
+				if (!response?.data) {
+					throw new Error("No data received. Please select a Promotion.");
+				} else {
+					const jsonData = response.data;
+					setData(jsonData);
+					const fixtureTypes = getUniqueValues(jsonData, "fixture_type");
+					const regions = getUniqueValues(jsonData, "region");
 
-				// Set the initial selections to the last elements of the arrays
-				const initialFixtureType = fixtureTypes[fixtureTypes.length - 1];
-				const initialRegion = regions[regions.length - 1];
+					const initialFixtureType = fixtureTypes[fixtureTypes.length - 1];
+					const initialRegion = regions[regions.length - 1];
 
-				setSelectedFixtureType(initialFixtureType);
-				setSelectedRegion(initialRegion);
+					setSelectedFixtureType(initialFixtureType);
+					setSelectedRegion(initialRegion);
+				}
 			} catch (error) {
-				setError(error.message);
+				console.error("Fetch Error:", error);
+				setError(error.toString());
 			} finally {
 				setIsLoading(false);
 			}
@@ -62,7 +47,7 @@ const RootApp = () => {
 	// Function to get unique values for fixture_type or region
 	const getUniqueValues = (jsonData, key) => {
 		const values = new Set();
-		if (jsonData && jsonData.final_skus) {
+		if (jsonData?.final_skus) {
 			Object.values(jsonData.final_skus).forEach((sku) => {
 				sku.positions.forEach((pos) => values.add(pos[key]));
 			});
@@ -72,7 +57,7 @@ const RootApp = () => {
 
 	const getRegionsForSelectedFixture = () => {
 		const regions = new Set();
-		if (data && data.final_skus) {
+		if (data?.final_skus) {
 			Object.values(data.final_skus).forEach((sku) => {
 				sku.positions.forEach((pos) => {
 					if (pos.fixture_type === selectedFixtureType) {
@@ -93,9 +78,19 @@ const RootApp = () => {
 		[data, selectedFixtureType],
 	);
 
+	const openModal = (imageUrl) => {
+		setSelectedImageUrl(imageUrl);
+		setIsModalOpen(true);
+	};
+
+	const closeModal = () => {
+		setIsModalOpen(false);
+		setSelectedImageUrl(null);
+	};
+
 	const processAndDisplayData = () => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
-			return <p>No SKU data available.</p>;
+			return <p>No SKU data available. Please select a Promotion.</p>;
 		}
 
 		let shelves = {}; // Object to hold shelves data
@@ -110,24 +105,12 @@ const RootApp = () => {
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
 				sku.positions.forEach((position) => {
-					// Debugging logs
-					// console.log("Checking position:", position);
-					// console.log(
-					// 	"Fixture Type Check:",
-					// 	position.fixture_type === selectedFixtureType,
-					// );
-					// console.log(
-					// 	"Region Check:",
-					// 	!selectedRegion || position.region === selectedRegion,
-					// );
-					// console.log("Shelf Check:", position.shelf);
 					if (
 						position.fixture_type === selectedFixtureType &&
 						(!selectedRegion || position.region === selectedRegion)
 					) {
 						if (position.shelf === "P") {
 							shelfP.push({ ...position, ...sku });
-							// console.log("Added to shelf P:", position); // Debugging log
 						} else {
 							if (!shelves[position.shelf]) {
 								shelves[position.shelf] = [];
@@ -138,11 +121,10 @@ const RootApp = () => {
 				});
 			}
 		});
-		// console.log("Shelf P data:", shelfP); // Debugging log
 
 		// Function to render shelf data
 		const renderShelf = (positions, shelfLabel) => {
-			// Step 1: Group by horizontal value
+			// Group by horizontal value
 			let groupedByHorizontal = positions.reduce((acc, item) => {
 				let horizontal = item.horizontal;
 				if (!acc[horizontal]) {
@@ -152,12 +134,12 @@ const RootApp = () => {
 				return acc;
 			}, {});
 
-			// Step 2 & 3: Sort groups by horizontal and items within by vertical
+			// Sort groups by horizontal and reverse sort items within by vertical
 			let sortedGroupKeys = Object.keys(groupedByHorizontal).sort(
 				(a, b) => a - b,
 			);
 			sortedGroupKeys.forEach((horizontal) => {
-				groupedByHorizontal[horizontal].sort((a, b) => a.vertical - b.vertical);
+				groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical); // Reverse sorting by vertical
 			});
 			// Adjust sorting for 'P' shelf if horizontal values are not numeric
 			if (shelfLabel === "P") {
@@ -179,24 +161,31 @@ const RootApp = () => {
 											className={`item position-${item.horizontal}-${item.vertical}`}
 											key={index}
 										>
-											<img
-												src={`${data.ImageURL}${item.code}.jpg`}
-												alt={`SKU ${item.code}`}
-												width={item.width * 5}
-												height={item.height * 5}
-												data-tooltip-id={item.code}
-											/>
+											<a
+												href="#"
+												onClick={() =>
+													openModal(`${data.ImageURL}${item.code}.jpg`)
+												}
+											>
+												<img
+													src={`${data.ImageURL}${item.code}.jpg`}
+													alt={`SKU ${item.code}`}
+													width={item.width * 5}
+													height={item.height * 5}
+													data-tooltip-id={item.code}
+												/>
+											</a>
 										</div>
 										<Tooltip id={item.code}>
 											<p>SKU: {item.code}</p>
-											<p>Horizontal: {item.horizontal}</p>
-											<p>Vertical: {item.vertical}</p>
-											<p>Finishing: {item.finishing}</p>
-											<p>Material: {item.material}</p>
-											<p>Product ID: {item.product_id}</p>
 											<p>Product Type: {item.product_type}</p>
+											<p>Material: {item.material}</p>
+											<p>Finishing: {item.finishing}</p>
 											<p>Width: {item.width}</p>
 											<p>Height: {item.height}</p>
+											<p>
+												Horizontal: {item.horizontal}, Vertical: {item.vertical}
+											</p>
 										</Tooltip>
 									</>
 								))}
@@ -214,7 +203,7 @@ const RootApp = () => {
 				</h2>
 				<div className="admin-fixture">
 					<div className="face-data-display">
-						<h3>Front</h3>
+						<h3>Face</h3>
 						{Object.entries(shelves).map(([shelfLabel, positions]) =>
 							renderShelf(positions, shelfLabel),
 						)}
@@ -224,35 +213,70 @@ const RootApp = () => {
 						{shelfP.length > 0 && renderShelf(shelfP, "P")}
 					</div>
 				</div>
+				<Modal
+					isOpen={isModalOpen}
+					onRequestClose={closeModal}
+					contentLabel="Image Modal"
+					shouldCloseOnEsc={true}
+					shouldCloseOnOverlayClick={true}
+					style={{
+						content: {
+							top: "50%",
+							left: "50%",
+							right: "auto",
+							bottom: "auto",
+							marginRight: "-50%",
+							transform: "translate(-50%, -50%)",
+							width: "auto",
+							maxHeight: "90%",
+							maxWidth: "80%",
+							zIndex: "1000",
+							borderRadius: "20px",
+						},
+						overlay: {
+							backgroundColor: "#0a090952",
+							position: "fixed",
+							top: "0",
+							left: "0",
+							right: "0",
+							bottom: "0",
+						},
+					}}
+				>
+					<img src={selectedImageUrl} alt="Full Size" />
+					<button onClick={closeModal}>Close</button>
+				</Modal>
 			</>
 		);
 	};
 	// Debug: Output raw data and selected values
-	console.log("Raw Data:", data);
-	// console.log("Selected Fixture Type:", selectedFixtureType);
-	// console.log("Selected Region:", selectedRegion);
+	// console.log("Raw Data:", data);
 
 	if (isLoading) {
-		return <p>Loading...</p>;
+		return <Loader />;
 	}
 
 	if (error) {
-		return <p>Error: {error}</p>;
+		return <p>{error}</p>;
 	}
 
 	if (!data) {
-		return <p>No data available.</p>;
+		return <p>No data available. Please select a Promotion</p>;
 	}
 
 	return (
 		<div className="fixture-select">
-			<h4>Select Fixture</h4>
+			<strong>Select Fixture</strong>
 			<ul className="buttons-row">
 				{[...uniqueFixtureTypes].reverse().map((type) => (
 					<li key={type}>
 						<button
 							onClick={() => setSelectedFixtureType(type)}
-							className={selectedFixtureType === type ? "activeBtn" : ""}
+							className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${
+								selectedFixtureType === type
+									? " ui-checkboxradio-checked ui-state-active"
+									: ""
+							}`}
 						>
 							{type}
 						</button>
@@ -261,13 +285,17 @@ const RootApp = () => {
 			</ul>
 			{selectedFixtureType && (
 				<>
-					<h4>Select Region</h4>
+					<strong>Select Region</strong>
 					<ul className="buttons-row">
 						{[...uniqueRegions].reverse().map((region) => (
 							<li key={region}>
 								<button
 									onClick={() => setSelectedRegion(region)}
-									className={selectedRegion === region ? "activeBtn" : ""}
+									className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${
+										selectedRegion === region
+											? " ui-checkboxradio-checked ui-state-active"
+											: ""
+									}`}
 								>
 									{region}
 								</button>

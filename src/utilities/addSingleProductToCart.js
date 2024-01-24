@@ -9,15 +9,16 @@ import { addToCart } from "../services/addToCart";
  */
 export async function addSingleProductToCart(itemDetails) {
 	// Validate the input.
-	if (!itemDetails?.ProductID || !itemDetails?.Code) {
+	if (!itemDetails?.Product_ID || !itemDetails?.SKU) {
 		throw new Error("Invalid item details provided.");
 	}
 
 	const productInfo = {
-		product_id: itemDetails.ProductID,
-		product_code: itemDetails.Code,
+		product_id: itemDetails.Product_ID,
+		product_code: itemDetails.SKU,
 		qty: 1, // Quantity is set to 1 since this is for a single product
 	};
+	console.log("productInfo", productInfo);
 
 	try {
 		const result = await addToCart([productInfo]); // Passing as an array since `addToCart` likely expects an array.

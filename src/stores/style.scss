@@ -14,11 +14,12 @@ button.addToCartBtn {
 	outline: 0;
 	cursor: pointer;
 	border: none;
-	padding: 0 15px;
-	height: 45px;
-	line-height: 45px;
-	border-radius: 7px;
-	background-color: #0070f3;
+	padding: 0 10px;
+	height: 35px;
+	line-height: 3%;
+	border-radius: 3px;
+	background-color: #008fca;
+	border-color: #0061a7;
 	color: white;
 	font-weight: 400;
 	font-size: 16px;
@@ -61,7 +62,7 @@ button.addToCartBtn {
 		display: flex;
 		gap: 1em;
 		.face-data-display {
-			flex: 2;
+			flex: 1.5;
 		}
 		.panel-data-display {
 			flex: 1;
@@ -101,7 +102,7 @@ button.addToCartBtn {
 		margin: 0 0.2em;
 
 		.item {
-			border: 1px solid #000;
+			// border: 1px solid #000;
 			margin: 0.5em auto;
 			background-size: cover;
 
@@ -121,6 +122,6 @@ button.addToCartBtn {
 		display: flex;
 		flex-direction: column;
 		padding: 0.2em;
-		border: 1px solid #ccc;
+		// border: 1px solid #ccc;
 	}
 }

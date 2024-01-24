@@ -17,7 +17,7 @@ function ItemModal({ isOpen, onClose, modalId, largeImgSrc, details }) {
 
 			await addSingleProductToCart(itemDetails);
 
-			console.log(`Item ${itemDetails.ProductID} added to cart.`);
+			console.log(`Item ${itemDetails.product_id} added to cart.`);
 		} catch (error) {
 			console.error("Error adding item to cart:", error.message);
 		}
@@ -40,7 +40,8 @@ function ItemModal({ isOpen, onClose, modalId, largeImgSrc, details }) {
 					marginRight: "-50%",
 					transform: "translate(-50%, -50%)",
 					width: "auto",
-					maxHeight: "90%",
+					maxHeight: "80%",
+					maxWidth: "70%",
 					zIndex: "1000",
 					borderRadius: "20px",
 				},

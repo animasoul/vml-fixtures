@@ -74,29 +74,27 @@ add_action('rest_api_init', function () {
 });
 
 
-function vml_fixtures_get_option($request) {
-    // Option A: Using session variables (current implementation)
-    $brand = $_SESSION['promo_wizard']['Customer'];
-    $promo = $_SESSION['promo_wizard']['PromoCode'];
+function vml_fixtures_get_option() {
+    // Check if promo_wizard key exists and is an array
+    $promoWizard = isset($_SESSION['promo_wizard']) && is_array($_SESSION['promo_wizard'])
+                   ? $_SESSION['promo_wizard']
+                   : null;
 
-    // Option B: Using URL parameters (uncomment to use)
-    // $brand = sanitize_text_field($request->get_param('brand'));
-    // $promo = sanitize_text_field($request->get_param('promo'));
+    // Extract if available
+    $brand = $promoWizard['Customer'] ?? null;
+    $storeCode = $_SESSION['Store'] ?? null;
+    
+    // Ensure that VIZMERCH_Custom class is loaded
+    if (class_exists('VIZMERCH_Custom')) {
+        $VizMerchCustom = VIZMERCH_Custom::get_instance();
+        $promo_wizard = $VizMerchCustom->get_cosmetic_promotion($brand, '');
 
-    if (!$brand || !$promo) {
-        return new WP_Error('missing_params', 'Missing brand or promo parameters', array('status' => 400));
+        return new WP_REST_Response(['data'=>$promo_wizard, 'store'=>$storeCode, 'brand'=>$brand],  200);
+    } else {
+        // Handle the case where VIZMERCH_Custom is not available
+        return new WP_Error('missing_dependency', 'VIZMERCH Custom class not found', array('status' => 500));
     }
 
-    $option_name = 'cosmetic_promo_' . $brand . '_' . $promo;
-
-    // Fetch the option value
-    $option_value = get_option($option_name);
-
-    if (false === $option_value) {
-        return new WP_Error('no_option', 'No option found for the given parameters', array('status' => 404));
-    }
-
-    // Return the option value
-    return new WP_REST_Response($option_value, 200);
+    // return new WP_REST_Response($promo_wizard, 200);
 }
 

@@ -73,140 +73,6 @@ function AddButton({
 
 /***/ }),
 
-/***/ "./src/components/FaceDataDisplay.js":
-/*!*******************************************!*\
-  !*** ./src/components/FaceDataDisplay.js ***!
-  \*******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _Shelf__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Shelf */ "./src/components/Shelf.js");
-/* harmony import */ var _AddButton__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AddButton */ "./src/components/AddButton.js");
-/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
-
-
-
-
-
-
-function FaceDataDisplay({
-  faceData,
-  context
-}) {
-  // Create a ref for the face data display div
-  const faceDisplayRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-
-  // Check if faceData is an array
-  if (!Array.isArray(faceData)) return null;
-
-  /**
-   * Handle the addition of all fixtures to cart
-   */
-  const handleAddAllFixtureClick = async () => {
-    // Use the ref to get the faceDisplayElement
-    const faceDisplayElement = faceDisplayRef.current;
-    if (faceDisplayElement) {
-      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__.gatherProductInfoAndCallAPI)(faceDisplayElement);
-    }
-    throw new Error("Unable to locate face data for addition to cart.");
-  };
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "face-data-display",
-    ref: faceDisplayRef
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Face"), faceData.map(shelfData => {
-    const [shelfKey] = Object.keys(shelfData);
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_Shelf__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      key: shelfKey,
-      shelfData: shelfData,
-      context: context
-    });
-  }), context === "store" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "footer-btn"
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_AddButton__WEBPACK_IMPORTED_MODULE_2__["default"], {
-    onClickHandler: handleAddAllFixtureClick,
-    text: "Add All Shelf items to cart"
-  })));
-}
-FaceDataDisplay.propTypes = {
-  faceData: prop_types__WEBPACK_IMPORTED_MODULE_4___default().arrayOf((prop_types__WEBPACK_IMPORTED_MODULE_4___default().object)).isRequired,
-  context: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string) // Adding context to propTypes for better type safety
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (FaceDataDisplay);
-
-/***/ }),
-
-/***/ "./src/components/FrontEndApp.js":
-/*!***************************************!*\
-  !*** ./src/components/FrontEndApp.js ***!
-  \***************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Loader */ "./src/components/Loader.js");
-/* harmony import */ var _components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/FaceDataDisplay */ "./src/components/FaceDataDisplay.js");
-/* harmony import */ var _services_dataService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/dataService */ "./src/services/dataService.js");
-/* harmony import */ var _PanelDataDisplay__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./PanelDataDisplay */ "./src/components/PanelDataDisplay.js");
-
-
-
-
-
-
-function FrontendApp({
-  context,
-  selectedPromotion
-}) {
-  const [data, setData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)({
-    panelData: [],
-    faceData: []
-  });
-  const [loading, setLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(true);
-  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    if (selectedPromotion) {
-      setLoading(true);
-      (0,_services_dataService__WEBPACK_IMPORTED_MODULE_4__["default"])("get_sorted_data", selectedPromotion, "active").then(fetchedData => {
-        setData(fetchedData);
-      }).catch(err => {
-        console.error("Error fetching sorted data:", err);
-        setError(err);
-      }).finally(() => {
-        setLoading(false);
-      });
-    }
-  }, [selectedPromotion]);
-
-  // Function to handle promotion selection
-  const handlePromotionSelect = promotionTitle => {
-    setSelectedPromotion(promotionTitle);
-  };
-  if (loading) return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_Loader__WEBPACK_IMPORTED_MODULE_2__["default"], null);
-  if (error) return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "Error loading data. Please try again later.");
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: `${context}-fixture`
-  }, data.faceData.length > 0 ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_FaceDataDisplay__WEBPACK_IMPORTED_MODULE_3__["default"], {
-    faceData: data.faceData,
-    context: context
-  }) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "No Face Data available."), data.panelData.length > 0 ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_PanelDataDisplay__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    panelData: data.panelData,
-    context: context
-  }) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, "No Panel Data available."));
-}
-/* harmony default export */ __webpack_exports__["default"] = (FrontendApp);
-
-/***/ }),
-
 /***/ "./src/components/Item.js":
 /*!********************************!*\
   !*** ./src/components/Item.js ***!
@@ -235,7 +101,8 @@ __webpack_require__.r(__webpack_exports__);
 function Item({
   item,
   context,
-  type
+  type,
+  imageUrl
 }) {
   const [showModal, setShowModal] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   // Create a ref for the tooltip/modal. useRef() will generate a unique reference object.
@@ -252,37 +119,38 @@ function Item({
 
   // Check for valid item
   if (!item || typeof item !== "object") return null;
+
+  // console.log("item", item);
+
   const details = {
-    Description: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Description"),
-    Width: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Width"),
-    Height: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Height"),
+    SKU: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "code"),
+    Product_Type: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "product_type"),
+    Product_ID: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "product_id"),
+    Tharstern_id: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "tharstern_id"),
+    Material: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "material"),
     TharsternCode: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "TharsternCode"),
-    ProductID: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "ProductID"),
-    Category: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Category"),
-    Code: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Code"),
-    StockQty: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "StockQty"),
-    Horizontal: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Horizontal"),
-    Vertical: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Vertical")
+    Finishing: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "finishing"),
+    Width: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "width"),
+    Height: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "height"),
+    Horizontal: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "horizontal"),
+    Vertical: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "vertical")
   };
-  const tooltipId = `my-tooltip-html-prop-${details.TharsternCode}`;
-  const position = `${details.Horizontal}-${details.Vertical}`;
-  let halfWidth = details.Width / (type === "panel" ? 2 : 1.4);
-  let halfHeight = details.Height / (type === "panel" ? 2 : 1.4);
-  const backgroundImage = (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "URL1");
   const itemStyle = {
-    cursor: "pointer",
-    width: `${halfWidth}em`,
-    height: `${halfHeight}em`,
-    backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none"
+    cursor: "pointer"
   };
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: `item position-${position}`,
+    className: `item position-${details.Horizontal}-${details.Vertical}`,
     "data-tooltip-id": uniqId,
-    "data-product-id": details.ProductID,
-    "data-product-code": details.Code,
+    "data-product-id": details.Product_ID,
+    "data-product-code": details.SKU,
     onClick: handleItemClick,
     style: itemStyle
-  }, type === "panel" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
+    src: imageUrl,
+    alt: `SKU ${details.SKU}`,
+    width: details.Width * 5,
+    height: details.Height * 5
+  }), type === "panel" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
     className: "smallp"
   }, details.Description), context === "admin" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react_tooltip__WEBPACK_IMPORTED_MODULE_1__.Tooltip, {
     id: uniqId
@@ -294,7 +162,7 @@ function Item({
     className: "smallp"
   }, details.Category, ", V:", details.Vertical, ", H:", details.Horizontal)), context === "store" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_ItemModal__WEBPACK_IMPORTED_MODULE_3__["default"], {
     modalId: uniqId,
-    largeImgSrc: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "URL1"),
+    largeImgSrc: imageUrl,
     details: details,
     isOpen: showModal,
     onClose: () => setShowModal(false)
@@ -315,63 +183,11 @@ Item.propTypes = {
     URL1: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string).isRequired
   }).isRequired,
   context: prop_types__WEBPACK_IMPORTED_MODULE_4___default().oneOf(["admin", "store"]).isRequired,
-  type: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string) // Specify possible values if they're known
+  type: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string),
+  // Specify possible values if they're known
+  imageUrl: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string)
 };
-
 /* harmony default export */ __webpack_exports__["default"] = (Item);
-
-/***/ }),
-
-/***/ "./src/components/ItemGroup.js":
-/*!*************************************!*\
-  !*** ./src/components/ItemGroup.js ***!
-  \*************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _Item__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Item */ "./src/components/Item.js");
-/* harmony import */ var _utilities_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utilities/utilities */ "./src/utilities/utilities.js");
-
-// ItemGroup Component
-// Represents a group of items. Assigns position classes based on item properties.
-
-
-
-
-function ItemGroup({
-  items,
-  context,
-  type
-}) {
-  // Validate items prop
-  if (!items) return null;
-  const itemsArray = Array.isArray(items) ? items : [items];
-
-  // Check if any item in the itemsArray has a horizontal value of 8
-  const hasPosition8 = itemsArray.some(item => (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "Horizontal") == 8);
-  const positionClass = hasPosition8 ? " group-position-8" : "";
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: `item-group${positionClass}`
-  }, itemsArray.map(item => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_Item__WEBPACK_IMPORTED_MODULE_1__["default"], {
-    item: item,
-    key: item.ProductID || item.someOtherUniqueId,
-    context: context,
-    type: type
-  })));
-}
-ItemGroup.propTypes = {
-  items: prop_types__WEBPACK_IMPORTED_MODULE_3___default().oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_3___default().arrayOf((prop_types__WEBPACK_IMPORTED_MODULE_3___default().object)), (prop_types__WEBPACK_IMPORTED_MODULE_3___default().object)]).isRequired,
-  context: (prop_types__WEBPACK_IMPORTED_MODULE_3___default().string),
-  // Make sure to define what possible values 'context' can have, if known
-  type: (prop_types__WEBPACK_IMPORTED_MODULE_3___default().string) // Same goes for 'type'
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (ItemGroup);
 
 /***/ }),
 
@@ -414,7 +230,7 @@ function ItemModal({
         throw new Error("Item details not provided.");
       }
       await (0,_utilities_addSingleProductToCart__WEBPACK_IMPORTED_MODULE_3__.addSingleProductToCart)(itemDetails);
-      console.log(`Item ${itemDetails.ProductID} added to cart.`);
+      console.log(`Item ${itemDetails.product_id} added to cart.`);
     } catch (error) {
       console.error("Error adding item to cart:", error.message);
     }
@@ -435,7 +251,8 @@ function ItemModal({
         marginRight: "-50%",
         transform: "translate(-50%, -50%)",
         width: "auto",
-        maxHeight: "90%",
+        maxHeight: "80%",
+        maxWidth: "70%",
         zIndex: "1000",
         borderRadius: "20px"
       },
@@ -515,263 +332,6 @@ function Loader() {
 
 /***/ }),
 
-/***/ "./src/components/PanelDataDisplay.js":
-/*!********************************************!*\
-  !*** ./src/components/PanelDataDisplay.js ***!
-  \********************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _ItemGroup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ItemGroup */ "./src/components/ItemGroup.js");
-/* harmony import */ var _AddButton__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AddButton */ "./src/components/AddButton.js");
-/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
-
-
-
-
-
-
-function PanelDataDisplay({
-  panelData,
-  context
-}) {
-  // Create a ref for the panel data display div
-  const panelDisplayRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-
-  // Check if panelData is an array
-  if (!Array.isArray(panelData)) return null;
-
-  /**
-   * Handle the addition of all fixtures to cart
-   */
-  const handleAddAllFixtureClick = async () => {
-    // Use the ref to get the panelDisplayElement
-    const panelDisplayElement = panelDisplayRef.current;
-    if (panelDisplayElement) {
-      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__.gatherProductInfoAndCallAPI)(panelDisplayElement);
-    }
-    throw new Error("Unable to locate panel data for addition to cart.");
-  };
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "panel-data-display",
-    ref: panelDisplayRef
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Panel"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_ItemGroup__WEBPACK_IMPORTED_MODULE_1__["default"], {
-    items: panelData,
-    context: context,
-    type: "panel"
-  }), context === "store" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "footer-btn"
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_AddButton__WEBPACK_IMPORTED_MODULE_2__["default"], {
-    onClickHandler: handleAddAllFixtureClick,
-    text: "Add All Panel items to cart"
-  })));
-}
-PanelDataDisplay.propTypes = {
-  panelData: prop_types__WEBPACK_IMPORTED_MODULE_4___default().arrayOf((prop_types__WEBPACK_IMPORTED_MODULE_4___default().object)).isRequired,
-  context: (prop_types__WEBPACK_IMPORTED_MODULE_4___default().string) // Adding context to propTypes for better type safety
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (PanelDataDisplay);
-
-/***/ }),
-
-/***/ "./src/components/PromotionsList.js":
-/*!******************************************!*\
-  !*** ./src/components/PromotionsList.js ***!
-  \******************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _services_dataService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/dataService */ "./src/services/dataService.js");
-
-
-
-function PromotionsList({
-  onPromotionSelect
-}) {
-  // Helper function to extract URL params
-  const getUrlParameter = name => {
-    name = name.replace(/[[]/, "\\[").replace(/[\]]/, "\\]");
-    const regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-    const results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-  };
-
-  // Initial setup for selected promotion either from URL or local storage
-  const testPromotion = getUrlParameter("test");
-  const initialSelectedPromotion = testPromotion || localStorage.getItem("lastSelectedPromotion");
-
-  // State setup
-  const [promotions, setPromotions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)([]);
-  const [selectedPromotion, setSelectedPromotion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(initialSelectedPromotion);
-
-  // Effect for fetching and caching promotions
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
-    if (!testPromotion) {
-      const cachedPromotions = localStorage.getItem("cachedPromotions");
-      const parsedPromotions = cachedPromotions && JSON.parse(cachedPromotions);
-      const isCacheValid = cacheTimestamp => {
-        const now = new Date();
-        const minutesPassed = (now - new Date(cacheTimestamp)) / (1000 * 60);
-        return minutesPassed < 60; // Cache is valid if less than 60 minutes have passed
-      };
-
-      if (parsedPromotions && isCacheValid(parsedPromotions.timestamp)) {
-        setPromotions(parsedPromotions.data);
-        if (parsedPromotions.data.length > 0 && !selectedPromotion) {
-          const defaultSelection = parsedPromotions.data[0].ProjectTitle;
-          setSelectedPromotion(defaultSelection);
-          onPromotionSelect(defaultSelection);
-          localStorage.setItem("lastSelectedPromotion", defaultSelection);
-        }
-      } else {
-        (0,_services_dataService__WEBPACK_IMPORTED_MODULE_2__["default"])("vizmerch_list_promotions", null, "active", "true").then(fetchedData => {
-          const reversedData = [...fetchedData].reverse();
-          const dataToCache = {
-            data: reversedData,
-            timestamp: new Date().toISOString()
-          };
-          localStorage.setItem("cachedPromotions", JSON.stringify(dataToCache));
-          setPromotions(reversedData);
-          if (reversedData.length > 0 && !selectedPromotion) {
-            const defaultSelection = reversedData[0].ProjectTitle;
-            setSelectedPromotion(defaultSelection);
-            onPromotionSelect(defaultSelection);
-            localStorage.setItem("lastSelectedPromotion", defaultSelection);
-          }
-        }).catch(err => {
-          console.error("Error fetching promotions:", err);
-        });
-      }
-    } else {
-      // If we have a test promotion, we don't need to fetch or cache
-      onPromotionSelect(testPromotion);
-      localStorage.setItem("lastSelectedPromotion", testPromotion);
-    }
-  }, [testPromotion, onPromotionSelect]);
-
-  // Handle promotion selection
-  const handlePromotionSelection = promotionTitle => {
-    setSelectedPromotion(promotionTitle);
-    onPromotionSelect(promotionTitle);
-    localStorage.setItem("lastSelectedPromotion", promotionTitle);
-  };
-
-  // If there's a test promotion in the URL, display the header and don't show the buttons
-  if (testPromotion) {
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Test: ", selectedPromotion);
-  }
-
-  // If we only have one or no promotions, there's no need to display the selection
-  if (promotions.length <= 1) {
-    return null;
-  }
-
-  // Render the buttons for promotion selection
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Choose a promotion (all are currently active)"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "buttons-row"
-  }, promotions.map(promotion => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
-    key: promotion.ProjectID,
-    "data-projectid": promotion.ProjectID,
-    className: selectedPromotion === promotion.ProjectTitle ? "activeBtn" : "",
-    onClick: () => handlePromotionSelection(promotion.ProjectTitle)
-  }, promotion.ProjectTitle))));
-}
-/* harmony default export */ __webpack_exports__["default"] = (PromotionsList);
-
-/***/ }),
-
-/***/ "./src/components/Shelf.js":
-/*!*********************************!*\
-  !*** ./src/components/Shelf.js ***!
-  \*********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _AddButton__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AddButton */ "./src/components/AddButton.js");
-/* harmony import */ var _utilities_utilities__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utilities/utilities */ "./src/utilities/utilities.js");
-/* harmony import */ var _components_ItemGroup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/ItemGroup */ "./src/components/ItemGroup.js");
-/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
-
-// Shelf Component
-// Represents a shelf in a store with items and provides an option to add all items to the cart.
-
-
-
-
-
-
-
-function Shelf({
-  shelfData,
-  context
-}) {
-  const shelfRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-
-  // Check for valid shelfData
-  if (!shelfData || typeof shelfData !== "object" || !Object.keys(shelfData).length) {
-    return null;
-  }
-  const handleAddAllShelfItems = async () => {
-    try {
-      const shelfElement = shelfRef.current;
-      if (shelfElement) {
-        await (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__.gatherProductInfoAndCallAPI)(shelfElement);
-      } else {
-        throw new Error(`Unable to locate items for shelf ${shelfKey} to add to cart.`);
-      }
-    } catch (error) {
-      console.error("Error in handleAddAllShelfItems:", error);
-      // Handle or show error message as required
-    }
-  };
-
-  const shelfKey = Object.keys(shelfData)?.[0];
-  const horizontalData = shelfData[shelfKey];
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: `face-shelf face-shelf-${(0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.extractShelfNumber)(shelfKey)}`
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "shelf-title common-container"
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, shelfKey), context === "store" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_AddButton__WEBPACK_IMPORTED_MODULE_1__["default"], {
-    onClickHandler: handleAddAllShelfItems,
-    text: `Add All ${shelfKey} items to cart`
-  })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: `shelf shelf-${(0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.extractShelfNumber)(shelfKey)}`,
-    ref: shelfRef
-  }, horizontalData.map((data, horizontalIndex) => {
-    const horizontalKey = Object.keys(data)?.[0];
-    const items = data[horizontalKey];
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ItemGroup__WEBPACK_IMPORTED_MODULE_3__["default"], {
-      items: items,
-      key: data.someUniqueId || `${horizontalKey}-${horizontalIndex}`,
-      context: context,
-      type: "shelf"
-    });
-  })));
-}
-Shelf.propTypes = {
-  shelfData: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().object).isRequired,
-  context: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string).isRequired
-};
-/* harmony default export */ __webpack_exports__["default"] = (Shelf);
-
-/***/ }),
-
 /***/ "./src/services/addToCart.js":
 /*!***********************************!*\
   !*** ./src/services/addToCart.js ***!
@@ -846,61 +406,42 @@ async function addToCart(productInfoArray) {
 
 /***/ }),
 
-/***/ "./src/services/dataService.js":
-/*!*************************************!*\
-  !*** ./src/services/dataService.js ***!
-  \*************************************/
+/***/ "./src/services/getOptionService.js":
+/*!******************************************!*\
+  !*** ./src/services/getOptionService.js ***!
+  \******************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   fetchOptionData: function() { return /* binding */ fetchOptionData; }
+/* harmony export */ });
+// getOptionService.js
+
 /**
- * Fetches data from the server with specified action and optional parameters.
- *
- * @param {Object} params - The parameters object.
- * @param {string} params.action - The action parameter to be sent to the server.
- * @param {?string} [params.promotion=null] - Optional. The promotion identifier.
- * @param {?string} [params.filter=null] - Optional. The filter criteria.
- * @param {string} [params.return_json='false'] - Determines if the server will return JSON or another format.
- * @returns {Promise<Object>} A promise that resolves with the JSON response from the server.
- * @throws {Error} Throws an error if the fetch operation fails or if the response can't be parsed as JSON.
+ * Fetch option data from the custom WordPress REST API.
+ * @param {string} brand - The brand parameter for the API.
+ * @param {string} promo - The promo parameter for the API.
+ * @returns {Promise<any>} A promise that resolves to the fetched data.
  */
-async function fetchDataFromServer(action, promotion = null, filter = null, return_json = "false") {
+const fetchOptionData = async (brand, promo) => {
   try {
-    const params = new URLSearchParams({
-      action: action
-    });
+    // const apiUrl = `/wp-json/vml-fixtures/v1/get-option/?brand=${encodeURIComponent(
+    // 	brand,
+    // )}&promo=${encodeURIComponent(promo)}`;
 
-    // If the filter is provided and is not null, append it to the params
-    if (filter !== null) {
-      params.append("filter", filter);
-    }
-    if (promotion !== null) {
-      params.append("promotion", promotion);
-    }
-    if (return_json !== null) {
-      params.append("json", return_json);
-    }
-    const response = await fetch("/wp-admin/admin-ajax.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: params
-    });
+    const apiUrl = `/wp-json/vml-fixtures/v1/get-option/`;
+    const response = await fetch(apiUrl);
     if (!response.ok) {
-      throw new Error(`Failed to fetch data. Status code: ${response.status}`);
+      throw new Error(`API request failed with status ${response.status}`);
     }
-    return response.json();
-  } catch (error) {
-    // Logging the error for debugging (optional)
-    console.error("Error occurred while fetching data:", error.message);
-
-    // Rethrow the error to be handled by calling function
-    throw error;
+    return await response.json();
+  } catch (err) {
+    console.error("Error fetching option data:", err);
+    throw err;
   }
-}
-/* harmony default export */ __webpack_exports__["default"] = (fetchDataFromServer);
+};
 
 /***/ }),
 
@@ -914,27 +455,229 @@ async function fetchDataFromServer(action, promotion = null, filter = null, retu
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _components_FrontEndApp__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/FrontEndApp */ "./src/components/FrontEndApp.js");
-/* harmony import */ var _components_PromotionsList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/PromotionsList */ "./src/components/PromotionsList.js");
+/* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/Loader */ "./src/components/Loader.js");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _services_getOptionService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/getOptionService */ "./src/services/getOptionService.js");
+/* harmony import */ var _components_Item__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/Item */ "./src/components/Item.js");
+/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
+/* harmony import */ var _components_AddButton__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/AddButton */ "./src/components/AddButton.js");
+
+// Desc: Root component for admin app
 
 
 
 
-function StoreApp() {
-  const [selectedPromotion, setSelectedPromotion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
+
+
+const RootApp = () => {
+  const [data, setData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
+  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(true);
+  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
+  const [selectedFixtureType, setSelectedFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
+  const [selectedRegion, setSelectedRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
+  const shelfRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
+  // Create a ref for the face data display div
+  const faceDisplayRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
+  // Create a ref for the panel data display div
+  const panelDisplayRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
+
+  /**
+   * Handle the addition of all fixtures to cart
+   */
+  const handleAddAllPanelFixtureClick = async () => {
+    // Use the ref to get the panelDisplayElement
+    const panelDisplayElement = panelDisplayRef.current;
+    if (panelDisplayElement) {
+      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_5__.gatherProductInfoAndCallAPI)(panelDisplayElement);
+    }
+    throw new Error("Unable to locate panel data for addition to cart.");
+  };
+
+  /**
+   * Handle the addition of all fixtures to cart
+   */
+  const handleAddAllFixtureClick = async () => {
+    // Use the ref to get the faceDisplayElement
+    const faceDisplayElement = faceDisplayRef.current;
+    if (faceDisplayElement) {
+      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_5__.gatherProductInfoAndCallAPI)(faceDisplayElement);
+    }
+    throw new Error("Unable to locate face data for addition to cart.");
+  };
+  const handleAddAllShelfItems = async () => {
+    try {
+      const shelfElement = shelfRef.current;
+      if (shelfElement) {
+        await (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_5__.gatherProductInfoAndCallAPI)(shelfElement);
+      } else {
+        throw new Error(`Unable to locate items for shelf ${shelfLabel} to add to cart.`);
+      }
+    } catch (error) {
+      console.error("Error in handleAddAllShelfItems:", error);
+      // Handle or show error message as required
+    }
+  };
+
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+    async function fetchData() {
+      try {
+        const response = await (0,_services_getOptionService__WEBPACK_IMPORTED_MODULE_3__.fetchOptionData)();
+        if (!response.data) {
+          throw new Error("No data received for this store/fixture.");
+        } else {
+          const jsonData = response.data;
+          const store = response.store;
+          console.log("Store:", store);
+          // Strip letters from the store code
+          const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
+          console.log("Store Number:", storeNumber);
+          // if storeNumber is null or undefined, return error saying that a store must be selected
+          if (!storeNumber) {
+            throw new Error("A store must be selected.");
+          }
+          // Retrieve fixture_type and region using storeNumber
+
+          if (jsonData?.final_stores) {
+            const storeData = jsonData.final_stores[storeNumber];
+            const initialFixtureType = storeData.fixture_type;
+            const initialRegion = storeData.region;
+            setData(jsonData);
+            setSelectedFixtureType(initialFixtureType);
+            setSelectedRegion(initialRegion);
+          } else {
+            // Handle case where storeData is not found
+            console.error("Store data not found for store number:", storeNumber);
+            throw new Error("Store data not found.");
+          }
+        }
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        setError(error.toString());
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+  const processAndDisplayData = () => {
+    if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
+      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "No SKU data available.");
+    }
+    let shelves = {}; // Object to hold shelves data
+    let shelfP = []; // Array to hold shelf 'P' data
+
+    const sortHorizontalValues = (a, b) => {
+      const order = ["LS", "M", "RS"];
+      return order.indexOf(a) - order.indexOf(b);
+    };
+
+    // Iterate over each SKU object in final_skus
+    Object.values(data.final_skus).forEach(sku => {
+      if (sku.positions) {
+        sku.positions.forEach(position => {
+          if (position.fixture_type === selectedFixtureType && (!selectedRegion || position.region === selectedRegion)) {
+            if (position.shelf === "P") {
+              shelfP.push({
+                ...position,
+                ...sku
+              });
+            } else {
+              if (!shelves[position.shelf]) {
+                shelves[position.shelf] = [];
+              }
+              shelves[position.shelf].push({
+                ...position,
+                ...sku
+              });
+            }
+          }
+        });
+      }
+    });
+
+    // Function to render shelf data
+    const renderShelf = (positions, shelfLabel) => {
+      // Group by horizontal value
+      let groupedByHorizontal = positions.reduce((acc, item) => {
+        let horizontal = item.horizontal;
+        if (!acc[horizontal]) {
+          acc[horizontal] = [];
+        }
+        acc[horizontal].push(item);
+        return acc;
+      }, {});
+
+      // Sort groups by horizontal and reverse sort items within by vertical
+      let sortedGroupKeys = Object.keys(groupedByHorizontal).sort((a, b) => a - b);
+      sortedGroupKeys.forEach(horizontal => {
+        groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical); // Reverse sorting by vertical
+      });
+      // Adjust sorting for 'P' shelf if horizontal values are not numeric
+      if (shelfLabel === "P") {
+        sortedGroupKeys.sort(sortHorizontalValues);
+      }
+
+      // Step 4: Render
+      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+        className: `face-shelf face-shelf-${shelfLabel}`,
+        key: shelfLabel
+      }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+        className: "shelf-title common-container"
+      }, shelfLabel === "P" ? null : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Shelf ", shelfLabel), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
+        onClickHandler: handleAddAllShelfItems,
+        text: `Add All Shelf ${shelfLabel} items to cart`
+      }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+        className: `shelf shelf-${shelfLabel}`,
+        ref: shelfRef
+      }, sortedGroupKeys.map(horizontal => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+        className: "item-group",
+        key: horizontal
+      }, groupedByHorizontal[horizontal].map((item, index) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_Item__WEBPACK_IMPORTED_MODULE_4__["default"], {
+        item: item,
+        key: item.product_id,
+        context: "store",
+        type: "face",
+        imageUrl: `${data.ImageURL}${item.code}.jpg`
+      }))))));
+    };
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, selectedFixtureType, " - ", selectedRegion), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "store-fixture"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "face-data-display",
+      ref: faceDisplayRef
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(shelves).map(([shelfLabel, positions]) => renderShelf(positions, shelfLabel)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "footer-btn"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      onClickHandler: handleAddAllFixtureClick,
+      text: "Add All Shelf items to cart"
+    }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "panel-data-display",
+      ref: panelDisplayRef
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, renderShelf(shelfP, "P"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "footer-btn"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      onClickHandler: handleAddAllPanelFixtureClick,
+      text: "Add All Panel items to cart"
+    }))))));
+  };
+  // Debug: Output raw data and selected values
+  // console.log("Raw Data:", data);
+
+  if (isLoading) {
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_Loader__WEBPACK_IMPORTED_MODULE_1__["default"], null);
+  }
+  if (error) {
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, error);
+  }
+  if (!data) {
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "No data available for your store fixture.");
+  }
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "store-fixture-wrapper"
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_PromotionsList__WEBPACK_IMPORTED_MODULE_3__["default"], {
-    onPromotionSelect: setSelectedPromotion,
-    selectedPromotion: selectedPromotion
-  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_FrontEndApp__WEBPACK_IMPORTED_MODULE_2__["default"], {
-    context: "store",
-    selectedPromotion: selectedPromotion
-  }));
-}
-/* harmony default export */ __webpack_exports__["default"] = (StoreApp);
+  }, processAndDisplayData());
+};
+/* harmony default export */ __webpack_exports__["default"] = (RootApp);
 
 /***/ }),
 
@@ -961,15 +704,16 @@ __webpack_require__.r(__webpack_exports__);
  */
 async function addSingleProductToCart(itemDetails) {
   // Validate the input.
-  if (!itemDetails?.ProductID || !itemDetails?.Code) {
+  if (!itemDetails?.Product_ID || !itemDetails?.SKU) {
     throw new Error("Invalid item details provided.");
   }
   const productInfo = {
-    product_id: itemDetails.ProductID,
-    product_code: itemDetails.Code,
+    product_id: itemDetails.Product_ID,
+    product_code: itemDetails.SKU,
     qty: 1 // Quantity is set to 1 since this is for a single product
   };
 
+  console.log("productInfo", productInfo);
   try {
     const result = await (0,_services_addToCart__WEBPACK_IMPORTED_MODULE_0__.addToCart)([productInfo]); // Passing as an array since `addToCart` likely expects an array.
     return result;
@@ -1032,6 +776,7 @@ async function gatherProductInfoAndCallAPI(parentElement) {
   if (!productInfoArray.length) {
     throw new Error("No valid items found.");
   }
+  console.log("productInfoArray", productInfoArray);
   try {
     const result = await (0,_services_addToCart__WEBPACK_IMPORTED_MODULE_0__.addToCart)(productInfoArray);
     return result;

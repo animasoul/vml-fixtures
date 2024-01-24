@@ -7,7 +7,7 @@ import ItemModal from "./ItemModal";
 // Item Component
 // Represents an individual item with its details and behavior based on the context.
 
-function Item({ item, context, type }) {
+function Item({ item, context, type, imageUrl }) {
 	const [showModal, setShowModal] = useState(false);
 	// Create a ref for the tooltip/modal. useRef() will generate a unique reference object.
 	const uniqRef = useRef();
@@ -25,42 +25,41 @@ function Item({ item, context, type }) {
 	// Check for valid item
 	if (!item || typeof item !== "object") return null;
 
+	// console.log("item", item);
+
 	const details = {
-		Description: safeGet(item, "Description"),
-		Width: safeGet(item, "Width"),
-		Height: safeGet(item, "Height"),
+		SKU: safeGet(item, "code"),
+		Product_Type: safeGet(item, "product_type"),
+		Product_ID: safeGet(item, "product_id"),
+		Tharstern_id: safeGet(item, "tharstern_id"),
+		Material: safeGet(item, "material"),
 		TharsternCode: safeGet(item, "TharsternCode"),
-		ProductID: safeGet(item, "ProductID"),
-		Category: safeGet(item, "Category"),
-		Code: safeGet(item, "Code"),
-		StockQty: safeGet(item, "StockQty"),
-		Horizontal: safeGet(item, "Horizontal"),
-		Vertical: safeGet(item, "Vertical"),
+		Finishing: safeGet(item, "finishing"),
+		Width: safeGet(item, "width"),
+		Height: safeGet(item, "height"),
+		Horizontal: safeGet(item, "horizontal"),
+		Vertical: safeGet(item, "vertical"),
 	};
-
-	const tooltipId = `my-tooltip-html-prop-${details.TharsternCode}`;
-	const position = `${details.Horizontal}-${details.Vertical}`;
-	let halfWidth = details.Width / (type === "panel" ? 2 : 1.4);
-	let halfHeight = details.Height / (type === "panel" ? 2 : 1.4);
-
-	const backgroundImage = safeGet(item, "URL1");
 
 	const itemStyle = {
 		cursor: "pointer",
-		width: `${halfWidth}em`,
-		height: `${halfHeight}em`,
-		backgroundImage: backgroundImage ? `url(${backgroundImage})` : "none",
 	};
 
 	return (
 		<div
-			className={`item position-${position}`}
+			className={`item position-${details.Horizontal}-${details.Vertical}`}
 			data-tooltip-id={uniqId}
-			data-product-id={details.ProductID}
-			data-product-code={details.Code}
+			data-product-id={details.Product_ID}
+			data-product-code={details.SKU}
 			onClick={handleItemClick}
 			style={itemStyle}
 		>
+			<img
+				src={imageUrl}
+				alt={`SKU ${details.SKU}`}
+				width={details.Width * 5}
+				height={details.Height * 5}
+			/>
 			{type === "panel" && <p className="smallp">{details.Description}</p>}
 			{context === "admin" && (
 				<>
@@ -79,11 +78,10 @@ function Item({ item, context, type }) {
 					)}
 				</>
 			)}
-
 			{context === "store" && (
 				<ItemModal
 					modalId={uniqId}
-					largeImgSrc={safeGet(item, "URL1")}
+					largeImgSrc={imageUrl}
 					details={details}
 					isOpen={showModal}
 					onClose={() => setShowModal(false)}
@@ -109,6 +107,7 @@ Item.propTypes = {
 	}).isRequired,
 	context: PropTypes.oneOf(["admin", "store"]).isRequired,
 	type: PropTypes.string, // Specify possible values if they're known
+	imageUrl: PropTypes.string,
 };
 
 export default Item;
