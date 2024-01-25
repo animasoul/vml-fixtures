@@ -47,7 +47,7 @@ button.addToCartBtn:disabled {
   row-gap: 1em;
 }
 .wp-block-vml-fixtures-store button {
-  flex: 1;
+  flex: 0;
 }
 .wp-block-vml-fixtures-store button.activeBtn {
   color: #fff;

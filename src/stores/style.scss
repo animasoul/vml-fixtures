@@ -46,7 +46,7 @@ button.addToCartBtn {
 		row-gap: 1em;
 	}
 	button {
-		flex: 1;
+		flex: 0;
 		&.activeBtn {
 			color: #fff;
 			background-color: #c36;
