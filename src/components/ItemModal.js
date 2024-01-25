@@ -29,7 +29,7 @@ function ItemModal({ isOpen, onClose, modalId, largeImgSrc, details }) {
 			onRequestClose={onClose}
 			contentLabel="Item Modal"
 			id={modalId}
-			shouldCloseOnOverlayClick={false}
+			shouldCloseOnOverlayClick={true}
 			shouldCloseOnEsc={true}
 			style={{
 				content: {
@@ -55,6 +55,21 @@ function ItemModal({ isOpen, onClose, modalId, largeImgSrc, details }) {
 				},
 			}}
 		>
+			<div className="modal-buttons common-container">
+				<button
+					onClick={(e) => {
+						onClose();
+						e.stopPropagation();
+					}}
+					className="close-modal"
+				>
+					Close
+				</button>
+				<AddButton
+					onClickHandler={() => handleAddItemToCart(details)}
+					text={`Add item to cart`}
+				/>
+			</div>
 			<img
 				src={largeImgSrc}
 				alt={details["Description"] || "Item image"}

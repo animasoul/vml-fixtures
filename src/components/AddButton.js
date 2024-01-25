@@ -42,13 +42,13 @@ function AddButton({ onClickHandler, text }) {
 	};
 
 	return (
-		<div>
+		<>
 			<button onClick={handleClick} disabled={loading} className="addToCartBtn">
 				{loading ? "Adding to Cart..." : text}
 			</button>
 			{error && <p style={{ color: "red" }}>{error}</p>}
 			{success && <p style={{ color: "green" }}>Added Successfully!</p>}
-		</div>
+		</>
 	);
 }
 

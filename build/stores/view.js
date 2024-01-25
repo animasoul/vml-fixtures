@@ -55,7 +55,7 @@ function AddButton({
       setLoading(false);
     }
   };
-  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     onClick: handleClick,
     disabled: loading,
     className: "addToCartBtn"
@@ -128,7 +128,6 @@ function Item({
     Product_ID: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "product_id"),
     Tharstern_id: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "tharstern_id"),
     Material: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "material"),
-    TharsternCode: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "TharsternCode"),
     Finishing: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "finishing"),
     Width: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "width"),
     Height: (0,_utilities_utilities__WEBPACK_IMPORTED_MODULE_2__.safeGet)(item, "height"),
@@ -141,7 +140,7 @@ function Item({
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `item position-${details.Horizontal}-${details.Vertical}`,
     "data-tooltip-id": uniqId,
-    "data-product-id": details.Product_ID,
+    "data-product-id": details.Tharstern_id,
     "data-product-code": details.SKU,
     onClick: handleItemClick,
     style: itemStyle
@@ -240,7 +239,7 @@ function ItemModal({
     onRequestClose: onClose,
     contentLabel: "Item Modal",
     id: modalId,
-    shouldCloseOnOverlayClick: false,
+    shouldCloseOnOverlayClick: true,
     shouldCloseOnEsc: true,
     style: {
       content: {
@@ -265,7 +264,18 @@ function ItemModal({
         bottom: "0"
       }
     }
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "modal-buttons common-container"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+    onClick: e => {
+      onClose();
+      e.stopPropagation();
+    },
+    className: "close-modal"
+  }, "Close"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_AddButton__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    onClickHandler: () => handleAddItemToCart(details),
+    text: `Add item to cart`
+  })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
     src: largeImgSrc,
     alt: details["Description"] || "Item image",
     "data-product-id": details["ProductID"],
@@ -459,9 +469,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _services_getOptionService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/getOptionService */ "./src/services/getOptionService.js");
-/* harmony import */ var _components_Item__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/Item */ "./src/components/Item.js");
-/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
-/* harmony import */ var _components_AddButton__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../components/AddButton */ "./src/components/AddButton.js");
+/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
+/* harmony import */ var _components_AddButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/AddButton */ "./src/components/AddButton.js");
+/* harmony import */ var _StoreShelf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./StoreShelf */ "./src/stores/StoreShelf.js");
 
 // Desc: Root component for admin app
 
@@ -476,7 +486,7 @@ const RootApp = () => {
   const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
   const [selectedFixtureType, setSelectedFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
   const [selectedRegion, setSelectedRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const shelfRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
+
   // Create a ref for the face data display div
   const faceDisplayRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
   // Create a ref for the panel data display div
@@ -489,7 +499,7 @@ const RootApp = () => {
     // Use the ref to get the panelDisplayElement
     const panelDisplayElement = panelDisplayRef.current;
     if (panelDisplayElement) {
-      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_5__.gatherProductInfoAndCallAPI)(panelDisplayElement);
+      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__.gatherProductInfoAndCallAPI)(panelDisplayElement);
     }
     throw new Error("Unable to locate panel data for addition to cart.");
   };
@@ -501,24 +511,10 @@ const RootApp = () => {
     // Use the ref to get the faceDisplayElement
     const faceDisplayElement = faceDisplayRef.current;
     if (faceDisplayElement) {
-      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_5__.gatherProductInfoAndCallAPI)(faceDisplayElement);
+      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__.gatherProductInfoAndCallAPI)(faceDisplayElement);
     }
     throw new Error("Unable to locate face data for addition to cart.");
   };
-  const handleAddAllShelfItems = async () => {
-    try {
-      const shelfElement = shelfRef.current;
-      if (shelfElement) {
-        await (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_5__.gatherProductInfoAndCallAPI)(shelfElement);
-      } else {
-        throw new Error(`Unable to locate items for shelf ${shelfLabel} to add to cart.`);
-      }
-    } catch (error) {
-      console.error("Error in handleAddAllShelfItems:", error);
-      // Handle or show error message as required
-    }
-  };
-
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
     async function fetchData() {
       try {
@@ -528,10 +524,11 @@ const RootApp = () => {
         } else {
           const jsonData = response.data;
           const store = response.store;
-          console.log("Store:", store);
+          // console.log("Store:", store);
           // Strip letters from the store code
           const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
-          console.log("Store Number:", storeNumber);
+
+          // console.log("Store Number:", storeNumber);
           // if storeNumber is null or undefined, return error saying that a store must be selected
           if (!storeNumber) {
             throw new Error("A store must be selected.");
@@ -567,11 +564,6 @@ const RootApp = () => {
     let shelves = {}; // Object to hold shelves data
     let shelfP = []; // Array to hold shelf 'P' data
 
-    const sortHorizontalValues = (a, b) => {
-      const order = ["LS", "M", "RS"];
-      return order.indexOf(a) - order.indexOf(b);
-    };
-
     // Iterate over each SKU object in final_skus
     Object.values(data.final_skus).forEach(sku => {
       if (sku.positions) {
@@ -595,68 +587,31 @@ const RootApp = () => {
         });
       }
     });
-
-    // Function to render shelf data
-    const renderShelf = (positions, shelfLabel) => {
-      // Group by horizontal value
-      let groupedByHorizontal = positions.reduce((acc, item) => {
-        let horizontal = item.horizontal;
-        if (!acc[horizontal]) {
-          acc[horizontal] = [];
-        }
-        acc[horizontal].push(item);
-        return acc;
-      }, {});
-
-      // Sort groups by horizontal and reverse sort items within by vertical
-      let sortedGroupKeys = Object.keys(groupedByHorizontal).sort((a, b) => a - b);
-      sortedGroupKeys.forEach(horizontal => {
-        groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical); // Reverse sorting by vertical
-      });
-      // Adjust sorting for 'P' shelf if horizontal values are not numeric
-      if (shelfLabel === "P") {
-        sortedGroupKeys.sort(sortHorizontalValues);
-      }
-
-      // Step 4: Render
-      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-        className: `face-shelf face-shelf-${shelfLabel}`,
-        key: shelfLabel
-      }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-        className: "shelf-title common-container"
-      }, shelfLabel === "P" ? null : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Shelf ", shelfLabel), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
-        onClickHandler: handleAddAllShelfItems,
-        text: `Add All Shelf ${shelfLabel} items to cart`
-      }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-        className: `shelf shelf-${shelfLabel}`,
-        ref: shelfRef
-      }, sortedGroupKeys.map(horizontal => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-        className: "item-group",
-        key: horizontal
-      }, groupedByHorizontal[horizontal].map((item, index) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_Item__WEBPACK_IMPORTED_MODULE_4__["default"], {
-        item: item,
-        key: item.product_id,
-        context: "store",
-        type: "face",
-        imageUrl: `${data.ImageURL}${item.code}.jpg`
-      }))))));
-    };
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, selectedFixtureType, " - ", selectedRegion), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "store-fixture"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "face-data-display",
       ref: faceDisplayRef
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(shelves).map(([shelfLabel, positions]) => renderShelf(positions, shelfLabel)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      positions: positions,
+      shelfLabel: shelfLabel,
+      data: data,
+      key: shelfLabel
+    })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-btn"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_5__["default"], {
       onClickHandler: handleAddAllFixtureClick,
-      text: "Add All Shelf items to cart"
+      text: "Add All Face items to cart"
     }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "panel-data-display",
       ref: panelDisplayRef
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, renderShelf(shelfP, "P"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      positions: shelfP,
+      shelfLabel: "P",
+      data: data
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-btn"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_5__["default"], {
       onClickHandler: handleAddAllPanelFixtureClick,
       text: "Add All Panel items to cart"
     }))))));
@@ -678,6 +633,113 @@ const RootApp = () => {
   }, processAndDisplayData());
 };
 /* harmony default export */ __webpack_exports__["default"] = (RootApp);
+
+/***/ }),
+
+/***/ "./src/stores/StoreShelf.js":
+/*!**********************************!*\
+  !*** ./src/stores/StoreShelf.js ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _components_Item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../components/Item */ "./src/components/Item.js");
+/* harmony import */ var _components_AddButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/AddButton */ "./src/components/AddButton.js");
+
+
+
+
+
+
+function StoreShelf({
+  positions,
+  shelfLabel,
+  data
+}) {
+  // console.log("positions", positions);
+  const shelfRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useRef)(null);
+  const handleAddAllShelfItems = async () => {
+    try {
+      const shelfElement = shelfRef.current;
+      // console.log("shelfElement", shelfElement);
+      if (shelfElement) {
+        await (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_2__.gatherProductInfoAndCallAPI)(shelfElement);
+      } else {
+        throw new Error(`Unable to locate items for shelf ${shelfLabel} to add to cart.`);
+      }
+    } catch (error) {
+      console.error("Error in handleAddAllShelfItems:", error);
+      // Handle or show error message as required
+    }
+  };
+
+  const sortHorizontalValues = (a, b) => {
+    const order = ["LS", "M", "RS"];
+    return order.indexOf(a) - order.indexOf(b);
+  };
+  // Group by horizontal value
+  let groupedByHorizontal = positions.reduce((acc, item) => {
+    let horizontal = item.horizontal;
+    if (!acc[horizontal]) {
+      acc[horizontal] = [];
+    }
+    acc[horizontal].push(item);
+    return acc;
+  }, {});
+
+  // Sort groups by horizontal and reverse sort items within by vertical
+  let sortedGroupKeys = Object.keys(groupedByHorizontal).sort((a, b) => a - b);
+  sortedGroupKeys.forEach(horizontal => {
+    groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical); // Reverse sorting by vertical
+  });
+  // Adjust sorting for 'P' shelf if horizontal values are not numeric
+  if (shelfLabel === "P") {
+    sortedGroupKeys.sort(sortHorizontalValues);
+  }
+
+  // Step 4: Render
+  return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: `face-shelf face-shelf-${shelfLabel}`,
+    key: shelfLabel
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "shelf-title common-container"
+  }, shelfLabel === "P" ? null : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Shelf ", shelfLabel), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    onClickHandler: handleAddAllShelfItems,
+    text: `Add All Shelf ${shelfLabel} items to cart`
+  }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: `shelf shelf-${shelfLabel}`,
+    ref: shelfLabel === "P" ? null : shelfRef
+  }, sortedGroupKeys.map(horizontal => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "item-group",
+    key: horizontal
+  }, groupedByHorizontal[horizontal].map(item => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_Item__WEBPACK_IMPORTED_MODULE_3__["default"], {
+    item: item,
+    key: item.product_id,
+    context: "store",
+    type: "face",
+    imageUrl: `${data.ImageURL}${item.code}.jpg`
+  }))))));
+}
+StoreShelf.propTypes = {
+  positions: prop_types__WEBPACK_IMPORTED_MODULE_5___default().arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_5___default().shape({
+    fixture_type: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string),
+    region: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string),
+    shelf: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string)
+  })).isRequired,
+  shelfLabel: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string).isRequired,
+  data: prop_types__WEBPACK_IMPORTED_MODULE_5___default().shape({
+    ImageURL: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string)
+  }).isRequired
+};
+/* harmony default export */ __webpack_exports__["default"] = (StoreShelf);
 
 /***/ }),
 
@@ -704,11 +766,11 @@ __webpack_require__.r(__webpack_exports__);
  */
 async function addSingleProductToCart(itemDetails) {
   // Validate the input.
-  if (!itemDetails?.Product_ID || !itemDetails?.SKU) {
+  if (!itemDetails?.Tharstern_id || !itemDetails?.SKU) {
     throw new Error("Invalid item details provided.");
   }
   const productInfo = {
-    product_id: itemDetails.Product_ID,
+    product_id: itemDetails.Tharstern_id,
     product_code: itemDetails.SKU,
     qty: 1 // Quantity is set to 1 since this is for a single product
   };
@@ -808,9 +870,9 @@ __webpack_require__.r(__webpack_exports__);
  * @param {any} defaultValue - The value to return if the key doesn't exist.
  * @returns {any} - The value from the object or default value.
  */
-const safeGet = (obj, key, defaultValue = "") => {
-  var _obj$key;
-  return (_obj$key = obj?.[key]) !== null && _obj$key !== void 0 ? _obj$key : defaultValue;
+const safeGet = (obj, key, defaultValue = "Not Set") => {
+  const value = obj?.[key];
+  return value === undefined || value === "" ? defaultValue : value;
 };
 
 /**

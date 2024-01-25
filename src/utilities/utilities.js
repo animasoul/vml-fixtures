@@ -6,7 +6,10 @@
  * @param {any} defaultValue - The value to return if the key doesn't exist.
  * @returns {any} - The value from the object or default value.
  */
-const safeGet = (obj, key, defaultValue = "") => obj?.[key] ?? defaultValue;
+const safeGet = (obj, key, defaultValue = "Not Set") => {
+	const value = obj?.[key];
+	return value === undefined || value === "" ? defaultValue : value;
+};
 
 /**
  * Utility to extract the shelf number from a given string.

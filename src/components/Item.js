@@ -33,7 +33,6 @@ function Item({ item, context, type, imageUrl }) {
 		Product_ID: safeGet(item, "product_id"),
 		Tharstern_id: safeGet(item, "tharstern_id"),
 		Material: safeGet(item, "material"),
-		TharsternCode: safeGet(item, "TharsternCode"),
 		Finishing: safeGet(item, "finishing"),
 		Width: safeGet(item, "width"),
 		Height: safeGet(item, "height"),
@@ -49,7 +48,7 @@ function Item({ item, context, type, imageUrl }) {
 		<div
 			className={`item position-${details.Horizontal}-${details.Vertical}`}
 			data-tooltip-id={uniqId}
-			data-product-id={details.Product_ID}
+			data-product-id={details.Tharstern_id}
 			data-product-code={details.SKU}
 			onClick={handleItemClick}
 			style={itemStyle}

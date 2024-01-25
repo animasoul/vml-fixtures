@@ -9,12 +9,12 @@ import { addToCart } from "../services/addToCart";
  */
 export async function addSingleProductToCart(itemDetails) {
 	// Validate the input.
-	if (!itemDetails?.Product_ID || !itemDetails?.SKU) {
+	if (!itemDetails?.Tharstern_id || !itemDetails?.SKU) {
 		throw new Error("Invalid item details provided.");
 	}
 
 	const productInfo = {
-		product_id: itemDetails.Product_ID,
+		product_id: itemDetails.Tharstern_id,
 		product_code: itemDetails.SKU,
 		qty: 1, // Quantity is set to 1 since this is for a single product
 	};

@@ -2,9 +2,9 @@
 import Loader from "../components/Loader";
 import React, { useState, useEffect, useRef } from "@wordpress/element";
 import { fetchOptionData } from "../services/getOptionService";
-import Item from "../components/Item";
 import { gatherProductInfoAndCallAPI } from "../utilities/gatherAndCallAPI";
 import AddButton from "../components/AddButton";
+import StoreShelf from "./StoreShelf";
 
 const RootApp = () => {
 	const [data, setData] = useState(null);
@@ -12,7 +12,7 @@ const RootApp = () => {
 	const [error, setError] = useState(null);
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
-	const shelfRef = useRef(null);
+
 	// Create a ref for the face data display div
 	const faceDisplayRef = useRef(null);
 	// Create a ref for the panel data display div
@@ -44,22 +44,6 @@ const RootApp = () => {
 		throw new Error("Unable to locate face data for addition to cart.");
 	};
 
-	const handleAddAllShelfItems = async () => {
-		try {
-			const shelfElement = shelfRef.current;
-			if (shelfElement) {
-				await gatherProductInfoAndCallAPI(shelfElement);
-			} else {
-				throw new Error(
-					`Unable to locate items for shelf ${shelfLabel} to add to cart.`,
-				);
-			}
-		} catch (error) {
-			console.error("Error in handleAddAllShelfItems:", error);
-			// Handle or show error message as required
-		}
-	};
-
 	useEffect(() => {
 		async function fetchData() {
 			try {
@@ -69,11 +53,11 @@ const RootApp = () => {
 				} else {
 					const jsonData = response.data;
 					const store = response.store;
-					console.log("Store:", store);
+					// console.log("Store:", store);
 					// Strip letters from the store code
 					const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
 
-					console.log("Store Number:", storeNumber);
+					// console.log("Store Number:", storeNumber);
 					// if storeNumber is null or undefined, return error saying that a store must be selected
 					if (!storeNumber) {
 						throw new Error("A store must be selected.");
@@ -116,11 +100,6 @@ const RootApp = () => {
 		let shelves = {}; // Object to hold shelves data
 		let shelfP = []; // Array to hold shelf 'P' data
 
-		const sortHorizontalValues = (a, b) => {
-			const order = ["LS", "M", "RS"];
-			return order.indexOf(a) - order.indexOf(b);
-		};
-
 		// Iterate over each SKU object in final_skus
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
@@ -142,63 +121,6 @@ const RootApp = () => {
 			}
 		});
 
-		// Function to render shelf data
-		const renderShelf = (positions, shelfLabel) => {
-			// Group by horizontal value
-			let groupedByHorizontal = positions.reduce((acc, item) => {
-				let horizontal = item.horizontal;
-				if (!acc[horizontal]) {
-					acc[horizontal] = [];
-				}
-				acc[horizontal].push(item);
-				return acc;
-			}, {});
-
-			// Sort groups by horizontal and reverse sort items within by vertical
-			let sortedGroupKeys = Object.keys(groupedByHorizontal).sort(
-				(a, b) => a - b,
-			);
-			sortedGroupKeys.forEach((horizontal) => {
-				groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical); // Reverse sorting by vertical
-			});
-			// Adjust sorting for 'P' shelf if horizontal values are not numeric
-			if (shelfLabel === "P") {
-				sortedGroupKeys.sort(sortHorizontalValues);
-			}
-
-			// Step 4: Render
-			return (
-				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
-					<div className="shelf-title common-container">
-						{shelfLabel === "P" ? null : (
-							<>
-								<h3>Shelf {shelfLabel}</h3>
-								<AddButton
-									onClickHandler={handleAddAllShelfItems}
-									text={`Add All Shelf ${shelfLabel} items to cart`}
-								/>
-							</>
-						)}
-					</div>
-					<div className={`shelf shelf-${shelfLabel}`} ref={shelfRef}>
-						{sortedGroupKeys.map((horizontal) => (
-							<div className="item-group" key={horizontal}>
-								{groupedByHorizontal[horizontal].map((item, index) => (
-									<Item
-										item={item}
-										key={item.product_id}
-										context="store"
-										type="face"
-										imageUrl={`${data.ImageURL}${item.code}.jpg`}
-									/>
-								))}
-							</div>
-						))}
-					</div>
-				</div>
-			);
-		};
-
 		return (
 			<>
 				<h2>
@@ -207,13 +129,18 @@ const RootApp = () => {
 				<div className="store-fixture">
 					<div className="face-data-display" ref={faceDisplayRef}>
 						<h3>Face</h3>
-						{Object.entries(shelves).map(([shelfLabel, positions]) =>
-							renderShelf(positions, shelfLabel),
-						)}
+						{Object.entries(shelves).map(([shelfLabel, positions]) => (
+							<StoreShelf
+								positions={positions}
+								shelfLabel={shelfLabel}
+								data={data}
+								key={shelfLabel}
+							/>
+						))}
 						<div className="footer-btn">
 							<AddButton
 								onClickHandler={handleAddAllFixtureClick}
-								text="Add All Shelf items to cart"
+								text="Add All Face items to cart"
 							/>
 						</div>
 					</div>
@@ -221,7 +148,7 @@ const RootApp = () => {
 						<h3>Panel</h3>
 						{shelfP.length > 0 && (
 							<>
-								{renderShelf(shelfP, "P")}
+								<StoreShelf positions={shelfP} shelfLabel="P" data={data} />
 								<div className="footer-btn">
 									<AddButton
 										onClickHandler={handleAddAllPanelFixtureClick}
