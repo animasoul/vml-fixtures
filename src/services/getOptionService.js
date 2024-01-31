@@ -12,7 +12,13 @@ export const fetchOptionData = async (brand, promo) => {
 		// 	brand,
 		// )}&promo=${encodeURIComponent(promo)}`;
 
-		const apiUrl = `/wp-json/vml-fixtures/v1/get-option/`;
+		let apiUrl = `/wp-json/vml-fixtures/v1/get-option/`;
+
+		// Add brand and promo as query parameters if they are passed into the function
+		if (brand || promo) {
+			apiUrl += `?${new URLSearchParams({ brand, promo }).toString()}`;
+		}
+
 		const response = await fetch(apiUrl);
 
 		if (!response.ok) {

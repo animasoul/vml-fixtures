@@ -40,20 +40,17 @@ button.addToCartBtn:disabled {
 
 .wp-block-vml-fixtures-store .buttons-row {
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
   -moz-column-gap: 1em;
        column-gap: 1em;
   row-gap: 1em;
+  list-style: none;
+  margin-top: 1em;
 }
-.wp-block-vml-fixtures-store button {
-  flex: 0;
-}
-.wp-block-vml-fixtures-store button.activeBtn {
+.wp-block-vml-fixtures-store button.ui-checkboxradio-label.ui-state-active {
+  background-color: #008fca !important;
+  border-color: #0061a7 !important;
   color: #fff;
-  background-color: #c36;
-  text-decoration: none;
-  outline: 5px auto -webkit-focus-ring-color;
 }
 .wp-block-vml-fixtures-store .loading {
   width: 100%;
@@ -67,6 +64,11 @@ button.addToCartBtn:disabled {
 }
 .wp-block-vml-fixtures-store .store-fixture .panel-data-display {
   flex: 1;
+}
+.wp-block-vml-fixtures-store .new-selection {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
 }
 .wp-block-vml-fixtures-store .shelf-title {
   display: flex;

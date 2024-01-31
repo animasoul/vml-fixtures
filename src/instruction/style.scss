@@ -1,0 +1,90 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-vml-fixtures-instruct {
+	h3 {
+		color: #999;
+		border-top: 1px solid #000;
+		border-bottom: 1px solid #000;
+		line-height: 1.75em;
+		font-size: 1.75em;
+		margin: 0;
+		padding: 0;
+	}
+	.buttons-row {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 1em;
+		row-gap: 1em;
+		list-style: none;
+		margin-top: 1em;
+	}
+	button {
+		flex: 1;
+		&.ui-checkboxradio-label.ui-state-active {
+			background-color: #008fca !important;
+			border-color: #0061a7 !important;
+			color: #fff;
+		}
+	}
+	.loading {
+		width: 100%;
+	}
+	.shelf-title {
+		margin: 0.8em 0 0 0.2em;
+		flex-wrap: wrap;
+	}
+	.yellow {
+		border: 5px solid yellow;
+	}
+	.green {
+		border: 5px solid#43b24b;
+	}
+
+	.face-shelf {
+		display: flex;
+		flex: 1;
+		border-bottom: 2px dashed #000;
+		.shelf-title {
+			flex: 0.3;
+			font-size: 2em;
+		}
+	}
+	.face-shelf:last-child {
+		border-bottom: none;
+	}
+	.shelf {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		margin: 1em 0;
+	}
+	.group-position-8 {
+		flex-basis: 100%;
+	}
+	.item-group {
+		margin: 0 0.2em;
+
+		.item {
+			margin: 0.5em auto;
+			background-size: cover;
+			text-align: center;
+
+			.smallp {
+				font-size: 0.8em;
+				margin: 0;
+				line-height: 0.8em;
+			}
+		}
+	}
+	.panel-data-display .item-group {
+		display: flex;
+		flex-direction: column;
+		padding: 0.2em;
+	}
+}

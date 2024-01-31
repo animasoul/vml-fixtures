@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "vml-fixtures/instruct",
+  "version": "0.3.0",
+  "title": "VM Logistics Fixtures for Instruction Sheet",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "VM Logistics Fixtures Instruction Sheet Block",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "vml-fixtures-instruct",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js"
+}

@@ -1,0 +1,8 @@
+.ekit-template-content-header,
+.ekit-template-content-footer,
+.page-header {
+	display: none !important;
+}
+body {
+	background-color: #fff !important;
+}

@@ -1,17 +1,28 @@
-// Desc: Root component for admin app
+// Desc: Root component for store app
 import Loader from "../components/Loader";
-import React, { useState, useEffect, useRef } from "@wordpress/element";
+import React, {
+	useState,
+	useEffect,
+	useRef,
+	useMemo,
+} from "@wordpress/element";
 import { fetchOptionData } from "../services/getOptionService";
 import { gatherProductInfoAndCallAPI } from "../utilities/gatherAndCallAPI";
 import AddButton from "../components/AddButton";
 import StoreShelf from "./StoreShelf";
 
-const RootApp = () => {
+const StoreApp = () => {
 	const [data, setData] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
+
+	const [isDivVisible, setIsDivVisible] = useState(false);
+
+	const toggleDiv = () => {
+		setIsDivVisible(!isDivVisible);
+	};
 
 	// Create a ref for the face data display div
 	const faceDisplayRef = useRef(null);
@@ -53,7 +64,9 @@ const RootApp = () => {
 				} else {
 					const jsonData = response.data;
 					const store = response.store;
-					// console.log("Store:", store);
+					const brand = response.brand;
+					console.log("Store:", store);
+					console.log("Brand:", brand);
 					// Strip letters from the store code
 					const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
 
@@ -91,6 +104,40 @@ const RootApp = () => {
 
 		fetchData();
 	}, []);
+
+	// Function to get unique values for fixture_type or region
+	const getUniqueValues = (jsonData, key) => {
+		const values = new Set();
+		if (jsonData?.final_skus) {
+			Object.values(jsonData.final_skus).forEach((sku) => {
+				sku.positions.forEach((pos) => values.add(pos[key]));
+			});
+		}
+		return Array.from(values).sort();
+	};
+
+	const getRegionsForSelectedFixture = () => {
+		const regions = new Set();
+		if (data?.final_skus) {
+			Object.values(data.final_skus).forEach((sku) => {
+				sku.positions.forEach((pos) => {
+					if (pos.fixture_type === selectedFixtureType) {
+						regions.add(pos.region);
+					}
+				});
+			});
+		}
+		return Array.from(regions).sort();
+	};
+
+	const uniqueFixtureTypes = useMemo(
+		() => getUniqueValues(data, "fixture_type"),
+		[data],
+	);
+	const uniqueRegions = useMemo(
+		() => getRegionsForSelectedFixture(),
+		[data, selectedFixtureType],
+	);
 
 	const processAndDisplayData = () => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
@@ -177,7 +224,65 @@ const RootApp = () => {
 		return <p>No data available for your store fixture.</p>;
 	}
 
-	return <div className="store-fixture-wrapper">{processAndDisplayData()}</div>;
+	return (
+		<div style={{ position: "relative" }}>
+			<button
+				style={{ position: "absolute", top: "-10px", right: "0" }}
+				onClick={toggleDiv}
+			>
+				{isDivVisible ? "↑" : "↓"} Change Fixture/Region
+			</button>
+			<div className={`store-fixture-wrapper`}>
+				{isDivVisible && (
+					<div className="fixture-select">
+						<strong>Select Fixture</strong>
+						<ul className="buttons-row">
+							{[...uniqueFixtureTypes].reverse().map((type) => (
+								<li key={type}>
+									<button
+										onClick={() => setSelectedFixtureType(type)}
+										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${
+											selectedFixtureType === type
+												? " ui-checkboxradio-checked ui-state-active"
+												: ""
+										}`}
+									>
+										{type}
+									</button>
+								</li>
+							))}
+						</ul>
+						{selectedFixtureType && (
+							<>
+								<strong>Select Region</strong>
+								<ul className="buttons-row">
+									{[...uniqueRegions].reverse().map((region) => (
+										<li key={region}>
+											<button
+												onClick={() => setSelectedRegion(region)}
+												className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${
+													selectedRegion === region
+														? " ui-checkboxradio-checked ui-state-active"
+														: ""
+												}`}
+											>
+												{region}
+											</button>
+										</li>
+									))}
+								</ul>
+								<div className="new-selection">
+									<h4>Do you want to make the new selection permanent?</h4>
+									<button>Make Permanent</button>
+								</div>
+							</>
+						)}
+					</div>
+				)}
+				{processAndDisplayData()}
+			</div>
+		</div>
+	);
 };
 
-export default RootApp;
+export default StoreApp;

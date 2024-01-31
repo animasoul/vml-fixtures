@@ -441,7 +441,15 @@ const fetchOptionData = async (brand, promo) => {
     // 	brand,
     // )}&promo=${encodeURIComponent(promo)}`;
 
-    const apiUrl = `/wp-json/vml-fixtures/v1/get-option/`;
+    let apiUrl = `/wp-json/vml-fixtures/v1/get-option/`;
+
+    // Add brand and promo as query parameters if they are passed into the function
+    if (brand || promo) {
+      apiUrl += `?${new URLSearchParams({
+        brand,
+        promo
+      }).toString()}`;
+    }
     const response = await fetch(apiUrl);
     if (!response.ok) {
       throw new Error(`API request failed with status ${response.status}`);
@@ -473,19 +481,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_AddButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/AddButton */ "./src/components/AddButton.js");
 /* harmony import */ var _StoreShelf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./StoreShelf */ "./src/stores/StoreShelf.js");
 
-// Desc: Root component for admin app
+// Desc: Root component for store app
 
 
 
 
 
 
-const RootApp = () => {
+const StoreApp = () => {
   const [data, setData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
   const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(true);
   const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
   const [selectedFixtureType, setSelectedFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
   const [selectedRegion, setSelectedRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
+  const [isDivVisible, setIsDivVisible] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
+  const toggleDiv = () => {
+    setIsDivVisible(!isDivVisible);
+  };
 
   // Create a ref for the face data display div
   const faceDisplayRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
@@ -524,7 +536,9 @@ const RootApp = () => {
         } else {
           const jsonData = response.data;
           const store = response.store;
-          // console.log("Store:", store);
+          const brand = response.brand;
+          console.log("Store:", store);
+          console.log("Brand:", brand);
           // Strip letters from the store code
           const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
 
@@ -557,6 +571,32 @@ const RootApp = () => {
     }
     fetchData();
   }, []);
+
+  // Function to get unique values for fixture_type or region
+  const getUniqueValues = (jsonData, key) => {
+    const values = new Set();
+    if (jsonData?.final_skus) {
+      Object.values(jsonData.final_skus).forEach(sku => {
+        sku.positions.forEach(pos => values.add(pos[key]));
+      });
+    }
+    return Array.from(values).sort();
+  };
+  const getRegionsForSelectedFixture = () => {
+    const regions = new Set();
+    if (data?.final_skus) {
+      Object.values(data.final_skus).forEach(sku => {
+        sku.positions.forEach(pos => {
+          if (pos.fixture_type === selectedFixtureType) {
+            regions.add(pos.region);
+          }
+        });
+      });
+    }
+    return Array.from(regions).sort();
+  };
+  const uniqueFixtureTypes = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useMemo)(() => getUniqueValues(data, "fixture_type"), [data]);
+  const uniqueRegions = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useMemo)(() => getRegionsForSelectedFixture(), [data, selectedFixtureType]);
   const processAndDisplayData = () => {
     if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
       return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "No SKU data available.");
@@ -629,10 +669,39 @@ const RootApp = () => {
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "No data available for your store fixture.");
   }
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "store-fixture-wrapper"
-  }, processAndDisplayData());
+    style: {
+      position: "relative"
+    }
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+    style: {
+      position: "absolute",
+      top: "-10px",
+      right: "0"
+    },
+    onClick: toggleDiv
+  }, isDivVisible ? "↑" : "↓", " Change Fixture/Region"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: `store-fixture-wrapper`
+  }, isDivVisible && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "fixture-select"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, "Select Fixture"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", {
+    className: "buttons-row"
+  }, [...uniqueFixtureTypes].reverse().map(type => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", {
+    key: type
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+    onClick: () => setSelectedFixtureType(type),
+    className: `ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${selectedFixtureType === type ? " ui-checkboxradio-checked ui-state-active" : ""}`
+  }, type)))), selectedFixtureType && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, "Select Region"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", {
+    className: "buttons-row"
+  }, [...uniqueRegions].reverse().map(region => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", {
+    key: region
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+    onClick: () => setSelectedRegion(region),
+    className: `ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${selectedRegion === region ? " ui-checkboxradio-checked ui-state-active" : ""}`
+  }, region)))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "new-selection"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h4", null, "Do you want to make the new selection permanent?"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", null, "Make Permanent")))), processAndDisplayData()));
 };
-/* harmony default export */ __webpack_exports__["default"] = (RootApp);
+/* harmony default export */ __webpack_exports__["default"] = (StoreApp);
 
 /***/ }),
 

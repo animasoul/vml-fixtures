@@ -24,6 +24,7 @@
 function create_block_vml_fixtures_block_init() {
 	register_block_type( __DIR__ . '/build/stores' );
 	register_block_type( __DIR__ . '/build/admin' );
+    register_block_type( __DIR__ . '/build/instruction' );
 }
 add_action( 'init', 'create_block_vml_fixtures_block_init' );
 
@@ -74,20 +75,16 @@ add_action('rest_api_init', function () {
 });
 
 
-function vml_fixtures_get_option() {
-    // Check if promo_wizard key exists and is an array
-    $promoWizard = isset($_SESSION['promo_wizard']) && is_array($_SESSION['promo_wizard'])
-                   ? $_SESSION['promo_wizard']
-                   : null;
-
-    // Extract if available
-    $brand = $promoWizard['Customer'] ?? null;
+function vml_fixtures_get_option(WP_REST_Request $request) {
+    // Extract the brand parameter from the request
+    $brand = $request->get_param('brand') ?? $_SESSION['Customer'] ?? null;
+    $promo = $request->get_param('promo') ?? '';
     $storeCode = $_SESSION['Store'] ?? null;
     
     // Ensure that VIZMERCH_Custom class is loaded
     if (class_exists('VIZMERCH_Custom')) {
         $VizMerchCustom = VIZMERCH_Custom::get_instance();
-        $promo_wizard = $VizMerchCustom->get_cosmetic_promotion($brand, '');
+        $promo_wizard = $VizMerchCustom->get_cosmetic_promotion($brand, $promo);
 
         return new WP_REST_Response(['data'=>$promo_wizard, 'store'=>$storeCode, 'brand'=>$brand],  200);
     } else {

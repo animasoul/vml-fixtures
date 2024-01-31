@@ -40,19 +40,17 @@ button.addToCartBtn {
 .wp-block-vml-fixtures-store {
 	.buttons-row {
 		display: flex;
-		justify-content: space-between;
 		flex-wrap: wrap;
 		column-gap: 1em;
 		row-gap: 1em;
+		list-style: none;
+		margin-top: 1em;
 	}
 	button {
-		flex: 0;
-		&.activeBtn {
+		&.ui-checkboxradio-label.ui-state-active {
+			background-color: #008fca !important;
+			border-color: #0061a7 !important;
 			color: #fff;
-			background-color: #c36;
-			text-decoration: none;
-
-			outline: 5px auto -webkit-focus-ring-color;
 		}
 	}
 	.loading {
@@ -68,6 +66,11 @@ button.addToCartBtn {
 		.panel-data-display {
 			flex: 1;
 		}
+	}
+	.new-selection {
+		display: flex;
+		flex-direction: row;
+		gap: 1em;
 	}
 
 	.shelf-title {
