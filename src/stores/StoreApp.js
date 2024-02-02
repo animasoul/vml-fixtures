@@ -17,6 +17,11 @@ const StoreApp = () => {
 	const [error, setError] = useState(null);
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
+	const [selectedStore, setSelectedStore] = useState(null);
+
+	const [showButton, setShowButton] = useState(true);
+	const [message, setMessage] = useState("");
+	const [isError, setIsError] = useState(false);
 
 	const [isDivVisible, setIsDivVisible] = useState(false);
 
@@ -55,6 +60,59 @@ const StoreApp = () => {
 		throw new Error("Unable to locate face data for addition to cart.");
 	};
 
+	/**
+	 * Handle click to make permanent for fixture type and region selection
+	 */
+
+	const handleMakePermanentClick = async () => {
+		// gather all the required data for example..
+
+		const makePermanent = {
+			action: "vizmerch_cosmetic_switch_fixture",
+			brand: data.Customer,
+			promo: data.PromoCode,
+			store: selectedStore,
+			fixture: selectedFixtureType,
+			region: selectedRegion,
+		};
+
+		const formData = new URLSearchParams(makePermanent).toString();
+		const API_ENDPOINT = "/wp-admin/admin-ajax.php?";
+
+		try {
+			const response = await fetch(API_ENDPOINT, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: formData,
+			});
+			const result = await response.json();
+			if (result.error) {
+				throw new Error(result.error);
+			}
+			// Success
+			if (result.success) {
+				setShowButton(false);
+				setMessage(
+					"Request successful, New fixture/Region assigned to this store.",
+				);
+				setIsError(false);
+			} else {
+				setShowButton(true);
+				setMessage(
+					"Something went wrong and cannot make permanent, please try again.",
+				);
+				setIsError(true);
+			}
+		} catch (error) {
+			// Error
+			setMessage(error.message);
+			setIsError(true);
+			setShowButton(true); // Show the button again for retry
+		}
+	};
+
 	useEffect(() => {
 		async function fetchData() {
 			try {
@@ -64,9 +122,10 @@ const StoreApp = () => {
 				} else {
 					const jsonData = response.data;
 					const store = response.store;
+					setSelectedStore(store);
 					const brand = response.brand;
-					console.log("Store:", store);
-					console.log("Brand:", brand);
+					// console.log("Store:", store);
+					// console.log("Brand:", brand);
 					// Strip letters from the store code
 					const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
 
@@ -229,6 +288,9 @@ const StoreApp = () => {
 			<button
 				style={{ position: "absolute", top: "-10px", right: "0" }}
 				onClick={toggleDiv}
+				className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${
+					isDivVisible ? " ui-checkboxradio-checked ui-state-active" : ""
+				}`}
 			>
 				{isDivVisible ? "↑" : "↓"} Change Fixture/Region
 			</button>
@@ -273,7 +335,20 @@ const StoreApp = () => {
 								</ul>
 								<div className="new-selection">
 									<h4>Do you want to make the new selection permanent?</h4>
-									<button>Make Permanent</button>
+									{showButton && (
+										<button
+											style={{ margin: "0.5em" }}
+											className="ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
+											onClick={handleMakePermanentClick}
+										>
+											Make Permanent
+										</button>
+									)}
+									{message && (
+										<div style={{ color: isError ? "red" : "green" }}>
+											{message}
+										</div>
+									)}
 								</div>
 							</>
 						)}
