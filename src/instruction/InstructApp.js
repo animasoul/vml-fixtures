@@ -1,6 +1,6 @@
 // Desc: Root component for admin app
 import Loader from "../components/Loader";
-import React, { useState, useEffect } from "@wordpress/element";
+import React, { useState, useEffect, useMemo } from "@wordpress/element";
 import { fetchOptionData } from "../services/getOptionService";
 import "./style-index.css";
 
@@ -44,9 +44,43 @@ const InstructApp = () => {
 		fetchData();
 	}, []);
 
+	// Function to get unique values for fixture_type or region
+	const getUniqueValues = (jsonData, key) => {
+		const values = new Set();
+		if (jsonData?.final_skus) {
+			Object.values(jsonData.final_skus).forEach((sku) => {
+				sku.positions.forEach((pos) => values.add(pos[key]));
+			});
+		}
+		return Array.from(values).sort();
+	};
+
+	const getRegionsForSelectedFixture = () => {
+		const regions = new Set();
+		if (data?.final_skus) {
+			Object.values(data.final_skus).forEach((sku) => {
+				sku.positions.forEach((pos) => {
+					if (pos.fixture_type === selectedFixtureType) {
+						regions.add(pos.region);
+					}
+				});
+			});
+		}
+		return Array.from(regions).sort();
+	};
+
+	const uniqueFixtureTypes = useMemo(
+		() => getUniqueValues(data, "fixture_type"),
+		[data],
+	);
+	const uniqueRegions = useMemo(
+		() => getRegionsForSelectedFixture(),
+		[data, selectedFixtureType],
+	);
+
 	const processAndDisplayData = () => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
-			return <p>No SKU data available. Please select a Promotion.</p>;
+			return <p>No SKU data available. Please select a Fixture.</p>;
 		}
 
 		let shelves = {}; // Object to hold shelves data
@@ -120,8 +154,8 @@ const InstructApp = () => {
 										<img
 											src={`${data.ImageURL}${item.code}.jpg`}
 											alt={`SKU ${item.code}`}
-											width={item.width * 12}
-											height={item.height * 12}
+											width={item.width * 6}
+											height={item.height * 6}
 											data-tooltip-id={item.code}
 											className={color}
 										/>
@@ -169,7 +203,51 @@ const InstructApp = () => {
 		return <p>No data available. Please select a Promotion</p>;
 	}
 
-	return <div className="fixture-select">{processAndDisplayData()}</div>;
+	return (
+		<div className="fixture-select">
+			<div className="noprint">
+				<strong>Select Fixture</strong>
+				<ul className="buttons-row">
+					{[...uniqueFixtureTypes].reverse().map((type) => (
+						<li key={type}>
+							<button
+								onClick={() => setSelectedFixtureType(type)}
+								className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${
+									selectedFixtureType === type
+										? " ui-checkboxradio-checked ui-state-active"
+										: ""
+								}`}
+							>
+								{type}
+							</button>
+						</li>
+					))}
+				</ul>
+				{selectedFixtureType && (
+					<>
+						<strong>Select Region</strong>
+						<ul className="buttons-row">
+							{[...uniqueRegions].reverse().map((region) => (
+								<li key={region}>
+									<button
+										onClick={() => setSelectedRegion(region)}
+										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${
+											selectedRegion === region
+												? " ui-checkboxradio-checked ui-state-active"
+												: ""
+										}`}
+									>
+										{region}
+									</button>
+								</li>
+							))}
+						</ul>
+					</>
+				)}
+			</div>
+			{processAndDisplayData()}
+		</div>
+	);
 };
 
 export default InstructApp;

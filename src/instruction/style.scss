@@ -88,3 +88,27 @@
 		padding: 0.2em;
 	}
 }
+
+@media print {
+	.noprint,
+	.ekit-template-content-header,
+	.ekit-template-content-footer,
+	.ekit-template-content-sidebar,
+	.promotion_info,
+	header.page-header {
+		display: none;
+	}
+	body {
+		background-color: white !important;
+	}
+	body:not([class*="elementor-page-"]) .site-main {
+		margin-top: 3em;
+		max-width: 100% !important;
+	}
+	.face-data-display {
+		page-break-after: always;
+	}
+	.wp-block-vml-fixtures-instruct h3 {
+		color: #999 !important;
+	}
+}
