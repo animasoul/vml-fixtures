@@ -11,6 +11,25 @@ const InstructApp = () => {
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
 
+	const [text, setText] = useState("");
+
+	const handleChange = (event) => {
+		setText(event.target.value);
+	};
+
+	const renderTextWithLineBreaks = (text) => {
+		return text.split("\n").map((line, index) => (
+			<span key={index}>
+				{line}
+				<br />
+			</span>
+		));
+	};
+
+	const handlePrint = () => {
+		window.print();
+	};
+
 	// Get the current URL
 	const url = new URL(window.location.href);
 
@@ -154,8 +173,8 @@ const InstructApp = () => {
 										<img
 											src={`${data.ImageURL}${item.code}.jpg`}
 											alt={`SKU ${item.code}`}
-											width={item.width * 6}
-											height={item.height * 6}
+											width={item.width * 7}
+											height={item.height * 7}
 											data-tooltip-id={item.code}
 											className={color}
 										/>
@@ -170,19 +189,45 @@ const InstructApp = () => {
 
 		return (
 			<>
-				<h2>
+				<h2 className="noprint">
 					{selectedFixtureType} - {selectedRegion}
 				</h2>
 				<div className="admin-fixture">
 					<div className="face-data-display">
+						<p className="header-text">{renderTextWithLineBreaks(text)}</p>
 						<h3>Graphic Layout:</h3>
 						{Object.entries(shelves).map(([shelfLabel, positions]) =>
 							renderShelf(positions, shelfLabel),
 						)}
+						<div className="footer-instructions">
+							<p>
+								<span className="green">GREEN</span> = NEW Graphics
+							</p>{" "}
+							<p>
+								<span className="yellow">YELLOW</span>= MOVING Graphics
+							</p>
+						</div>
+						<p className="text">
+							This graphic layout shows all of the graphics on your gondola by
+							location AFTER the update is complete.
+						</p>
 					</div>
 					<div className="panel-data-display">
+						<p className="header-text">{renderTextWithLineBreaks(text)}</p>
 						<h3>Backpanel:</h3>
 						{shelfP.length > 0 && renderShelf(shelfP, "P")}
+						<div className="footer-instructions">
+							<p>
+								<span className="green">GREEN</span> = NEW Graphics
+							</p>{" "}
+							<p>
+								<span className="yellow">YELLOW</span>= MOVING Graphics
+							</p>
+						</div>
+						<p className="text">
+							This graphic layout shows all of the graphics on your gondola by
+							location AFTER the update is complete.
+						</p>
 					</div>
 				</div>
 			</>
@@ -244,6 +289,17 @@ const InstructApp = () => {
 						</ul>
 					</>
 				)}
+				<button className="noprint printButton" onClick={handlePrint}>
+					Instruction sheet to PDF
+				</button>
+				<textarea
+					value={text}
+					className="noprint textarea"
+					onChange={handleChange}
+					rows="3" // Adjust the number of rows as needed
+					cols="20" // Adjust the number of columns as needed
+					placeholder="Enter your print header text here..."
+				></textarea>
 			</div>
 			{processAndDisplayData()}
 		</div>
