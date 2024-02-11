@@ -80,13 +80,18 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
     $brand = $request->get_param('brand') ?? $_SESSION['Customer'] ?? null;
     $promo = $request->get_param('promo') ?? '';
     $storeCode = $_SESSION['Store'] ?? null;
+
+    $customer = $_SESSION['Customer']; // i.e. LUXSGH
+    // Now find that user account to get the brand image
+    $user = get_user_by('login', $customer);
+    $image = get_field('brand_logo', 'user_' . $user->ID);
     
     // Ensure that VIZMERCH_Custom class is loaded
     if (class_exists('VIZMERCH_Custom')) {
         $VizMerchCustom = VIZMERCH_Custom::get_instance();
         $promo_wizard = $VizMerchCustom->get_cosmetic_promotion($brand, $promo);
 
-        return new WP_REST_Response(['data'=>$promo_wizard, 'store'=>$storeCode, 'brand'=>$brand],  200);
+        return new WP_REST_Response(['data'=>$promo_wizard, 'store'=>$storeCode, 'brand'=>$brand, 'logo'=>$image],  200);
     } else {
         // Handle the case where VIZMERCH_Custom is not available
         return new WP_Error('missing_dependency', 'VIZMERCH Custom class not found', array('status' => 500));
@@ -94,4 +99,41 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
 
     // return new WP_REST_Response($promo_wizard, 200);
 }
+
+function register_custom_routes() {
+    register_rest_route('vml-fixtures/v1', '/upload-pdf', array(
+        'methods' => 'POST',
+        'callback' => 'handle_pdf_upload',
+        'permission_callback' => '__return_true',
+        // Removed 'args' for direct $_FILES checking
+    ));
+}
+add_action('rest_api_init', 'register_custom_routes');
+
+function handle_pdf_upload($request) {
+    // Assuming a file was uploaded via a form with the name 'file'
+    $file = $_FILES['file'];
+
+    // Specify the custom directory relative to WordPress's upload directory
+    $upload_dir = wp_upload_dir();
+    $custom_dir = $upload_dir['basedir'] . '/instruction_pdfs';
+
+    // Ensure the directory exists
+    if (!file_exists($custom_dir)) {
+        wp_mkdir_p($custom_dir);
+    }
+
+    // Construct the path where file should be saved
+    $target_file = $custom_dir . '/' . basename($file['name']);
+
+    // Move the uploaded file
+    if (move_uploaded_file($file['tmp_name'], $target_file)) {
+        // Return the URL to access the uploaded file
+        $file_url = $upload_dir['baseurl'] . '/instruction_pdfs/' . basename($file['name']);
+        return new WP_REST_Response(array('url' => $file_url), 200);
+    } else {
+        return new WP_Error('upload_failed', 'Failed to move uploaded file.', array('status' => 500));
+    }
+}
+
 

@@ -6,13 +6,17 @@
  */
 
 .wp-block-vml-fixtures-instruct {
+	.admin-fixture {
+		background-color: #fff;
+		clear: both;
+	}
 	.printButton {
 		float: right;
 	}
 	h3 {
 		color: #999;
-		border-top: 1px solid #000;
-		border-bottom: 1px solid #000;
+		border-top: 3px solid #000;
+		border-bottom: 3px solid #000;
 		line-height: 1.75em;
 		font-size: 1.75em;
 		margin: 0;
@@ -99,22 +103,81 @@
 	}
 	p.text {
 		text-align: center;
+		margin: 0 15%;
 	}
+	p.clean {
+		text-align: right;
+		margin-right: 3%;
+	}
+
 	textarea {
 		width: 60%;
 		margin: 1em auto 0 auto;
 	}
-	p.header-text {
+	.print-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		img.left-image,
+		img.right-image {
+			width: 37%;
+		}
+		img.left-image {
+			margin-left: 4%;
+		}
+		img.right-image {
+			margin-right: 4%;
+		}
+
+		p.header-text {
+			font-weight: bold;
+			text-align: center;
+			width: 350px;
+			margin: 0 auto 5px auto;
+			font-size: 1em;
+			line-height: 1.3em;
+		}
+	}
+	.react-pdf__Document {
+		margin-top: 3em;
+	}
+	.textInput {
+		width: 30%;
+	}
+	.textInput p,
+	.uploadPdf p {
 		font-weight: bold;
+		margin-top: 1em;
+	}
+	.onlyprint {
+		display: none;
+	}
+	.face-data-display,
+	.panel-data-display {
+		position: relative;
+		height: 100%;
+		padding-bottom: 150px;
+	}
+	.footer-instructions-wrapper {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		height: 150px;
+	}
+	hr {
+		border: 2px solid #000;
+	}
+	.scale {
+		float: right;
 		text-align: center;
-		width: 450px;
-		margin: 0 auto 5px auto;
-		font-size: 0.8em;
-		line-height: 1.3em;
 	}
 }
 
 @media print {
+	@page {
+		size: A4;
+		margin: 0;
+	}
 	.noprint,
 	.ekit-template-content-header,
 	.ekit-template-content-footer,
@@ -123,22 +186,30 @@
 	header.page-header {
 		display: none;
 	}
+	.onlyprint {
+		display: block !important;
+	}
 	body {
 		background-color: white !important;
 	}
 	body:not([class*="elementor-page-"]) .site-main {
 		max-width: 100% !important;
+		transform: scale(1);
 	}
-
+	.print-pdf {
+		page-break-after: always;
+	}
 	.wp-block-vml-fixtures-instruct {
 		.face-data-display {
-			margin-top: 3em;
+			padding-top: 20px;
+			page-break-inside: avoid;
 		}
 
 		.panel-data-display {
-			padding-top: 1.5em;
+			padding-top: 20px;
 			page-break-before: always;
 		}
+
 		.shelf {
 			flex-grow: inherit;
 		}
