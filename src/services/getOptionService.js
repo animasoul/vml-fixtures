@@ -6,7 +6,7 @@
  * @param {string} promo - The promo parameter for the API.
  * @returns {Promise<any>} A promise that resolves to the fetched data.
  */
-export const fetchOptionData = async (brand, promo) => {
+export const fetchOptionData = async (noPromo, brand, promo) => {
 	try {
 		// const apiUrl = `/wp-json/vml-fixtures/v1/get-option/?brand=${encodeURIComponent(
 		// 	brand,
@@ -15,8 +15,8 @@ export const fetchOptionData = async (brand, promo) => {
 		let apiUrl = `/wp-json/vml-fixtures/v1/get-option/`;
 
 		// Add brand and promo as query parameters if they are passed into the function
-		if (brand || promo) {
-			apiUrl += `?${new URLSearchParams({ brand, promo }).toString()}`;
+		if (noPromo || brand || promo) {
+			apiUrl += `?${new URLSearchParams({ noPromo, brand, promo }).toString()}`;
 		}
 
 		const response = await fetch(apiUrl);

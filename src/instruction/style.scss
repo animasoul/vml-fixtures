@@ -106,8 +106,7 @@
 		margin: 0 15%;
 	}
 	p.clean {
-		text-align: right;
-		margin-right: 3%;
+		text-align: center;
 	}
 
 	textarea {
@@ -138,11 +137,23 @@
 			line-height: 1.3em;
 		}
 	}
-	.react-pdf__Document {
-		margin-top: 3em;
-	}
+
 	.textInput {
-		width: 30%;
+		width: 50%;
+		margin-bottom: 5px;
+		.inputFields {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			label {
+				flex: 1;
+				text-align: right;
+				margin-right: 5px;
+			}
+			input {
+				flex: 2;
+			}
+		}
 	}
 	.textInput p,
 	.uploadPdf p {
@@ -155,7 +166,6 @@
 	.face-data-display,
 	.panel-data-display {
 		position: relative;
-		height: 100%;
 		padding-bottom: 150px;
 	}
 	.footer-instructions-wrapper {
@@ -171,13 +181,22 @@
 		float: right;
 		text-align: center;
 	}
+	.react-pdf__Document {
+		width: 200px;
+	}
+	.face-data-display {
+		padding-top: 20px;
+		page-break-inside: avoid;
+	}
+
+	.panel-data-display {
+		padding-top: 20px;
+		page-break-before: always;
+		page-break-inside: avoid;
+	}
 }
 
 @media print {
-	@page {
-		size: A4;
-		margin: 0;
-	}
 	.noprint,
 	.ekit-template-content-header,
 	.ekit-template-content-footer,
@@ -194,20 +213,14 @@
 	}
 	body:not([class*="elementor-page-"]) .site-main {
 		max-width: 100% !important;
-		transform: scale(1);
-	}
-	.print-pdf {
-		page-break-after: always;
 	}
 	.wp-block-vml-fixtures-instruct {
-		.face-data-display {
-			padding-top: 20px;
-			page-break-inside: avoid;
-		}
-
-		.panel-data-display {
-			padding-top: 20px;
-			page-break-before: always;
+		// .print-pdf {
+		// 	page-break-after: always;
+		// }
+		.react-pdf__Document {
+			margin-top: 3em;
+			width: 100% !important;
 		}
 
 		.shelf {
@@ -219,6 +232,10 @@
 		h3 {
 			color: #999 !important;
 			padding: 0 5%;
+		}
+		.footer-instructions-wrapper {
+			margin-top: -150px;
+			position: fixed;
 		}
 	}
 }

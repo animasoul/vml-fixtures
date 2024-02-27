@@ -77,8 +77,14 @@ add_action('rest_api_init', function () {
 
 function vml_fixtures_get_option(WP_REST_Request $request) {
     // Extract the brand parameter from the request
+    $noPromo= $request->get_param('noPromo') ?? false;
     $brand = $request->get_param('brand') ?? $_SESSION['Customer'] ?? null;
-    $promo = $request->get_param('promo') ?? '';
+    
+    if ($noPromo) {
+        $promo = '';
+    } else {
+        $promo = $request->get_param('promo') ?? $_SESSION['promo_wizard']['PromoCode'] ?? '';
+    }
     $storeCode = $_SESSION['Store'] ?? null;
 
     $customer = $_SESSION['Customer']; // i.e. LUXSGH

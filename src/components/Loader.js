@@ -9,7 +9,7 @@ function Loader() {
 	};
 	return (
 		<div className="loading">
-			Loading fixture...
+			Loading...
 			<PropagateLoader color="#008fca" cssOverride={override} />
 		</div>
 	);

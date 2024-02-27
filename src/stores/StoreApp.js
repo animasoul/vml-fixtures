@@ -116,7 +116,8 @@ const StoreApp = () => {
 	useEffect(() => {
 		async function fetchData() {
 			try {
-				const response = await fetchOptionData();
+				const noPromo = true;
+				const response = await fetchOptionData(noPromo);
 				if (!response.data) {
 					throw new Error("No data received for this store/fixture.");
 				} else {

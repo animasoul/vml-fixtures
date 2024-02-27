@@ -3,8 +3,7 @@ import Loader from "../components/Loader";
 import React, { useState, useEffect, useMemo } from "@wordpress/element";
 import { fetchOptionData } from "../services/getOptionService";
 import "./style-index.css";
-import { Document, Page, Thumbnail, pdfjs } from "react-pdf";
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+import UploadPdf from "./UploadPdf";
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
@@ -14,16 +13,49 @@ const InstructApp = () => {
 	const [selectedRegion, setSelectedRegion] = useState(null);
 	const [brandImage, setBrandImage] = useState(null);
 
+	const [hasAllALL, setHasAllALL] = useState(false);
+	const [hasAllUSCA, setHasAllUSCA] = useState(false);
+
+	useEffect(() => {
+		if (!data || !selectedFixtureType) {
+			setHasAllALL(false);
+			setHasAllUSCA(false);
+			return;
+		}
+
+		let allALL = true;
+		let allUSCA = true;
+
+		Object.values(data.final_skus).forEach((sku) => {
+			if (
+				sku.positions.some(
+					(position) => position.fixture_type === selectedFixtureType,
+				)
+			) {
+				const containsALL = sku.code.includes("-ALL-");
+				const containsUSCA = sku.code.includes("-USCA-");
+
+				if (!containsALL) allALL = false;
+				if (!containsUSCA) allUSCA = false;
+			}
+		});
+
+		setHasAllALL(allALL);
+		setHasAllUSCA(allUSCA);
+	}, [data, selectedFixtureType]);
+
 	// to scale images
-	const [scale, setScale] = useState(1); // Scale factor
+	const [scaleChange, setScaleChange] = useState(0); // Tracks cumulative scale change
 
 	const increaseSize = () => {
-		setScale(scale * 1.1);
+		setScaleChange((prevScaleChange) => prevScaleChange + 0.1);
 	};
 
 	const decreaseSize = () => {
-		setScale(scale * 0.9);
+		setScaleChange((prevScaleChange) => prevScaleChange - 0.1);
 	};
+	const scale = 1 + scaleChange;
+	const scalePercentage = Math.round((scaleChange + 1) * 100);
 
 	// States for individual input fields
 	const [fixtureType, setFixtureType] = useState("");
@@ -43,46 +75,9 @@ const InstructApp = () => {
 		setUpdateSeason(event.target.value);
 	};
 
-	const [file, setFile] = useState(null);
-	const [pdfUrl, setPdfUrl] = useState("");
-
-	const handleFileChange = (event) => {
-		setFile(event.target.files[0]);
-		console.log(event.target.files[0]);
-	};
-
-	const uploadFile = () => {
-		if (!file) {
-			return;
-		}
-
-		const formData = new FormData();
-		formData.append("file", file);
-		console.log(formData);
-
-		fetch("/wp-json/vml-fixtures/v1/upload-pdf", {
-			method: "POST",
-			body: formData,
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				setPdfUrl(data.url);
-			})
-			.catch((error) => console.error("Error:", error));
-	};
-
 	const handlePrint = () => {
 		window.print();
 	};
-
-	// Get the current URL
-	// const url = new URL(window.location.href);
-
-	// Get the parameters from the URL
-	// const brand = url.searchParams.get("brand");
-	// const promo = url.searchParams.get("promo");
-	// const initialFixtureType = url.searchParams.get("fixture");
-	// const initialRegion = url.searchParams.get("region");
 
 	useEffect(() => {
 		async function fetchData() {
@@ -104,7 +99,7 @@ const InstructApp = () => {
 					setSelectedFixtureType(initialFixtureType);
 					setSelectedRegion(initialRegion);
 					setUpdateSeason(jsonData.PromoName);
-					setExecutionWeek("Execution Week: " + jsonData.UpDate);
+					setExecutionWeek("Execution Dates: " + jsonData.UpDate);
 					setBranding("Single Branded");
 				}
 			} catch (error) {
@@ -328,8 +323,6 @@ const InstructApp = () => {
 								<strong>
 									To clean: Use a dry cloth only - No alcohol based products
 								</strong>
-								{"   "}
-								PAGE 2
 							</p>
 						</div>
 					</div>
@@ -376,8 +369,6 @@ const InstructApp = () => {
 									<strong>
 										To clean: Use a dry cloth only - No alcohol based products
 									</strong>
-									{"   "}
-									PAGE 3
 								</p>
 							</div>
 						</div>
@@ -443,7 +434,10 @@ const InstructApp = () => {
 					</>
 				)}
 				<div className="printButton">
-					<button className="noprint" onClick={handlePrint}>
+					<button
+						className="noprint ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
+						onClick={handlePrint}
+					>
 						Instruction sheet to PDF
 					</button>
 
@@ -458,86 +452,96 @@ const InstructApp = () => {
 				</div>
 				<div className="noprint textInput">
 					<p>Enter the header of the PDF information</p>
-
-					<input
-						type="text"
-						value={fixtureType}
-						onChange={(e) => setFixtureType(e.target.value)}
-						placeholder="Fixture Type"
-						className="fixtureType"
-					/>
-					<input
-						type="text"
-						value={region}
-						onChange={(e) => setRegion(e.target.value)}
-						placeholder="Region"
-					/>
-					<input
-						type="text"
-						value={updateSeason}
-						onChange={handleUpdateSeasonChange}
-						placeholder="Update Season"
-					/>
-					<input
-						type="text"
-						value={executionWeek}
-						onChange={(e) => setExecutionWeek(e.target.value)}
-						placeholder="Execution Week"
-					/>
-					<input
-						type="text"
-						value={branding}
-						onChange={(e) => setBranding(e.target.value)}
-						placeholder="Branding"
-					/>
+					{hasAllUSCA && (
+						<div className="inputFields">
+							<label htmlFor="same">This fixture has same US CA regions</label>
+							<button
+								className="ui-button ui-widget ui-corner-all ui-button-text-only"
+								id="same"
+								onClick={() => {
+									setRegion("US - CA");
+								}}
+							>
+								Combine?
+							</button>
+						</div>
+					)}
+					{hasAllALL && (
+						<div className="inputFields">
+							<label htmlFor="same">This fixture has same ALL regions</label>
+							<button
+								className="ui-button ui-widget ui-corner-all ui-button-text-only"
+								id="same"
+								onClick={() => {
+									setRegion("US - CA - QC");
+								}}
+							>
+								Combine?
+							</button>
+						</div>
+					)}
+					<div className="inputFields">
+						<label htmlFor="fixtureInput">Fixture:</label>
+						<input
+							type="text"
+							value={fixtureType}
+							onChange={(e) => setFixtureType(e.target.value)}
+							placeholder="Fixture Type"
+							className="fixtureType"
+							id="fixtureInput"
+						/>
+					</div>
+					<div className="inputFields">
+						<label htmlFor="regionInput">Region:</label>
+						<input
+							type="text"
+							value={region}
+							onChange={(e) => setRegion(e.target.value)}
+							placeholder="Region"
+							id="regionInput"
+						/>
+					</div>
+					<div className="inputFields">
+						<label htmlFor="seasonInput">Updates:</label>
+						<input
+							type="text"
+							value={updateSeason}
+							onChange={handleUpdateSeasonChange}
+							placeholder="Update Season"
+							id="seasonInput"
+						/>
+					</div>
+					<div className="inputFields">
+						<label htmlFor="weekInput">Execution Dates:</label>
+						<input
+							type="text"
+							value={executionWeek}
+							onChange={(e) => setExecutionWeek(e.target.value)}
+							placeholder="Execution Dates"
+							id="weekInput"
+						/>
+					</div>
+					<div className="inputFields">
+						<label htmlFor="brandingInput">Type:</label>
+						<input
+							type="text"
+							value={branding}
+							onChange={(e) => setBranding(e.target.value)}
+							placeholder="Branding"
+							id="brandingInput"
+						/>
+					</div>
 				</div>
 			</div>
-			<div className="uploadPdf">
-				<p className="noprint">Upload PDF of the first page</p>
-				<input
-					type="file"
-					onChange={handleFileChange}
-					accept="application/pdf"
-					className="noprint file-input"
-				/>
-				<button
-					onClick={uploadFile}
-					className="noprint ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
-				>
-					Upload PDF
-				</button>
-				{pdfUrl ? (
-					<>
-						<Document file={pdfUrl} className="print-pdf">
-							{/* <Document file="http://ga.local/wp-content/uploads/2024/02/Beauty-Blender-SEP-EC-Spring-12.8.23-UPDATE.pdf"> */}
-							<Page
-								pageNumber={1}
-								renderMode="canvas"
-								renderTextLayer={false}
-								renderAnnotationLayer={false}
-								width={1140}
-								className={"onlyprint"}
-							/>
-						</Document>
-
-						<Document file={pdfUrl}>
-							<Thumbnail
-								pageNumber={1}
-								renderMode="canvas"
-								renderTextLayer={false}
-								renderAnnotationLayer={false}
-								width={200}
-								className={"noprint"}
-							/>
-						</Document>
-					</>
-				) : (
-					<br />
-				)}
-			</div>
+			<UploadPdf />
 			<div className="noprint scale">
 				<div className="scale-wrapper">
-					<p>Enlarge/reduce image sizes to fit print</p>
+					<p>
+						Enlarge/reduce image sizes
+						<br /> to fit printer output
+						<br />
+						{scalePercentage}%
+					</p>
 					<button
 						className="noprint ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
 						onClick={decreaseSize}
