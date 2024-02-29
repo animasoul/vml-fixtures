@@ -83,7 +83,11 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
     if ($noPromo) {
         $promo = '';
     } else {
-        $promo = $request->get_param('promo') ?? $_SESSION['promo_wizard']['PromoCode'] ?? '';
+        if (isset($_SESSION['promo_wizard']['PromoCode'])) {
+            $promo = $_SESSION['promo_wizard']['PromoCode'];
+        } else {
+            return new WP_REST_Response([],  200);
+        }
     }
     $storeCode = $_SESSION['Store'] ?? null;
 

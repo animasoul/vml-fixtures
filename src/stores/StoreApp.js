@@ -133,7 +133,7 @@ const StoreApp = () => {
 					// console.log("Store Number:", storeNumber);
 					// if storeNumber is null or undefined, return error saying that a store must be selected
 					if (!storeNumber) {
-						throw new Error("A store must be selected.");
+						throw new Error("Please select a store.");
 					}
 					// Retrieve fixture_type and region using storeNumber
 
@@ -270,7 +270,7 @@ const StoreApp = () => {
 		);
 	};
 	// Debug: Output raw data and selected values
-	// console.log("Raw Data:", data);
+	console.log("Raw Data:", data);
 
 	if (isLoading) {
 		return <Loader />;

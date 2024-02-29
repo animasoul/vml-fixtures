@@ -84,7 +84,7 @@ const InstructApp = () => {
 			try {
 				const response = await fetchOptionData();
 				if (!response?.data) {
-					throw new Error("No data received. Please select a Promotion.");
+					throw new Error("Please select a Promotion.");
 				} else {
 					setBrandImage(response.logo);
 					const jsonData = response.data;
