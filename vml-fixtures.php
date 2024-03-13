@@ -78,7 +78,6 @@ add_action('rest_api_init', function () {
 function vml_fixtures_get_option(WP_REST_Request $request) {
     // Extract the brand parameter from the request
     $noPromo= $request->get_param('noPromo') ?? false;
-    $brand = $request->get_param('brand') ?? $_SESSION['Customer'] ?? null;
     
     if ($noPromo) {
         $promo = '';
@@ -99,9 +98,9 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
     // Ensure that VIZMERCH_Custom class is loaded
     if (class_exists('VIZMERCH_Custom')) {
         $VizMerchCustom = VIZMERCH_Custom::get_instance();
-        $promo_wizard = $VizMerchCustom->get_cosmetic_promotion($brand, $promo);
+        $promo_wizard = $VizMerchCustom->get_cosmetic_promotion($customer, $promo);
 
-        return new WP_REST_Response(['data'=>$promo_wizard, 'store'=>$storeCode, 'brand'=>$brand, 'logo'=>$image],  200);
+        return new WP_REST_Response(['data'=>$promo_wizard, 'store'=>$storeCode, 'brand'=>$customer, 'logo'=>$image],  200);
     } else {
         // Handle the case where VIZMERCH_Custom is not available
         return new WP_Error('missing_dependency', 'VIZMERCH Custom class not found', array('status' => 500));

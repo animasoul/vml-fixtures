@@ -45,11 +45,17 @@
 		margin: 0.2em 0;
 		flex-wrap: wrap;
 	}
-	.yellow {
+	.move {
 		border: 5px solid yellow;
 	}
-	.green {
+	.new {
 		border: 5px solid#43b24b;
+	}
+	.keep {
+		border: 5px solid transparent;
+	}
+	.delete {
+		border: 5px solid red;
 	}
 
 	.face-shelf {
@@ -187,6 +193,9 @@
 	.face-data-display {
 		padding-top: 20px;
 		page-break-inside: avoid;
+	}
+	.page-break {
+		page-break-before: always;
 	}
 
 	.panel-data-display {

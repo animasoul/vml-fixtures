@@ -20,7 +20,7 @@ const RootApp = () => {
 			try {
 				const response = await fetchOptionData();
 				if (!response?.data) {
-					throw new Error("Please select a Promotion.");
+					console.log("Please select a Promotion.");
 				} else {
 					const jsonData = response.data;
 					setData(jsonData);
@@ -164,11 +164,15 @@ const RootApp = () => {
 											<a
 												href="#"
 												onClick={() =>
-													openModal(`${data.ImageURL}${item.code}.jpg`)
+													openModal(
+														`${item.ImageURL || data.ImageURL}${item.code}.jpg`,
+													)
 												}
 											>
 												<img
-													src={`${data.ImageURL}${item.code}.jpg`}
+													src={`${item.ImageURL || data.ImageURL}${
+														item.code
+													}.jpg`}
 													alt={`SKU ${item.code}`}
 													width={item.width * 5}
 													height={item.height * 5}

@@ -84,7 +84,7 @@ const InstructApp = () => {
 			try {
 				const response = await fetchOptionData();
 				if (!response?.data) {
-					throw new Error("Please select a Promotion.");
+					console.log("Please select a Promotion.");
 				} else {
 					setBrandImage(response.logo);
 					const jsonData = response.data;
@@ -192,8 +192,10 @@ const InstructApp = () => {
 			return <p>No SKU data available. Please select a Fixture.</p>;
 		}
 
-		let shelves = {}; // Object to hold shelves data
-		let shelfP = []; // Array to hold shelf 'P' data
+		let shelves = {}; // Object to hold shelves data for non-deleted items
+		let shelvesForDeletion = {}; // Object to hold shelves data for deleted items
+		let shelfP = []; // Array to hold shelf 'P' data for non-deleted items
+		let shelfPForDeletion = []; // Array to hold shelf 'P' data for deleted items
 
 		const sortHorizontalValues = (a, b) => {
 			const order = ["LS", "M", "RS"];
@@ -204,17 +206,22 @@ const InstructApp = () => {
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
 				sku.positions.forEach((position) => {
+					// Determine the correct storage based on the `update` status at the `position` level
+					const isDeleted = position.update === "delete";
+					let targetShelves = isDeleted ? shelvesForDeletion : shelves;
+					let targetShelfP = isDeleted ? shelfPForDeletion : shelfP;
+
 					if (
 						position.fixture_type === selectedFixtureType &&
 						(!selectedRegion || position.region === selectedRegion)
 					) {
 						if (position.shelf === "P") {
-							shelfP.push({ ...position, ...sku });
+							targetShelfP.push({ ...position, ...sku });
 						} else {
-							if (!shelves[position.shelf]) {
-								shelves[position.shelf] = [];
+							if (!targetShelves[position.shelf]) {
+								targetShelves[position.shelf] = [];
 							}
-							shelves[position.shelf].push({ ...position, ...sku });
+							targetShelves[position.shelf].push({ ...position, ...sku });
 						}
 					}
 				});
@@ -244,7 +251,6 @@ const InstructApp = () => {
 			if (shelfLabel === "P") {
 				sortedGroupKeys.sort(sortHorizontalValues);
 			}
-			const color = "green";
 
 			// Step 4: Render
 			return (
@@ -261,12 +267,12 @@ const InstructApp = () => {
 										key={index}
 									>
 										<img
-											src={`${data.ImageURL}${item.code}.jpg`}
+											src={`${item.ImageURL || data.ImageURL}${item.code}.jpg`}
 											alt={`SKU ${item.code}`}
 											width={item.width * 7 * scale}
 											height={item.height * 7 * scale}
 											data-tooltip-id={item.code}
-											className={color}
+											className={item.update}
 										/>
 									</div>
 								))}
@@ -277,13 +283,16 @@ const InstructApp = () => {
 			);
 		};
 
-		return (
+		// Function to generate the layout, duplicated and adjusted for items marked for deletion
+		const generateLayout = (shelves, shelfP, titleSuffix = "") => (
 			<>
 				<h2 className="noprint">
 					{selectedFixtureType} - {selectedRegion}
 				</h2>
 				<div className="admin-fixture">
-					<div className="face-data-display">
+					<div
+						className={`face-data-display ${titleSuffix ? "page-break" : ""}`}
+					>
 						<div className="print-header">
 							<img
 								src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
@@ -301,17 +310,17 @@ const InstructApp = () => {
 							</p>
 							<img src={brandImage} alt="Brand Logo" className="right-image" />
 						</div>
-						<h3>Graphic Layout:</h3>
+						<h3>Graphic Layout: {titleSuffix}</h3>
 						{Object.entries(shelves).map(([shelfLabel, positions]) =>
 							renderShelf(positions, shelfLabel),
 						)}
 						<div className="footer-instructions-wrapper">
 							<div className="footer-instructions">
 								<p>
-									<span className="green">GREEN</span> = NEW Graphics
+									<span className="new">GREEN</span> = NEW Graphics
 								</p>{" "}
 								<p>
-									<span className="yellow">YELLOW</span>= MOVING Graphics
+									<span className="move">YELLOW</span>= MOVING Graphics
 								</p>
 							</div>
 							<p className="text">
@@ -349,15 +358,15 @@ const InstructApp = () => {
 									className="right-image"
 								/>
 							</div>
-							<h3>Backpanel:</h3>
+							<h3>Backpanel: {titleSuffix}</h3>
 							{renderShelf(shelfP, "P")}
 							<div className="footer-instructions-wrapper">
 								<div className="footer-instructions">
 									<p>
-										<span className="green">GREEN</span> = NEW Graphics
+										<span className="new">GREEN</span> = NEW Graphics
 									</p>{" "}
 									<p>
-										<span className="yellow">YELLOW</span>= MOVING Graphics
+										<span className="move">YELLOW</span>= MOVING Graphics
 									</p>
 								</div>
 								<p className="text">
@@ -374,6 +383,20 @@ const InstructApp = () => {
 						</div>
 					)}
 				</div>
+			</>
+		);
+
+		// Render both layouts: one for non-deleted items, and one for deleted items
+		return (
+			<>
+				{generateLayout(shelves, shelfP)}
+				{(Object.keys(shelvesForDeletion).length > 0 ||
+					shelfPForDeletion.length > 0) &&
+					generateLayout(
+						shelvesForDeletion,
+						shelfPForDeletion,
+						"(Deleted Items)",
+					)}
 			</>
 		);
 	};
