@@ -1,1 +1,239 @@
-.wp-block-vml-fixtures-instruct .admin-fixture{background-color:#fff;clear:both}.wp-block-vml-fixtures-instruct .printButton{float:right}.wp-block-vml-fixtures-instruct h3{border-bottom:3px solid #000;border-top:3px solid #000;color:#999;font-size:1.75em;line-height:1.75em;margin:0;padding:0}.wp-block-vml-fixtures-instruct .buttons-row{-moz-column-gap:1em;column-gap:1em;display:flex;flex-wrap:wrap;list-style:none;margin-top:1em;row-gap:1em}.wp-block-vml-fixtures-instruct button{flex:1}.wp-block-vml-fixtures-instruct button.ui-checkboxradio-label.ui-state-active{background-color:#008fca!important;border-color:#0061a7!important;color:#fff}.wp-block-vml-fixtures-instruct .loading{width:100%}.wp-block-vml-fixtures-instruct .shelf-title{flex-wrap:wrap;margin:.2em 0}.wp-block-vml-fixtures-instruct .move{border:5px solid #ff0}.wp-block-vml-fixtures-instruct .new{border:5px solid #43b24b}.wp-block-vml-fixtures-instruct .keep{border:5px solid transparent}.wp-block-vml-fixtures-instruct .delete{border:5px solid red}.wp-block-vml-fixtures-instruct .face-shelf{border-bottom:2px dashed #000;display:flex;flex:1}.wp-block-vml-fixtures-instruct .face-shelf .shelf-title{flex:.3;font-size:2em}.wp-block-vml-fixtures-instruct .face-shelf:last-child{border-bottom:none}.wp-block-vml-fixtures-instruct .shelf{align-items:center;display:flex;flex-wrap:wrap;justify-content:center;margin:0}.wp-block-vml-fixtures-instruct .group-position-8{flex-basis:100%}.wp-block-vml-fixtures-instruct .item-group{margin:0 .2em}.wp-block-vml-fixtures-instruct .item-group .item{background-size:cover;margin:.5em auto;text-align:center}.wp-block-vml-fixtures-instruct .item-group .item .smallp{font-size:.8em;line-height:.8em;margin:0}.wp-block-vml-fixtures-instruct .panel-data-display .item-group{display:flex;flex-direction:column;padding:.2em}.wp-block-vml-fixtures-instruct .footer-instructions{align-items:center;display:flex;justify-content:space-between;margin:1em 20% 0}.wp-block-vml-fixtures-instruct p.text{margin:0 15%;text-align:center}.wp-block-vml-fixtures-instruct p.clean{text-align:center}.wp-block-vml-fixtures-instruct textarea{margin:1em auto 0;width:60%}.wp-block-vml-fixtures-instruct .print-header{align-items:center;display:flex;justify-content:space-between}.wp-block-vml-fixtures-instruct .print-header img.left-image,.wp-block-vml-fixtures-instruct .print-header img.right-image{width:32%}.wp-block-vml-fixtures-instruct .print-header img.left-image{margin-left:3%}.wp-block-vml-fixtures-instruct .print-header img.right-image{margin-right:3%}.wp-block-vml-fixtures-instruct .print-header p.header-text{font-size:1em;font-weight:700;line-height:1.3em;margin:0 auto 5px;text-align:center;width:28%}.wp-block-vml-fixtures-instruct .textInput{margin-bottom:5px;width:50%}.wp-block-vml-fixtures-instruct .textInput .inputFields{align-items:center;display:flex;justify-content:space-between}.wp-block-vml-fixtures-instruct .textInput .inputFields label{flex:1;margin-right:5px;text-align:right}.wp-block-vml-fixtures-instruct .textInput .inputFields input{flex:2}.wp-block-vml-fixtures-instruct .textInput p,.wp-block-vml-fixtures-instruct .uploadPdf p{font-weight:700;margin-top:1em}.wp-block-vml-fixtures-instruct .onlyprint{display:none}.wp-block-vml-fixtures-instruct .face-data-display,.wp-block-vml-fixtures-instruct .panel-data-display{padding-bottom:150px;position:relative}.wp-block-vml-fixtures-instruct .footer-instructions-wrapper{bottom:0;height:150px;position:absolute;width:100%}.wp-block-vml-fixtures-instruct hr{border:2px solid #000}.wp-block-vml-fixtures-instruct .scale{float:right;text-align:center}.wp-block-vml-fixtures-instruct .react-pdf__Document{width:200px}.wp-block-vml-fixtures-instruct .face-data-display{padding-top:20px;page-break-inside:avoid}.wp-block-vml-fixtures-instruct .page-break{page-break-before:always}.wp-block-vml-fixtures-instruct .panel-data-display{padding-top:20px;page-break-before:always;page-break-inside:avoid}@media print{.ekit-template-content-footer,.ekit-template-content-header,.ekit-template-content-sidebar,.noprint,.promotion_info,header.page-header{display:none}.onlyprint{display:block!important}body{background-color:#fff!important}body:not([class*=elementor-page-]) .site-main{max-width:100%!important}.wp-block-vml-fixtures-instruct .react-pdf__Document{margin-top:3em;width:100%!important}.wp-block-vml-fixtures-instruct .shelf{flex-grow:inherit}.wp-block-vml-fixtures-instruct .face-shelf{margin:0 5%}.wp-block-vml-fixtures-instruct h3{color:#999!important;padding:0 5%}.wp-block-vml-fixtures-instruct .footer-instructions-wrapper{margin-top:-150px;position:fixed}}
+/*!***************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/instruction/style.scss ***!
+  \***************************************************************************************************************************************************************************************************************************************************/
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.wp-block-vml-fixtures-instruct .admin-fixture {
+  background-color: #fff;
+  clear: both;
+}
+.wp-block-vml-fixtures-instruct .printButton {
+  float: right;
+}
+.wp-block-vml-fixtures-instruct h3 {
+  color: #999;
+  border-top: 3px solid #000;
+  border-bottom: 3px solid #000;
+  line-height: 1.75em;
+  font-size: 1.75em;
+  margin: 0;
+  padding: 0;
+}
+.wp-block-vml-fixtures-instruct .buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  -moz-column-gap: 1em;
+       column-gap: 1em;
+  row-gap: 1em;
+  list-style: none;
+  margin-top: 1em;
+}
+.wp-block-vml-fixtures-instruct button {
+  flex: 1;
+}
+.wp-block-vml-fixtures-instruct button.ui-checkboxradio-label.ui-state-active {
+  background-color: #008fca !important;
+  border-color: #0061a7 !important;
+  color: #fff;
+}
+.wp-block-vml-fixtures-instruct .loading {
+  width: 100%;
+}
+.wp-block-vml-fixtures-instruct .shelf-title {
+  margin: 0.2em 0;
+  flex-wrap: wrap;
+}
+.wp-block-vml-fixtures-instruct .move {
+  border: 5px solid yellow;
+}
+.wp-block-vml-fixtures-instruct .new {
+  border: 5px solid #43b24b;
+}
+.wp-block-vml-fixtures-instruct .keep {
+  border: 5px solid transparent;
+}
+.wp-block-vml-fixtures-instruct .delete {
+  border: 5px solid red;
+}
+.wp-block-vml-fixtures-instruct .face-shelf {
+  display: flex;
+  flex: 1;
+  border-bottom: 2px dashed #000;
+}
+.wp-block-vml-fixtures-instruct .face-shelf .shelf-title {
+  flex: 0.3;
+  font-size: 1.8em;
+}
+.wp-block-vml-fixtures-instruct .face-shelf:last-child {
+  border-bottom: none;
+}
+.wp-block-vml-fixtures-instruct .shelf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+.wp-block-vml-fixtures-instruct .group-position-8 {
+  flex-basis: 100%;
+}
+.wp-block-vml-fixtures-instruct .item-group {
+  margin: 0 0.2em;
+}
+.wp-block-vml-fixtures-instruct .item-group .item {
+  margin: 0.5em auto;
+  background-size: cover;
+  text-align: center;
+}
+.wp-block-vml-fixtures-instruct .item-group .item .smallp {
+  font-size: 0.8em;
+  margin: 0;
+  line-height: 0.8em;
+}
+.wp-block-vml-fixtures-instruct .panel-data-display .item-group {
+  display: flex;
+  flex-direction: column;
+  padding: 0.2em;
+}
+.wp-block-vml-fixtures-instruct .footer-instructions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1em 20% 0 20%;
+}
+.wp-block-vml-fixtures-instruct p.text {
+  text-align: center;
+  margin: 0 15%;
+}
+.wp-block-vml-fixtures-instruct p.clean {
+  text-align: center;
+}
+.wp-block-vml-fixtures-instruct textarea {
+  width: 60%;
+  margin: 1em auto 0 auto;
+}
+.wp-block-vml-fixtures-instruct .print-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.wp-block-vml-fixtures-instruct .print-header img.left-image,
+.wp-block-vml-fixtures-instruct .print-header img.right-image {
+  width: 32%;
+}
+.wp-block-vml-fixtures-instruct .print-header img.left-image {
+  margin-left: 3%;
+}
+.wp-block-vml-fixtures-instruct .print-header img.right-image {
+  margin-right: 3%;
+}
+.wp-block-vml-fixtures-instruct .print-header p.header-text {
+  font-weight: bold;
+  text-align: center;
+  width: 28%;
+  margin: 0 auto 5px auto;
+  font-size: 1em;
+  line-height: 1.3em;
+}
+.wp-block-vml-fixtures-instruct .textInput {
+  width: 50%;
+  margin-bottom: 5px;
+}
+.wp-block-vml-fixtures-instruct .textInput .inputFields {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.wp-block-vml-fixtures-instruct .textInput .inputFields label {
+  flex: 1;
+  text-align: right;
+  margin-right: 5px;
+}
+.wp-block-vml-fixtures-instruct .textInput .inputFields input {
+  flex: 2;
+}
+.wp-block-vml-fixtures-instruct .textInput p,
+.wp-block-vml-fixtures-instruct .uploadPdf p {
+  font-weight: bold;
+  margin-top: 1em;
+}
+.wp-block-vml-fixtures-instruct .onlyprint {
+  display: none;
+}
+.wp-block-vml-fixtures-instruct .face-data-display,
+.wp-block-vml-fixtures-instruct .panel-data-display {
+  position: relative;
+  padding-bottom: 150px;
+}
+.wp-block-vml-fixtures-instruct .footer-instructions-wrapper {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 150px;
+}
+.wp-block-vml-fixtures-instruct hr {
+  border: 2px solid #000;
+}
+.wp-block-vml-fixtures-instruct .scale {
+  float: right;
+  text-align: center;
+}
+.wp-block-vml-fixtures-instruct .react-pdf__Document {
+  width: 200px;
+}
+.wp-block-vml-fixtures-instruct .face-data-display {
+  padding-top: 20px;
+  page-break-inside: avoid;
+}
+.wp-block-vml-fixtures-instruct .page-break {
+  page-break-before: always;
+}
+.wp-block-vml-fixtures-instruct .panel-data-display {
+  padding-top: 20px;
+  page-break-before: always;
+  page-break-inside: avoid;
+}
+
+@media print {
+  .noprint,
+  .ekit-template-content-header,
+  .ekit-template-content-footer,
+  .ekit-template-content-sidebar,
+  .promotion_info,
+  header.page-header {
+    display: none;
+  }
+  .onlyprint {
+    display: block !important;
+  }
+  body {
+    background-color: white !important;
+  }
+  body:not([class*=elementor-page-]) .site-main {
+    max-width: 100% !important;
+  }
+  .wp-block-vml-fixtures-instruct .react-pdf__Document {
+    margin-top: 3em;
+    width: 100% !important;
+  }
+  .wp-block-vml-fixtures-instruct .shelf {
+    flex-grow: inherit;
+  }
+  .wp-block-vml-fixtures-instruct .face-shelf {
+    margin: 0 5%;
+  }
+  .wp-block-vml-fixtures-instruct h3 {
+    color: #999 !important;
+    padding: 0 5%;
+  }
+  .wp-block-vml-fixtures-instruct .footer-instructions-wrapper {
+    margin-top: -150px;
+    position: fixed;
+  }
+}
+
+/*# sourceMappingURL=style-index.css.map*/

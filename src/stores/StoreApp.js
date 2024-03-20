@@ -211,6 +211,11 @@ const StoreApp = () => {
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
 				sku.positions.forEach((position) => {
+					// Skip the position if it's marked for deletion
+					if (position.update === "delete") {
+						return;
+					}
+
 					if (
 						position.fixture_type === selectedFixtureType &&
 						(!selectedRegion || position.region === selectedRegion)
@@ -270,7 +275,7 @@ const StoreApp = () => {
 		);
 	};
 	// Debug: Output raw data and selected values
-	console.log("Raw Data:", data);
+	// console.log("Raw Data:", data);
 
 	if (isLoading) {
 		return <Loader />;

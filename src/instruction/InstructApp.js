@@ -188,40 +188,101 @@ const InstructApp = () => {
 	);
 
 	const processAndDisplayData = () => {
-		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
-			return <p>No SKU data available. Please select a Fixture.</p>;
-		}
-
 		let shelves = {}; // Object to hold shelves data for non-deleted items
 		let shelvesForDeletion = {}; // Object to hold shelves data for deleted items
+		let shelvesForMoving = {}; // Object to hold shelves data for moving items
+		let shelvesForAdding = {}; // Object to hold shelves data for adding items
 		let shelfP = []; // Array to hold shelf 'P' data for non-deleted items
 		let shelfPForDeletion = []; // Array to hold shelf 'P' data for deleted items
+		let shelfPForMoving = []; // Array to hold shelf 'P' data for moving items
+		let shelfPForAdding = []; // Array to hold shelf 'P' data for adding items
 
 		const sortHorizontalValues = (a, b) => {
 			const order = ["LS", "M", "RS"];
 			return order.indexOf(a) - order.indexOf(b);
 		};
 
+		let HighestShelfNumber = 0;
+		let updatesExist = false;
+
+		// First pass to check for updates and determine highestShelfNumber
+		Object.values(data.final_skus).forEach((sku) => {
+			sku.positions.forEach((position) => {
+				if (
+					position.fixture_type === selectedFixtureType &&
+					(!selectedRegion || position.region === selectedRegion)
+				) {
+					const shelfNumber = parseInt(position.shelf, 10);
+					if (!isNaN(shelfNumber) && position.shelf !== "P") {
+						HighestShelfNumber = Math.max(HighestShelfNumber, shelfNumber);
+					}
+					if (["new", "move", "delete"].includes(position.update)) {
+						updatesExist = true;
+					}
+				}
+			});
+		});
+
+		// Initialize arrays only if updates exist
+		if (updatesExist) {
+			for (let i = 1; i <= HighestShelfNumber; i++) {
+				let shelfKey = i.toString();
+				shelvesForAdding[shelfKey] = [];
+				shelvesForMoving[shelfKey] = [];
+				shelvesForDeletion[shelfKey] = [];
+			}
+		}
+
 		// Iterate over each SKU object in final_skus
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
 				sku.positions.forEach((position) => {
-					// Determine the correct storage based on the `update` status at the `position` level
-					const isDeleted = position.update === "delete";
-					let targetShelves = isDeleted ? shelvesForDeletion : shelves;
-					let targetShelfP = isDeleted ? shelfPForDeletion : shelfP;
+					// Create an item object combining position and sku data
+					let item = { ...position, ...sku };
 
 					if (
 						position.fixture_type === selectedFixtureType &&
 						(!selectedRegion || position.region === selectedRegion)
 					) {
-						if (position.shelf === "P") {
-							targetShelfP.push({ ...position, ...sku });
-						} else {
-							if (!targetShelves[position.shelf]) {
-								targetShelves[position.shelf] = [];
+						// console.log("Item:", item);
+						// Handle deletion separately to prevent adding to default shelves
+						if (position.update === "delete") {
+							if (position.shelf === "P") {
+								shelfPForDeletion.push(item);
+							} else {
+								if (!shelvesForDeletion[position.shelf])
+									shelvesForDeletion[position.shelf] = [];
+
+								shelvesForDeletion[position.shelf].push(item);
 							}
-							targetShelves[position.shelf].push({ ...position, ...sku });
+							return;
+						}
+
+						// Handle added and moved items by adding them to their specific and default shelves
+						if (position.update === "new" || position.update === "move") {
+							let specificShelves =
+								position.update === "new" ? shelvesForAdding : shelvesForMoving;
+							let specificShelfP =
+								position.update === "new" ? shelfPForAdding : shelfPForMoving;
+
+							if (position.shelf === "P") {
+								specificShelfP.push(item);
+							} else {
+								if (!specificShelves[position.shelf])
+									specificShelves[position.shelf] = [];
+
+								specificShelves[position.shelf].push(item);
+								console.log("Specific Shelves:", item);
+							}
+						}
+
+						// Add all non-deleted items to default shelves
+
+						if (position.shelf === "P") {
+							shelfP.push(item);
+						} else {
+							if (!shelves[position.shelf]) shelves[position.shelf] = [];
+							shelves[position.shelf].push(item);
 						}
 					}
 				});
@@ -256,7 +317,7 @@ const InstructApp = () => {
 			return (
 				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
 					<div className="shelf-title common-container">
-						{shelfLabel === "P" ? null : <>B1S{shelfLabel}</>}
+						{shelfLabel === "P" ? null : <>BAY 1/SHELF {shelfLabel}</>}
 					</div>
 					<div className={`shelf shelf-${shelfLabel}`}>
 						{sortedGroupKeys.map((horizontal) => (
@@ -322,6 +383,9 @@ const InstructApp = () => {
 								<p>
 									<span className="move">YELLOW</span>= MOVING Graphics
 								</p>
+								<p>
+									<span className="delete">RED</span>= REMOVED Graphics
+								</p>
 							</div>
 							<p className="text">
 								This graphic layout shows all of the graphics on your gondola by
@@ -368,6 +432,9 @@ const InstructApp = () => {
 									<p>
 										<span className="move">YELLOW</span>= MOVING Graphics
 									</p>
+									<p>
+										<span className="delete">RED</span>= REMOVED Graphics
+									</p>
 								</div>
 								<p className="text">
 									This graphic layout shows all of the graphics on your gondola
@@ -390,12 +457,18 @@ const InstructApp = () => {
 		return (
 			<>
 				{generateLayout(shelves, shelfP)}
+				{(Object.keys(shelvesForAdding).length > 0 ||
+					shelfPForAdding.length > 0) &&
+					generateLayout(shelvesForAdding, shelfPForAdding, "(Added Items)")}
+				{(Object.keys(shelvesForMoving).length > 0 ||
+					shelfPForMoving?.length > 0) &&
+					generateLayout(shelvesForMoving, shelfPForMoving, "(Moved Items)")}
 				{(Object.keys(shelvesForDeletion).length > 0 ||
 					shelfPForDeletion.length > 0) &&
 					generateLayout(
 						shelvesForDeletion,
 						shelfPForDeletion,
-						"(Deleted Items)",
+						"(Removed Items)",
 					)}
 			</>
 		);
@@ -412,7 +485,7 @@ const InstructApp = () => {
 	}
 
 	if (!data) {
-		return <p>No data available. Please select a Promotion</p>;
+		return <p>Please select a Promotion</p>;
 	}
 
 	return (

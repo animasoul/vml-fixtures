@@ -105,6 +105,11 @@ const RootApp = () => {
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
 				sku.positions.forEach((position) => {
+					// Skip the position if it's marked for deletion
+					if (position.update === "delete") {
+						return;
+					}
+
 					if (
 						position.fixture_type === selectedFixtureType &&
 						(!selectedRegion || position.region === selectedRegion)
@@ -265,7 +270,7 @@ const RootApp = () => {
 	}
 
 	if (!data) {
-		return <p>No data available. Please select a Promotion</p>;
+		return <p>Please select a Promotion</p>;
 	}
 
 	return (
