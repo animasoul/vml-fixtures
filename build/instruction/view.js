@@ -208,6 +208,75 @@ const InstructApp = () => {
   };
   const uniqueFixtureTypes = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useMemo)(() => getUniqueValues(data, "fixture_type"), [data]);
   const uniqueRegions = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useMemo)(() => getRegionsForSelectedFixture(), [data, selectedFixtureType]);
+  function drawLineBetweenMovedItems(itemId) {
+    const fromElement = document.getElementById(`${itemId}-movedFrom`);
+    const toElement = document.getElementById(`${itemId}-movedTo`);
+    const svgContainer = document.getElementById(`${itemId}-svg-container`);
+    if (fromElement && toElement && svgContainer) {
+      const fromRect = fromElement.getBoundingClientRect();
+      const toRect = toElement.getBoundingClientRect();
+      const svgPosition = svgContainer.getBoundingClientRect();
+
+      // Calculate line start and end positions relative to the SVG container
+      const startX = fromRect.left + fromRect.width / 2 - svgPosition.left;
+      const startY = fromRect.top + fromRect.height / 2 - svgPosition.top;
+      const endX = toRect.left + toRect.width / 2 - svgPosition.left;
+      const endY = toRect.top + toRect.height / 2 - svgPosition.top;
+
+      // Clear previous SVG content
+      svgContainer.innerHTML = "";
+
+      // Define a unique marker ID to prevent conflicts in case of multiple lines
+      const markerId = `arrowhead-${itemId}`;
+
+      // Create the defs element for marker definition
+      const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+      svgContainer.appendChild(defs);
+
+      // Create the marker element
+      const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+      marker.setAttribute("id", markerId);
+      marker.setAttribute("markerWidth", "10");
+      marker.setAttribute("markerHeight", "10");
+      marker.setAttribute("refX", "0");
+      marker.setAttribute("refY", "3");
+      marker.setAttribute("orient", "auto");
+      marker.setAttribute("markerUnits", "strokeWidth");
+      defs.appendChild(marker);
+
+      // Create the polygon element for the arrowhead shape
+      const arrowhead = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      arrowhead.setAttribute("points", "0 0, 10 3, 0 6");
+      arrowhead.setAttribute("fill", "red");
+      marker.appendChild(arrowhead);
+
+      // Create the line
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", startX);
+      line.setAttribute("y1", startY);
+      line.setAttribute("x2", endX);
+      line.setAttribute("y2", endY);
+      line.setAttribute("stroke", "red");
+      line.setAttribute("stroke-width", "2");
+      // Reference the marker for the arrowhead
+      line.setAttribute("marker-end", `url(#${markerId})`);
+      svgContainer.appendChild(line);
+    }
+  }
+  const itemCodes = [];
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+    // Draw lines between moved items
+    itemCodes.forEach(drawLineBetweenMovedItems);
+
+    // Setup resize event listener if necessary
+    const handleResize = () => {
+      itemCodes.forEach(drawLineBetweenMovedItems);
+    };
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, [itemCodes, selectedFixtureType, selectedRegion]);
   const processAndDisplayData = () => {
     let shelves = {}; // Object to hold shelves data for non-deleted items
     let shelvesForDeletion = {}; // Object to hold shelves data for deleted items
@@ -225,42 +294,48 @@ const InstructApp = () => {
     let HighestShelfNumber = 0;
     let updatesExist = false;
 
-    // First pass to check for updates and determine highestShelfNumber
-    Object.values(data.final_skus).forEach(sku => {
-      sku.positions.forEach(position => {
-        if (position.fixture_type === selectedFixtureType && (!selectedRegion || position.region === selectedRegion)) {
-          const shelfNumber = parseInt(position.shelf, 10);
-          if (!isNaN(shelfNumber) && position.shelf !== "P") {
-            HighestShelfNumber = Math.max(HighestShelfNumber, shelfNumber);
-          }
-          if (["new", "move", "delete"].includes(position.update)) {
-            updatesExist = true;
-          }
-        }
-      });
-    });
-
-    // Initialize arrays only if updates exist
-    if (updatesExist) {
-      for (let i = 1; i <= HighestShelfNumber; i++) {
-        let shelfKey = i.toString();
-        shelvesForAdding[shelfKey] = [];
-        shelvesForMoving[shelfKey] = [];
-        shelvesForDeletion[shelfKey] = [];
-      }
-    }
-
-    // Iterate over each SKU object in final_skus
+    // Single pass to check for updates, determine highestShelfNumber, and process items
     Object.values(data.final_skus).forEach(sku => {
       if (sku.positions) {
         sku.positions.forEach(position => {
-          // Create an item object combining position and sku data
-          let item = {
-            ...position,
-            ...sku
-          };
           if (position.fixture_type === selectedFixtureType && (!selectedRegion || position.region === selectedRegion)) {
-            // console.log("Item:", item);
+            const shelfNumber = parseInt(position.shelf, 10);
+            if (!isNaN(shelfNumber) && position.shelf !== "P") {
+              HighestShelfNumber = Math.max(HighestShelfNumber, shelfNumber);
+            }
+            if (["new", "move", "delete"].includes(position.update)) {
+              updatesExist = true;
+            }
+
+            // Create an item object combining position and sku data
+            let item = {
+              ...position,
+              ...sku
+            };
+
+            // Process "move" update items
+            if (position.update === "move" && position.moved_from) {
+              // Parse the moved_from property
+              const [fromBay, fromShelf, fromHorizontal, fromVertical] = position.moved_from.split("|").map(String);
+
+              // Create a copy of the item with moved_from values
+              let movedItem = {
+                ...item,
+                bay: fromBay,
+                shelf: fromShelf,
+                horizontal: fromHorizontal,
+                vertical: fromVertical,
+                moved_item: true,
+                moved_to: `${position.bay}|${position.shelf}|${position.horizontal}|${position.vertical}`
+              };
+              if (position.shelf === "P") {
+                shelfPForMoving.push(movedItem);
+              } else {
+                shelvesForMoving[fromShelf] = shelvesForMoving[fromShelf] || [];
+                shelvesForMoving[fromShelf].push(movedItem);
+              }
+            }
+
             // Handle deletion separately to prevent adding to default shelves
             if (position.update === "delete") {
               if (position.shelf === "P") {
@@ -281,12 +356,13 @@ const InstructApp = () => {
               } else {
                 if (!specificShelves[position.shelf]) specificShelves[position.shelf] = [];
                 specificShelves[position.shelf].push(item);
-                console.log("Specific Shelves:", item);
+              }
+              if (position.update === "move") {
+                itemCodes.push(item.code);
               }
             }
 
             // Add all non-deleted items to default shelves
-
             if (position.shelf === "P") {
               shelfP.push(item);
             } else {
@@ -298,8 +374,24 @@ const InstructApp = () => {
       }
     });
 
+    // Initialize arrays only if updates exist
+    if (updatesExist) {
+      for (let i = 1; i <= HighestShelfNumber; i++) {
+        let shelfKey = i.toString();
+        shelvesForAdding[shelfKey] = shelvesForAdding[shelfKey] || [];
+        shelvesForMoving[shelfKey] = shelvesForMoving[shelfKey] || [];
+        shelvesForDeletion[shelfKey] = shelvesForDeletion[shelfKey] || [];
+      }
+    }
+    const ItemBayShelf = ({
+      item
+    }) => {
+      const [fromBay, fromShelf] = item.moved_from.split("|");
+      const [toBay, toShelf] = item.moved_to.split("|");
+      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, "Move from Bay ", fromBay, "/Shelf ", fromShelf, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null), "to Bay ", toBay, "/Shelf ", toShelf);
+    };
     // Function to render shelf data
-    const renderShelf = (positions, shelfLabel) => {
+    const renderShelf = (positions, shelfLabel, id = "") => {
       // Group by horizontal value
       let groupedByHorizontal = positions.reduce((acc, item) => {
         let horizontal = item.horizontal;
@@ -334,21 +426,43 @@ const InstructApp = () => {
       }, groupedByHorizontal[horizontal].map((item, index) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
         className: `item position-${item.horizontal}-${item.vertical}`,
         key: index
-      }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
+      }, item.moved_item ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+        className: `moved-item`,
+        style: {
+          width: `${item.width * 7 * scale}px`,
+          height: `${item.height * 7 * scale}px`
+        },
+        id: `${item.code}-movedFrom`
+      }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ItemBayShelf, {
+        item: item
+      })) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
         src: `${item.ImageURL || data.ImageURL}${item.code}.jpg`,
         alt: `SKU ${item.code}`,
         width: item.width * 7 * scale,
         height: item.height * 7 * scale,
-        "data-tooltip-id": item.code,
+        ...(id === "moved" && {
+          id: `${item.code}-movedTo`
+        }),
         className: item.update
-      })))))));
+      }), id === "moved" && item.moved_item && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("svg", {
+        id: `${item.code}-svg-container`,
+        style: {
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: "100%",
+          height: "100%",
+          zIndex: "1000"
+        }
+      }))))))));
     };
 
     // Function to generate the layout, duplicated and adjusted for items marked for deletion
-    const generateLayout = (shelves, shelfP, titleSuffix = "") => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", {
+    const generateLayout = (shelves, shelfP, titleSuffix = "", id = "default") => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", {
       className: "noprint"
     }, selectedFixtureType, " - ", selectedRegion), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: "admin-fixture"
+      className: "admin-fixture",
+      id: id
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: `face-data-display ${titleSuffix ? "page-break" : ""}`
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -363,7 +477,7 @@ const InstructApp = () => {
       src: brandImage,
       alt: "Brand Logo",
       className: "right-image"
-    })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Graphic Layout: ", titleSuffix), Object.entries(shelves).map(([shelfLabel, positions]) => renderShelf(positions, shelfLabel)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Graphic Layout: ", titleSuffix), Object.entries(shelves).map(([shelfLabel, positions]) => renderShelf(positions, shelfLabel, id)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-instructions-wrapper"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-instructions"
@@ -408,7 +522,7 @@ const InstructApp = () => {
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, "To clean: Use a dry cloth only - No alcohol based products"))))));
 
     // Render both layouts: one for non-deleted items, and one for deleted items
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, generateLayout(shelves, shelfP), (Object.keys(shelvesForAdding).length > 0 || shelfPForAdding.length > 0) && generateLayout(shelvesForAdding, shelfPForAdding, "(Added Items)"), (Object.keys(shelvesForMoving).length > 0 || shelfPForMoving?.length > 0) && generateLayout(shelvesForMoving, shelfPForMoving, "(Moved Items)"), (Object.keys(shelvesForDeletion).length > 0 || shelfPForDeletion.length > 0) && generateLayout(shelvesForDeletion, shelfPForDeletion, "(Removed Items)"));
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, generateLayout(shelves, shelfP), (Object.keys(shelvesForAdding).length > 0 || shelfPForAdding.length > 0) && generateLayout(shelvesForAdding, shelfPForAdding, "(Added Items)", "added"), (Object.keys(shelvesForMoving).length > 0 || shelfPForMoving?.length > 0) && generateLayout(shelvesForMoving, shelfPForMoving, "(Moved Items)", "moved"), (Object.keys(shelvesForDeletion).length > 0 || shelfPForDeletion.length > 0) && generateLayout(shelvesForDeletion, shelfPForDeletion, "(Removed Items)", "deleted"));
   };
   // Debug: Output raw data and selected values
   // console.log("Raw Data:", data);
@@ -530,7 +644,9 @@ const InstructApp = () => {
   }, "-"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     className: "noprint ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label",
     onClick: increaseSize
-  }, "+"))), processAndDisplayData());
+  }, "+"))), processAndDisplayData(), window.addEventListener("resize", () => {
+    drawLineBetweenMovedItems("27213-US-16");
+  }));
 };
 /* harmony default export */ __webpack_exports__["default"] = (InstructApp);
 

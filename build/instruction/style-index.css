@@ -50,6 +50,9 @@
 .wp-block-vml-fixtures-instruct .move {
   border: 5px solid yellow;
 }
+.wp-block-vml-fixtures-instruct .moved-item {
+  border: 5px dashed gray;
+}
 .wp-block-vml-fixtures-instruct .new {
   border: 5px solid #43b24b;
 }
@@ -66,7 +69,7 @@
 }
 .wp-block-vml-fixtures-instruct .face-shelf .shelf-title {
   flex: 0.3;
-  font-size: 1.8em;
+  font-size: 0.8em;
 }
 .wp-block-vml-fixtures-instruct .face-shelf:last-child {
   border-bottom: none;

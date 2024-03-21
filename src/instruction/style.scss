@@ -48,6 +48,9 @@
 	.move {
 		border: 5px solid yellow;
 	}
+	.moved-item {
+		border: 5px dashed gray;
+	}
 	.new {
 		border: 5px solid#43b24b;
 	}
@@ -65,7 +68,7 @@
 
 		.shelf-title {
 			flex: 0.3;
-			font-size: 1.8em;
+			font-size: 0.8em;
 		}
 	}
 	.face-shelf:last-child {

@@ -1,6 +1,11 @@
 // Desc: Root component for admin app
 import Loader from "../components/Loader";
-import React, { useState, useEffect, useMemo } from "@wordpress/element";
+import React, {
+	useState,
+	useEffect,
+	useMemo,
+	useRef,
+} from "@wordpress/element";
 import { fetchOptionData } from "../services/getOptionService";
 import "./style-index.css";
 import UploadPdf from "./UploadPdf";
@@ -187,6 +192,91 @@ const InstructApp = () => {
 		[data, selectedFixtureType],
 	);
 
+	function drawLineBetweenMovedItems(itemId) {
+		const fromElement = document.getElementById(`${itemId}-movedFrom`);
+		const toElement = document.getElementById(`${itemId}-movedTo`);
+		const svgContainer = document.getElementById(`${itemId}-svg-container`);
+
+		if (fromElement && toElement && svgContainer) {
+			const fromRect = fromElement.getBoundingClientRect();
+			const toRect = toElement.getBoundingClientRect();
+			const svgPosition = svgContainer.getBoundingClientRect();
+
+			// Calculate line start and end positions relative to the SVG container
+			const startX = fromRect.left + fromRect.width / 2 - svgPosition.left;
+			const startY = fromRect.top + fromRect.height / 2 - svgPosition.top;
+			const endX = toRect.left + toRect.width / 2 - svgPosition.left;
+			const endY = toRect.top + toRect.height / 2 - svgPosition.top;
+
+			// Clear previous SVG content
+			svgContainer.innerHTML = "";
+
+			// Define a unique marker ID to prevent conflicts in case of multiple lines
+			const markerId = `arrowhead-${itemId}`;
+
+			// Create the defs element for marker definition
+			const defs = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"defs",
+			);
+			svgContainer.appendChild(defs);
+
+			// Create the marker element
+			const marker = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"marker",
+			);
+			marker.setAttribute("id", markerId);
+			marker.setAttribute("markerWidth", "10");
+			marker.setAttribute("markerHeight", "10");
+			marker.setAttribute("refX", "0");
+			marker.setAttribute("refY", "3");
+			marker.setAttribute("orient", "auto");
+			marker.setAttribute("markerUnits", "strokeWidth");
+			defs.appendChild(marker);
+
+			// Create the polygon element for the arrowhead shape
+			const arrowhead = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"polygon",
+			);
+			arrowhead.setAttribute("points", "0 0, 10 3, 0 6");
+			arrowhead.setAttribute("fill", "red");
+			marker.appendChild(arrowhead);
+
+			// Create the line
+			const line = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"line",
+			);
+			line.setAttribute("x1", startX);
+			line.setAttribute("y1", startY);
+			line.setAttribute("x2", endX);
+			line.setAttribute("y2", endY);
+			line.setAttribute("stroke", "red");
+			line.setAttribute("stroke-width", "2");
+			// Reference the marker for the arrowhead
+			line.setAttribute("marker-end", `url(#${markerId})`);
+
+			svgContainer.appendChild(line);
+		}
+	}
+
+	const itemCodes = [];
+	useEffect(() => {
+		// Draw lines between moved items
+		itemCodes.forEach(drawLineBetweenMovedItems);
+
+		// Setup resize event listener if necessary
+		const handleResize = () => {
+			itemCodes.forEach(drawLineBetweenMovedItems);
+		};
+		window.addEventListener("resize", handleResize);
+
+		// Cleanup
+		return () => window.removeEventListener("resize", handleResize);
+	}, [itemCodes, selectedFixtureType, selectedRegion]);
+
 	const processAndDisplayData = () => {
 		let shelves = {}; // Object to hold shelves data for non-deleted items
 		let shelvesForDeletion = {}; // Object to hold shelves data for deleted items
@@ -205,46 +295,50 @@ const InstructApp = () => {
 		let HighestShelfNumber = 0;
 		let updatesExist = false;
 
-		// First pass to check for updates and determine highestShelfNumber
-		Object.values(data.final_skus).forEach((sku) => {
-			sku.positions.forEach((position) => {
-				if (
-					position.fixture_type === selectedFixtureType &&
-					(!selectedRegion || position.region === selectedRegion)
-				) {
-					const shelfNumber = parseInt(position.shelf, 10);
-					if (!isNaN(shelfNumber) && position.shelf !== "P") {
-						HighestShelfNumber = Math.max(HighestShelfNumber, shelfNumber);
-					}
-					if (["new", "move", "delete"].includes(position.update)) {
-						updatesExist = true;
-					}
-				}
-			});
-		});
-
-		// Initialize arrays only if updates exist
-		if (updatesExist) {
-			for (let i = 1; i <= HighestShelfNumber; i++) {
-				let shelfKey = i.toString();
-				shelvesForAdding[shelfKey] = [];
-				shelvesForMoving[shelfKey] = [];
-				shelvesForDeletion[shelfKey] = [];
-			}
-		}
-
-		// Iterate over each SKU object in final_skus
+		// Single pass to check for updates, determine highestShelfNumber, and process items
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
 				sku.positions.forEach((position) => {
-					// Create an item object combining position and sku data
-					let item = { ...position, ...sku };
-
 					if (
 						position.fixture_type === selectedFixtureType &&
 						(!selectedRegion || position.region === selectedRegion)
 					) {
-						// console.log("Item:", item);
+						const shelfNumber = parseInt(position.shelf, 10);
+						if (!isNaN(shelfNumber) && position.shelf !== "P") {
+							HighestShelfNumber = Math.max(HighestShelfNumber, shelfNumber);
+						}
+						if (["new", "move", "delete"].includes(position.update)) {
+							updatesExist = true;
+						}
+
+						// Create an item object combining position and sku data
+						let item = { ...position, ...sku };
+
+						// Process "move" update items
+						if (position.update === "move" && position.moved_from) {
+							// Parse the moved_from property
+							const [fromBay, fromShelf, fromHorizontal, fromVertical] =
+								position.moved_from.split("|").map(String);
+
+							// Create a copy of the item with moved_from values
+							let movedItem = {
+								...item,
+								bay: fromBay,
+								shelf: fromShelf,
+								horizontal: fromHorizontal,
+								vertical: fromVertical,
+								moved_item: true,
+								moved_to: `${position.bay}|${position.shelf}|${position.horizontal}|${position.vertical}`,
+							};
+
+							if (position.shelf === "P") {
+								shelfPForMoving.push(movedItem);
+							} else {
+								shelvesForMoving[fromShelf] = shelvesForMoving[fromShelf] || [];
+								shelvesForMoving[fromShelf].push(movedItem);
+							}
+						}
+
 						// Handle deletion separately to prevent adding to default shelves
 						if (position.update === "delete") {
 							if (position.shelf === "P") {
@@ -272,12 +366,13 @@ const InstructApp = () => {
 									specificShelves[position.shelf] = [];
 
 								specificShelves[position.shelf].push(item);
-								console.log("Specific Shelves:", item);
+							}
+							if (position.update === "move") {
+								itemCodes.push(item.code);
 							}
 						}
 
 						// Add all non-deleted items to default shelves
-
 						if (position.shelf === "P") {
 							shelfP.push(item);
 						} else {
@@ -289,8 +384,29 @@ const InstructApp = () => {
 			}
 		});
 
+		// Initialize arrays only if updates exist
+		if (updatesExist) {
+			for (let i = 1; i <= HighestShelfNumber; i++) {
+				let shelfKey = i.toString();
+				shelvesForAdding[shelfKey] = shelvesForAdding[shelfKey] || [];
+				shelvesForMoving[shelfKey] = shelvesForMoving[shelfKey] || [];
+				shelvesForDeletion[shelfKey] = shelvesForDeletion[shelfKey] || [];
+			}
+		}
+		const ItemBayShelf = ({ item }) => {
+			const [fromBay, fromShelf] = item.moved_from.split("|");
+			const [toBay, toShelf] = item.moved_to.split("|");
+
+			return (
+				<>
+					Move from Bay {fromBay}/Shelf {fromShelf}
+					<br />
+					to Bay {toBay}/Shelf {toShelf}
+				</>
+			);
+		};
 		// Function to render shelf data
-		const renderShelf = (positions, shelfLabel) => {
+		const renderShelf = (positions, shelfLabel, id = "") => {
 			// Group by horizontal value
 			let groupedByHorizontal = positions.reduce((acc, item) => {
 				let horizontal = item.horizontal;
@@ -327,14 +443,44 @@ const InstructApp = () => {
 										className={`item position-${item.horizontal}-${item.vertical}`}
 										key={index}
 									>
-										<img
-											src={`${item.ImageURL || data.ImageURL}${item.code}.jpg`}
-											alt={`SKU ${item.code}`}
-											width={item.width * 7 * scale}
-											height={item.height * 7 * scale}
-											data-tooltip-id={item.code}
-											className={item.update}
-										/>
+										{item.moved_item ? (
+											<div
+												className={`moved-item`}
+												style={{
+													width: `${item.width * 7 * scale}px`,
+													height: `${item.height * 7 * scale}px`,
+												}}
+												id={`${item.code}-movedFrom`}
+											>
+												<ItemBayShelf item={item} />
+											</div>
+										) : (
+											<img
+												src={`${item.ImageURL || data.ImageURL}${
+													item.code
+												}.jpg`}
+												alt={`SKU ${item.code}`}
+												width={item.width * 7 * scale}
+												height={item.height * 7 * scale}
+												{...(id === "moved" && { id: `${item.code}-movedTo` })}
+												className={item.update}
+											/>
+										)}
+										{id === "moved" && item.moved_item && (
+											<>
+												<svg
+													id={`${item.code}-svg-container`}
+													style={{
+														position: "absolute",
+														top: "0",
+														left: "0",
+														width: "100%",
+														height: "100%",
+														zIndex: "1000",
+													}}
+												></svg>
+											</>
+										)}
 									</div>
 								))}
 							</div>
@@ -345,12 +491,17 @@ const InstructApp = () => {
 		};
 
 		// Function to generate the layout, duplicated and adjusted for items marked for deletion
-		const generateLayout = (shelves, shelfP, titleSuffix = "") => (
+		const generateLayout = (
+			shelves,
+			shelfP,
+			titleSuffix = "",
+			id = "default",
+		) => (
 			<>
 				<h2 className="noprint">
 					{selectedFixtureType} - {selectedRegion}
 				</h2>
-				<div className="admin-fixture">
+				<div className="admin-fixture" id={id}>
 					<div
 						className={`face-data-display ${titleSuffix ? "page-break" : ""}`}
 					>
@@ -373,7 +524,7 @@ const InstructApp = () => {
 						</div>
 						<h3>Graphic Layout: {titleSuffix}</h3>
 						{Object.entries(shelves).map(([shelfLabel, positions]) =>
-							renderShelf(positions, shelfLabel),
+							renderShelf(positions, shelfLabel, id),
 						)}
 						<div className="footer-instructions-wrapper">
 							<div className="footer-instructions">
@@ -459,16 +610,27 @@ const InstructApp = () => {
 				{generateLayout(shelves, shelfP)}
 				{(Object.keys(shelvesForAdding).length > 0 ||
 					shelfPForAdding.length > 0) &&
-					generateLayout(shelvesForAdding, shelfPForAdding, "(Added Items)")}
+					generateLayout(
+						shelvesForAdding,
+						shelfPForAdding,
+						"(Added Items)",
+						"added",
+					)}
 				{(Object.keys(shelvesForMoving).length > 0 ||
 					shelfPForMoving?.length > 0) &&
-					generateLayout(shelvesForMoving, shelfPForMoving, "(Moved Items)")}
+					generateLayout(
+						shelvesForMoving,
+						shelfPForMoving,
+						"(Moved Items)",
+						"moved",
+					)}
 				{(Object.keys(shelvesForDeletion).length > 0 ||
 					shelfPForDeletion.length > 0) &&
 					generateLayout(
 						shelvesForDeletion,
 						shelfPForDeletion,
 						"(Removed Items)",
+						"deleted",
 					)}
 			</>
 		);
@@ -653,6 +815,9 @@ const InstructApp = () => {
 				</div>
 			</div>
 			{processAndDisplayData()}
+			{window.addEventListener("resize", () => {
+				drawLineBetweenMovedItems("27213-US-16");
+			})}
 		</div>
 	);
 };
