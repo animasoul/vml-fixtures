@@ -1,14 +1,10 @@
 // Desc: Root component for admin app
+import React, { useEffect, useMemo, useState } from "@wordpress/element";
 import Loader from "../components/Loader";
-import React, {
-	useState,
-	useEffect,
-	useMemo,
-	useRef,
-} from "@wordpress/element";
 import { fetchOptionData } from "../services/getOptionService";
-import "./style-index.css";
 import UploadPdf from "./UploadPdf";
+import "./style-index.css";
+import { drawLineBetweenMovedItems } from "./svgHelpers";
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
@@ -192,76 +188,6 @@ const InstructApp = () => {
 		[data, selectedFixtureType],
 	);
 
-	function drawLineBetweenMovedItems(itemId) {
-		const fromElement = document.getElementById(`${itemId}-movedFrom`);
-		const toElement = document.getElementById(`${itemId}-movedTo`);
-		const svgContainer = document.getElementById(`${itemId}-svg-container`);
-
-		if (fromElement && toElement && svgContainer) {
-			const fromRect = fromElement.getBoundingClientRect();
-			const toRect = toElement.getBoundingClientRect();
-			const svgPosition = svgContainer.getBoundingClientRect();
-
-			// Calculate line start and end positions relative to the SVG container
-			const startX = fromRect.left + fromRect.width / 2 - svgPosition.left;
-			const startY = fromRect.top + fromRect.height / 2 - svgPosition.top;
-			const endX = toRect.left + toRect.width / 2 - svgPosition.left;
-			const endY = toRect.top + toRect.height / 2 - svgPosition.top;
-
-			// Clear previous SVG content
-			svgContainer.innerHTML = "";
-
-			// Define a unique marker ID to prevent conflicts in case of multiple lines
-			const markerId = `arrowhead-${itemId}`;
-
-			// Create the defs element for marker definition
-			const defs = document.createElementNS(
-				"http://www.w3.org/2000/svg",
-				"defs",
-			);
-			svgContainer.appendChild(defs);
-
-			// Create the marker element
-			const marker = document.createElementNS(
-				"http://www.w3.org/2000/svg",
-				"marker",
-			);
-			marker.setAttribute("id", markerId);
-			marker.setAttribute("markerWidth", "10");
-			marker.setAttribute("markerHeight", "10");
-			marker.setAttribute("refX", "0");
-			marker.setAttribute("refY", "3");
-			marker.setAttribute("orient", "auto");
-			marker.setAttribute("markerUnits", "strokeWidth");
-			defs.appendChild(marker);
-
-			// Create the polygon element for the arrowhead shape
-			const arrowhead = document.createElementNS(
-				"http://www.w3.org/2000/svg",
-				"polygon",
-			);
-			arrowhead.setAttribute("points", "0 0, 10 3, 0 6");
-			arrowhead.setAttribute("fill", "red");
-			marker.appendChild(arrowhead);
-
-			// Create the line
-			const line = document.createElementNS(
-				"http://www.w3.org/2000/svg",
-				"line",
-			);
-			line.setAttribute("x1", startX);
-			line.setAttribute("y1", startY);
-			line.setAttribute("x2", endX);
-			line.setAttribute("y2", endY);
-			line.setAttribute("stroke", "red");
-			line.setAttribute("stroke-width", "2");
-			// Reference the marker for the arrowhead
-			line.setAttribute("marker-end", `url(#${markerId})`);
-
-			svgContainer.appendChild(line);
-		}
-	}
-
 	const itemCodes = [];
 	useEffect(() => {
 		// Draw lines between moved items
@@ -273,9 +199,17 @@ const InstructApp = () => {
 		};
 		window.addEventListener("resize", handleResize);
 
+		// Setup interval to redraw lines every second
+		const intervalId = setInterval(() => {
+			itemCodes.forEach(drawLineBetweenMovedItems);
+		}, 1000);
+
 		// Cleanup
-		return () => window.removeEventListener("resize", handleResize);
-	}, [itemCodes, selectedFixtureType, selectedRegion]);
+		return () => {
+			window.removeEventListener("resize", handleResize);
+			clearInterval(intervalId);
+		};
+	}, [itemCodes, selectedFixtureType, selectedRegion, scaleChange]);
 
 	const processAndDisplayData = () => {
 		let shelves = {}; // Object to hold shelves data for non-deleted items
@@ -393,18 +327,18 @@ const InstructApp = () => {
 				shelvesForDeletion[shelfKey] = shelvesForDeletion[shelfKey] || [];
 			}
 		}
-		const ItemBayShelf = ({ item }) => {
-			const [fromBay, fromShelf] = item.moved_from.split("|");
-			const [toBay, toShelf] = item.moved_to.split("|");
+		// const ItemBayShelf = ({ item }) => {
+		// 	const [fromBay, fromShelf] = item.moved_from.split("|");
+		// 	const [toBay, toShelf] = item.moved_to.split("|");
 
-			return (
-				<>
-					Move from Bay {fromBay}/Shelf {fromShelf}
-					<br />
-					to Bay {toBay}/Shelf {toShelf}
-				</>
-			);
-		};
+		// 	return (
+		// 		<>
+		// 			Move from Bay {fromBay}/Shelf {fromShelf}
+		// 			<br />
+		// 			to Bay {toBay}/Shelf {toShelf}
+		// 		</>
+		// 	);
+		// };
 		// Function to render shelf data
 		const renderShelf = (positions, shelfLabel, id = "") => {
 			// Group by horizontal value
@@ -452,7 +386,7 @@ const InstructApp = () => {
 												}}
 												id={`${item.code}-movedFrom`}
 											>
-												<ItemBayShelf item={item} />
+												{/* <ItemBayShelf item={item} /> */}
 											</div>
 										) : (
 											<img
@@ -815,9 +749,6 @@ const InstructApp = () => {
 				</div>
 			</div>
 			{processAndDisplayData()}
-			{window.addEventListener("resize", () => {
-				drawLineBetweenMovedItems("27213-US-16");
-			})}
 		</div>
 	);
 };

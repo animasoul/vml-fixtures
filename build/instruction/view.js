@@ -43,12 +43,13 @@ function Loader() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/Loader */ "./src/components/Loader.js");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../components/Loader */ "./src/components/Loader.js");
 /* harmony import */ var _services_getOptionService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/getOptionService */ "./src/services/getOptionService.js");
-/* harmony import */ var _style_index_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style-index.css */ "./src/instruction/style-index.css");
-/* harmony import */ var _UploadPdf__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./UploadPdf */ "./src/instruction/UploadPdf.js");
+/* harmony import */ var _UploadPdf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./UploadPdf */ "./src/instruction/UploadPdf.js");
+/* harmony import */ var _style_index_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./style-index.css */ "./src/instruction/style-index.css");
+/* harmony import */ var _svgHelpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./svgHelpers */ "./src/instruction/svgHelpers.js");
 
 // Desc: Root component for admin app
 
@@ -56,16 +57,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const InstructApp = () => {
-  const [data, setData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(true);
-  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [selectedFixtureType, setSelectedFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [selectedRegion, setSelectedRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [brandImage, setBrandImage] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [hasAllALL, setHasAllALL] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
-  const [hasAllUSCA, setHasAllUSCA] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+  const [data, setData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
+  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(true);
+  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
+  const [selectedFixtureType, setSelectedFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
+  const [selectedRegion, setSelectedRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
+  const [brandImage, setBrandImage] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(null);
+  const [hasAllALL, setHasAllALL] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
+  const [hasAllUSCA, setHasAllUSCA] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     if (!data || !selectedFixtureType) {
       setHasAllALL(false);
       setHasAllUSCA(false);
@@ -86,7 +88,7 @@ const InstructApp = () => {
   }, [data, selectedFixtureType]);
 
   // to scale images
-  const [scaleChange, setScaleChange] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(0); // Tracks cumulative scale change
+  const [scaleChange, setScaleChange] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(0); // Tracks cumulative scale change
 
   const increaseSize = () => {
     setScaleChange(prevScaleChange => prevScaleChange + 0.1);
@@ -98,14 +100,14 @@ const InstructApp = () => {
   const scalePercentage = Math.round((scaleChange + 1) * 100);
 
   // States for individual input fields
-  const [fixtureType, setFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)("");
-  const [region, setRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)("");
-  const [updateSeason, setUpdateSeason] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)("");
-  const [executionWeek, setExecutionWeek] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)("");
-  const [branding, setBranding] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)("");
+  const [fixtureType, setFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
+  const [region, setRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
+  const [updateSeason, setUpdateSeason] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
+  const [executionWeek, setExecutionWeek] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
+  const [branding, setBranding] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
 
   // Update dynamic fields based on user selection
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     if (selectedFixtureType) setFixtureType(selectedFixtureType);
     if (selectedRegion) setRegion(selectedRegion);
   }, [selectedFixtureType, selectedRegion]);
@@ -117,7 +119,7 @@ const InstructApp = () => {
   const handlePrint = () => {
     window.print();
   };
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     async function fetchData() {
       try {
         const response = await (0,_services_getOptionService__WEBPACK_IMPORTED_MODULE_3__.fetchOptionData)();
@@ -172,11 +174,11 @@ const InstructApp = () => {
       totalAcrossRegions
     };
   };
-  const [totals, setTotals] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)({
+  const [totals, setTotals] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)({
     totalsByRegion: {},
     totalAcrossRegions: 0
   });
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     if (data && selectedFixtureType) {
       const newTotals = calculateFixtureTotals(data, selectedFixtureType);
       setTotals(newTotals);
@@ -206,77 +208,30 @@ const InstructApp = () => {
     }
     return Array.from(regions).sort();
   };
-  const uniqueFixtureTypes = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useMemo)(() => getUniqueValues(data, "fixture_type"), [data]);
-  const uniqueRegions = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useMemo)(() => getRegionsForSelectedFixture(), [data, selectedFixtureType]);
-  function drawLineBetweenMovedItems(itemId) {
-    const fromElement = document.getElementById(`${itemId}-movedFrom`);
-    const toElement = document.getElementById(`${itemId}-movedTo`);
-    const svgContainer = document.getElementById(`${itemId}-svg-container`);
-    if (fromElement && toElement && svgContainer) {
-      const fromRect = fromElement.getBoundingClientRect();
-      const toRect = toElement.getBoundingClientRect();
-      const svgPosition = svgContainer.getBoundingClientRect();
-
-      // Calculate line start and end positions relative to the SVG container
-      const startX = fromRect.left + fromRect.width / 2 - svgPosition.left;
-      const startY = fromRect.top + fromRect.height / 2 - svgPosition.top;
-      const endX = toRect.left + toRect.width / 2 - svgPosition.left;
-      const endY = toRect.top + toRect.height / 2 - svgPosition.top;
-
-      // Clear previous SVG content
-      svgContainer.innerHTML = "";
-
-      // Define a unique marker ID to prevent conflicts in case of multiple lines
-      const markerId = `arrowhead-${itemId}`;
-
-      // Create the defs element for marker definition
-      const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-      svgContainer.appendChild(defs);
-
-      // Create the marker element
-      const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-      marker.setAttribute("id", markerId);
-      marker.setAttribute("markerWidth", "10");
-      marker.setAttribute("markerHeight", "10");
-      marker.setAttribute("refX", "0");
-      marker.setAttribute("refY", "3");
-      marker.setAttribute("orient", "auto");
-      marker.setAttribute("markerUnits", "strokeWidth");
-      defs.appendChild(marker);
-
-      // Create the polygon element for the arrowhead shape
-      const arrowhead = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-      arrowhead.setAttribute("points", "0 0, 10 3, 0 6");
-      arrowhead.setAttribute("fill", "red");
-      marker.appendChild(arrowhead);
-
-      // Create the line
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("x1", startX);
-      line.setAttribute("y1", startY);
-      line.setAttribute("x2", endX);
-      line.setAttribute("y2", endY);
-      line.setAttribute("stroke", "red");
-      line.setAttribute("stroke-width", "2");
-      // Reference the marker for the arrowhead
-      line.setAttribute("marker-end", `url(#${markerId})`);
-      svgContainer.appendChild(line);
-    }
-  }
+  const uniqueFixtureTypes = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useMemo)(() => getUniqueValues(data, "fixture_type"), [data]);
+  const uniqueRegions = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useMemo)(() => getRegionsForSelectedFixture(), [data, selectedFixtureType]);
   const itemCodes = [];
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     // Draw lines between moved items
-    itemCodes.forEach(drawLineBetweenMovedItems);
+    itemCodes.forEach(_svgHelpers__WEBPACK_IMPORTED_MODULE_6__.drawLineBetweenMovedItems);
 
     // Setup resize event listener if necessary
     const handleResize = () => {
-      itemCodes.forEach(drawLineBetweenMovedItems);
+      itemCodes.forEach(_svgHelpers__WEBPACK_IMPORTED_MODULE_6__.drawLineBetweenMovedItems);
     };
     window.addEventListener("resize", handleResize);
 
+    // Setup interval to redraw lines every second
+    const intervalId = setInterval(() => {
+      itemCodes.forEach(_svgHelpers__WEBPACK_IMPORTED_MODULE_6__.drawLineBetweenMovedItems);
+    }, 1000);
+
     // Cleanup
-    return () => window.removeEventListener("resize", handleResize);
-  }, [itemCodes, selectedFixtureType, selectedRegion]);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearInterval(intervalId);
+    };
+  }, [itemCodes, selectedFixtureType, selectedRegion, scaleChange]);
   const processAndDisplayData = () => {
     let shelves = {}; // Object to hold shelves data for non-deleted items
     let shelvesForDeletion = {}; // Object to hold shelves data for deleted items
@@ -383,13 +338,18 @@ const InstructApp = () => {
         shelvesForDeletion[shelfKey] = shelvesForDeletion[shelfKey] || [];
       }
     }
-    const ItemBayShelf = ({
-      item
-    }) => {
-      const [fromBay, fromShelf] = item.moved_from.split("|");
-      const [toBay, toShelf] = item.moved_to.split("|");
-      return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, "Move from Bay ", fromBay, "/Shelf ", fromShelf, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null), "to Bay ", toBay, "/Shelf ", toShelf);
-    };
+    // const ItemBayShelf = ({ item }) => {
+    // 	const [fromBay, fromShelf] = item.moved_from.split("|");
+    // 	const [toBay, toShelf] = item.moved_to.split("|");
+
+    // 	return (
+    // 		<>
+    // 			Move from Bay {fromBay}/Shelf {fromShelf}
+    // 			<br />
+    // 			to Bay {toBay}/Shelf {toShelf}
+    // 		</>
+    // 	);
+    // };
     // Function to render shelf data
     const renderShelf = (positions, shelfLabel, id = "") => {
       // Group by horizontal value
@@ -433,9 +393,7 @@ const InstructApp = () => {
           height: `${item.height * 7 * scale}px`
         },
         id: `${item.code}-movedFrom`
-      }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(ItemBayShelf, {
-        item: item
-      })) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
+      }) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
         src: `${item.ImageURL || data.ImageURL}${item.code}.jpg`,
         alt: `SKU ${item.code}`,
         width: item.width * 7 * scale,
@@ -528,7 +486,7 @@ const InstructApp = () => {
   // console.log("Raw Data:", data);
 
   if (isLoading) {
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_Loader__WEBPACK_IMPORTED_MODULE_1__["default"], null);
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_Loader__WEBPACK_IMPORTED_MODULE_2__["default"], null);
   }
   if (error) {
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, error);
@@ -634,7 +592,7 @@ const InstructApp = () => {
     onChange: e => setBranding(e.target.value),
     placeholder: "Branding",
     id: "brandingInput"
-  })))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_UploadPdf__WEBPACK_IMPORTED_MODULE_5__["default"], null), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  })))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_UploadPdf__WEBPACK_IMPORTED_MODULE_4__["default"], null), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "noprint scale"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "scale-wrapper"
@@ -644,9 +602,7 @@ const InstructApp = () => {
   }, "-"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     className: "noprint ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label",
     onClick: increaseSize
-  }, "+"))), processAndDisplayData(), window.addEventListener("resize", () => {
-    drawLineBetweenMovedItems("27213-US-16");
-  }));
+  }, "+"))), processAndDisplayData());
 };
 /* harmony default export */ __webpack_exports__["default"] = (InstructApp);
 
@@ -740,6 +696,88 @@ function UploadPdf() {
     width: 200,
     className: "noprint thumnail-pdf"
   }))) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null));
+}
+
+/***/ }),
+
+/***/ "./src/instruction/svgHelpers.js":
+/*!***************************************!*\
+  !*** ./src/instruction/svgHelpers.js ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   drawLineBetweenMovedItems: function() { return /* binding */ drawLineBetweenMovedItems; }
+/* harmony export */ });
+const SVG_NS = "http://www.w3.org/2000/svg";
+function createSvgElement(type, attributes, parent) {
+  const element = document.createElementNS(SVG_NS, type);
+  for (let attr in attributes) {
+    element.setAttribute(attr, attributes[attr]);
+  }
+  parent.appendChild(element);
+  return element;
+}
+function drawLineBetweenMovedItems(itemId) {
+  const fromElement = document.getElementById(`${itemId}-movedFrom`);
+  const toElement = document.getElementById(`${itemId}-movedTo`);
+  const svgContainer = document.getElementById(`${itemId}-svg-container`);
+  if (fromElement && toElement && svgContainer) {
+    const fromRect = fromElement.getBoundingClientRect();
+    const toRect = toElement.getBoundingClientRect();
+    const svgPosition = svgContainer.getBoundingClientRect();
+
+    // Calculate line start and end positions relative to the SVG container
+    const startX = fromRect.left + fromRect.width / 2 - svgPosition.left;
+    const startY = fromRect.top + fromRect.height / 2 - svgPosition.top;
+    let endX = toRect.left + toRect.width / 2 - svgPosition.left;
+    let endY = toRect.top + toRect.height / 2 - svgPosition.top;
+
+    // Clear previous SVG content
+    svgContainer.innerHTML = "";
+
+    // Define a unique marker ID to prevent conflicts in case of multiple lines
+    const markerId = `arrowhead-${itemId}`;
+
+    // Create the defs element for marker definition
+    const defs = createSvgElement("defs", {}, svgContainer);
+
+    // Create the marker element
+    const markerWidth = 10;
+    const marker = createSvgElement("marker", {
+      id: markerId,
+      markerWidth: markerWidth.toString(),
+      markerHeight: "10",
+      refX: "0",
+      refY: "3",
+      orient: "auto",
+      markerUnits: "strokeWidth"
+    }, defs);
+
+    // Adjust endX and endY to account for the arrowhead size
+    const angle = Math.atan2(endY - startY, endX - startX);
+    endX -= markerWidth * 1.5 * Math.cos(angle);
+    endY -= markerWidth * 1.5 * Math.sin(angle);
+
+    // Create the polygon element for the arrowhead shape
+    createSvgElement("polygon", {
+      points: "0 0, 10 3, 0 6",
+      fill: "red"
+    }, marker);
+
+    // Create the line
+    createSvgElement("line", {
+      x1: startX,
+      y1: startY,
+      x2: endX,
+      y2: endY,
+      stroke: "red",
+      "stroke-width": "2",
+      "marker-end": `url(#${markerId})`
+    }, svgContainer);
+  }
 }
 
 /***/ }),
