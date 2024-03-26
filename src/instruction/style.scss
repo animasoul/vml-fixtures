@@ -108,7 +108,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin: 1em 20% 0 20%;
+		margin: 1em 10% 0 10%;
 	}
 	p.text {
 		text-align: center;
@@ -206,6 +206,16 @@
 		page-break-before: always;
 		page-break-inside: avoid;
 	}
+	.shelf {
+		flex-grow: inherit;
+	}
+	.face-shelf {
+		margin: 0 5%;
+	}
+	h3 {
+		color: #999 !important;
+		padding: 0 5%;
+	}
 }
 
 @media print {
@@ -217,6 +227,7 @@
 	header.page-header {
 		display: none;
 	}
+
 	.onlyprint {
 		display: block !important;
 	}
@@ -232,16 +243,6 @@
 			width: 100% !important;
 		}
 
-		.shelf {
-			flex-grow: inherit;
-		}
-		.face-shelf {
-			margin: 0 5%;
-		}
-		h3 {
-			color: #999 !important;
-			padding: 0 5%;
-		}
 		.footer-instructions-wrapper {
 			margin-top: -150px;
 			position: fixed;

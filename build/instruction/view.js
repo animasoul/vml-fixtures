@@ -463,21 +463,7 @@ const InstructApp = () => {
       src: brandImage,
       alt: "Brand Logo",
       className: "right-image"
-    })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Backpanel: ", titleSuffix), renderShelf(shelfP, "P"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: "footer-instructions-wrapper"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: "footer-instructions"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", {
-      className: "new"
-    }, "GREEN"), " = NEW Graphics"), " ", (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", {
-      className: "move"
-    }, "YELLOW"), "= MOVING Graphics"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", {
-      className: "delete"
-    }, "RED"), "= REMOVED Graphics")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
-      className: "text"
-    }, "This graphic layout shows all of the graphics on your gondola by location AFTER the update is complete."), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("hr", null), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
-      className: "clean"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, "To clean: Use a dry cloth only - No alcohol based products"))))));
+    })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Backpanel: ", titleSuffix), renderShelf(shelfP, "P"))));
 
     // Render both layouts: one for non-deleted items, and one for deleted items
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, generateLayout(shelves, shelfP), (Object.keys(shelvesForAdding).length > 0 || shelfPForAdding.length > 0) && generateLayout(shelvesForAdding, shelfPForAdding, "(Added Items)", "added"), (Object.keys(shelvesForMoving).length > 0 || shelfPForMoving?.length > 0) && generateLayout(shelvesForMoving, shelfPForMoving, "(Moved Items)", "moved"), (Object.keys(shelvesForDeletion).length > 0 || shelfPForDeletion.length > 0) && generateLayout(shelvesForDeletion, shelfPForDeletion, "(Removed Items)", "deleted"));

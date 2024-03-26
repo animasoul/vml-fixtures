@@ -509,7 +509,7 @@ const InstructApp = () => {
 							</div>
 							<h3>Backpanel: {titleSuffix}</h3>
 							{renderShelf(shelfP, "P")}
-							<div className="footer-instructions-wrapper">
+							{/* <div className="footer-instructions-wrapper">
 								<div className="footer-instructions">
 									<p>
 										<span className="new">GREEN</span> = NEW Graphics
@@ -531,7 +531,7 @@ const InstructApp = () => {
 										To clean: Use a dry cloth only - No alcohol based products
 									</strong>
 								</p>
-							</div>
+							</div> */}
 						</div>
 					)}
 				</div>

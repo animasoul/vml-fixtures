@@ -106,7 +106,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1em 20% 0 20%;
+  margin: 1em 10% 0 10%;
 }
 .wp-block-vml-fixtures-instruct p.text {
   text-align: center;
@@ -200,6 +200,16 @@
   page-break-before: always;
   page-break-inside: avoid;
 }
+.wp-block-vml-fixtures-instruct .shelf {
+  flex-grow: inherit;
+}
+.wp-block-vml-fixtures-instruct .face-shelf {
+  margin: 0 5%;
+}
+.wp-block-vml-fixtures-instruct h3 {
+  color: #999 !important;
+  padding: 0 5%;
+}
 
 @media print {
   .noprint,
@@ -222,16 +232,6 @@
   .wp-block-vml-fixtures-instruct .react-pdf__Document {
     margin-top: 3em;
     width: 100% !important;
-  }
-  .wp-block-vml-fixtures-instruct .shelf {
-    flex-grow: inherit;
-  }
-  .wp-block-vml-fixtures-instruct .face-shelf {
-    margin: 0 5%;
-  }
-  .wp-block-vml-fixtures-instruct h3 {
-    color: #999 !important;
-    padding: 0 5%;
   }
   .wp-block-vml-fixtures-instruct .footer-instructions-wrapper {
     margin-top: -150px;
