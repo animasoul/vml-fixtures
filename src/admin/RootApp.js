@@ -161,42 +161,43 @@ const RootApp = () => {
 						{sortedGroupKeys.map((horizontal) => (
 							<div className="item-group" key={horizontal}>
 								{groupedByHorizontal[horizontal].map((item, index) => (
-									<>
-										<div
-											className={`item position-${item.horizontal}-${item.vertical}`}
-											key={index}
-										>
-											<a
-												href="#"
-												onClick={() =>
-													openModal(
-														`${item.ImageURL || data.ImageURL}${item.code}.jpg`,
-													)
-												}
+									item.code ? (
+										<>
+											<div
+												className={`item position-${item.horizontal}-${item.vertical}`}
+												key={index}
 											>
-												<img
-													src={`${item.ImageURL || data.ImageURL}${
-														item.code
-													}.jpg`}
-													alt={`SKU ${item.code}`}
-													width={item.width * 5}
-													height={item.height * 5}
-													data-tooltip-id={item.code}
-												/>
-											</a>
-										</div>
-										<Tooltip id={item.code}>
-											<p>SKU: {item.code}</p>
-											<p>Product Type: {item.product_type}</p>
-											<p>Material: {item.material}</p>
-											<p>Finishing: {item.finishing}</p>
-											<p>Width: {item.width}</p>
-											<p>Height: {item.height}</p>
-											<p>
-												Horizontal: {item.horizontal}, Vertical: {item.vertical}
-											</p>
-										</Tooltip>
-									</>
+												<a
+													href="#"
+													onClick={() =>
+														openModal(
+															`${item.ImageURL || data.ImageURL}${item.code}.jpg`,
+														)
+													}
+												>
+													<img
+														src={`${item.ImageURL || data.ImageURL}${item.code
+															}.jpg`}
+														alt={`SKU ${item.code}`}
+														width={item.width * 5}
+														height={item.height * 5}
+														data-tooltip-id={item.code}
+													/>
+												</a>
+											</div>
+											<Tooltip id={item.code}>
+												<p>SKU: {item.code}</p>
+												<p>Product Type: {item.product_type}</p>
+												<p>Material: {item.material}</p>
+												<p>Finishing: {item.finishing}</p>
+												<p>Width: {item.width}</p>
+												<p>Height: {item.height}</p>
+												<p>
+													Horizontal: {item.horizontal}, Vertical: {item.vertical}
+												</p>
+											</Tooltip>
+										</>
+									) : null
 								))}
 							</div>
 						))}
@@ -281,11 +282,10 @@ const RootApp = () => {
 					<li key={type}>
 						<button
 							onClick={() => setSelectedFixtureType(type)}
-							className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${
-								selectedFixtureType === type
-									? " ui-checkboxradio-checked ui-state-active"
-									: ""
-							}`}
+							className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${selectedFixtureType === type
+								? " ui-checkboxradio-checked ui-state-active"
+								: ""
+								}`}
 						>
 							{type}
 						</button>
@@ -300,11 +300,10 @@ const RootApp = () => {
 							<li key={region}>
 								<button
 									onClick={() => setSelectedRegion(region)}
-									className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${
-										selectedRegion === region
-											? " ui-checkboxradio-checked ui-state-active"
-											: ""
-									}`}
+									className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${selectedRegion === region
+										? " ui-checkboxradio-checked ui-state-active"
+										: ""
+										}`}
 								>
 									{region}
 								</button>
