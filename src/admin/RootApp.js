@@ -93,9 +93,10 @@ const RootApp = () => {
 			return <p>No SKU data available. Please select a Promotion.</p>;
 		}
 
-		let shelves = {}; // Object to hold shelves data
-		let shelfP = []; // Array to hold shelf 'P' data
+		// Create a structure to hold bays data
+		let bays = {};
 
+		// Function to sort horizontal values (especially for shelf P)
 		const sortHorizontalValues = (a, b) => {
 			const order = ["LS", "M", "RS"];
 			return order.indexOf(a) - order.indexOf(b);
@@ -105,22 +106,30 @@ const RootApp = () => {
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
 				sku.positions.forEach((position) => {
-					// Skip the position if it's marked for deletion
-					if (position.update === "delete") {
-						return;
-					}
+					// Skip positions marked for deletion
+					if (position.update === "delete") return;
 
 					if (
 						position.fixture_type === selectedFixtureType &&
 						(!selectedRegion || position.region === selectedRegion)
 					) {
+						// Initialize bay if it doesn't exist
+						const bayNumber = position.bay || 1; // Default to bay 1 if not specified
+						if (!bays[bayNumber]) {
+							bays[bayNumber] = {
+								shelves: {},
+								shelfP: []
+							};
+						}
+
+						// Sort into appropriate shelf within the bay
 						if (position.shelf === "P") {
-							shelfP.push({ ...position, ...sku });
+							bays[bayNumber].shelfP.push({ ...position, ...sku });
 						} else {
-							if (!shelves[position.shelf]) {
-								shelves[position.shelf] = [];
+							if (!bays[bayNumber].shelves[position.shelf]) {
+								bays[bayNumber].shelves[position.shelf] = [];
 							}
-							shelves[position.shelf].push({ ...position, ...sku });
+							bays[bayNumber].shelves[position.shelf].push({ ...position, ...sku });
 						}
 					}
 				});
@@ -171,12 +180,12 @@ const RootApp = () => {
 													href="#"
 													onClick={() =>
 														openModal(
-															`${item.ImageURL || data.ImageURL}${item.code}.jpg`,
+															`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`,
 														)
 													}
 												>
 													<img
-														src={`${item.ImageURL || data.ImageURL}${item.code
+														src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code
 															}.jpg`}
 														alt={`SKU ${item.code}`}
 														width={item.width * 5}
@@ -195,6 +204,7 @@ const RootApp = () => {
 												<p>
 													Horizontal: {item.horizontal}, Vertical: {item.vertical}
 												</p>
+												<p>Bay: {item.bay}</p>
 											</Tooltip>
 										</>
 									) : null
@@ -211,18 +221,23 @@ const RootApp = () => {
 				<h2>
 					{selectedFixtureType} - {selectedRegion}
 				</h2>
-				<div className="admin-fixture">
-					<div className="face-data-display">
-						<h3>Face</h3>
-						{Object.entries(shelves).map(([shelfLabel, positions]) =>
-							renderShelf(positions, shelfLabel),
-						)}
+				{Object.entries(bays).sort(([a], [b]) => a - b).map(([bayNumber, bayData]) => (
+					<div key={bayNumber} className="bay-container">
+						<h2>Bay {bayNumber}</h2>
+						<div className="admin-fixture">
+							<div className="face-data-display">
+								<h3>Face</h3>
+								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) =>
+									renderShelf(positions, shelfLabel)
+								)}
+							</div>
+							<div className="panel-data-display">
+								<h3>Panel</h3>
+								{bayData.shelfP.length > 0 && renderShelf(bayData.shelfP, "P")}
+							</div>
+						</div>
 					</div>
-					<div className="panel-data-display">
-						<h3>Panel</h3>
-						{shelfP.length > 0 && renderShelf(shelfP, "P")}
-					</div>
-				</div>
+				))}
 				<Modal
 					isOpen={isModalOpen}
 					onRequestClose={closeModal}

@@ -294,9 +294,8 @@ const StoreApp = () => {
 			<button
 				style={{ position: "absolute", top: "-10px", right: "0" }}
 				onClick={toggleDiv}
-				className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${
-					isDivVisible ? " ui-checkboxradio-checked ui-state-active" : ""
-				}`}
+				className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${isDivVisible ? " ui-checkboxradio-checked ui-state-active" : ""
+					}`}
 			>
 				{isDivVisible ? "↑" : "↓"} Change Fixture/Region
 			</button>
@@ -309,11 +308,10 @@ const StoreApp = () => {
 								<li key={type}>
 									<button
 										onClick={() => setSelectedFixtureType(type)}
-										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${
-											selectedFixtureType === type
+										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${selectedFixtureType === type
 												? " ui-checkboxradio-checked ui-state-active"
 												: ""
-										}`}
+											}`}
 									>
 										{type}
 									</button>
@@ -328,11 +326,10 @@ const StoreApp = () => {
 										<li key={region}>
 											<button
 												onClick={() => setSelectedRegion(region)}
-												className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${
-													selectedRegion === region
+												className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${selectedRegion === region
 														? " ui-checkboxradio-checked ui-state-active"
 														: ""
-												}`}
+													}`}
 											>
 												{region}
 											</button>

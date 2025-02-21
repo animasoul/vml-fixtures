@@ -390,9 +390,7 @@ const InstructApp = () => {
 											</div>
 										) : (
 											<img
-												src={`${item.ImageURL || data.ImageURL}${
-													item.code
-												}.jpg`}
+												src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
 												alt={`SKU ${item.code}`}
 												width={item.width * 7 * scale}
 												height={item.height * 7 * scale}
@@ -593,11 +591,10 @@ const InstructApp = () => {
 						<li key={type}>
 							<button
 								onClick={() => setSelectedFixtureType(type)}
-								className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${
-									selectedFixtureType === type
+								className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${selectedFixtureType === type
 										? " ui-checkboxradio-checked ui-state-active"
 										: ""
-								}`}
+									}`}
 							>
 								{type}
 							</button>
@@ -612,11 +609,10 @@ const InstructApp = () => {
 								<li key={region}>
 									<button
 										onClick={() => setSelectedRegion(region)}
-										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${
-											selectedRegion === region
+										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${selectedRegion === region
 												? " ui-checkboxradio-checked ui-state-active"
 												: ""
-										}`}
+											}`}
 									>
 										{region}
 									</button>

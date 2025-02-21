@@ -73,7 +73,7 @@ function StoreShelf({ positions, shelfLabel, data }) {
 								key={item.product_id}
 								context="store"
 								type="face"
-								imageUrl={`${item.ImageURL || data.ImageURL}${item.code}.jpg`}
+								imageUrl={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
 							/>
 						))}
 					</div>
