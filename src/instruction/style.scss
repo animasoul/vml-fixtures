@@ -249,3 +249,36 @@
 		}
 	}
 }
+
+.bay-container {
+	margin-bottom: 40px;
+
+	h2 {
+		margin-bottom: 20px;
+		color: #333;
+	}
+}
+
+.bay-links {
+	margin-top: 10px;
+	font-size: 0.9em;
+}
+
+.bay-link {
+	display: inline-block;
+	margin: 0 5px;
+	background-color: #f0f0f0;
+	border-radius: 4px;
+	text-decoration: none;
+	color: #333;
+
+	&:hover {
+		background-color: #e0e0e0;
+	}
+
+	&:not(:last-child)::after {
+		content: "|";
+		margin-left: 10px;
+		color: #666;
+	}
+}

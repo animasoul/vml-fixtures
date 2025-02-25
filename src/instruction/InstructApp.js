@@ -212,14 +212,11 @@ const InstructApp = () => {
 	}, [itemCodes, selectedFixtureType, selectedRegion, scaleChange]);
 
 	const processAndDisplayData = () => {
-		let shelves = {}; // Object to hold shelves data for non-deleted items
-		let shelvesForDeletion = {}; // Object to hold shelves data for deleted items
-		let shelvesForMoving = {}; // Object to hold shelves data for moving items
-		let shelvesForAdding = {}; // Object to hold shelves data for adding items
-		let shelfP = []; // Array to hold shelf 'P' data for non-deleted items
-		let shelfPForDeletion = []; // Array to hold shelf 'P' data for deleted items
-		let shelfPForMoving = []; // Array to hold shelf 'P' data for moving items
-		let shelfPForAdding = []; // Array to hold shelf 'P' data for adding items
+		// Create bay structures for different types of items
+		let bays = {};
+		let baysForDeletion = {};
+		let baysForMoving = {};
+		let baysForAdding = {};
 
 		const sortHorizontalValues = (a, b) => {
 			const order = ["LS", "M", "RS"];
@@ -229,7 +226,7 @@ const InstructApp = () => {
 		let HighestShelfNumber = 0;
 		let updatesExist = false;
 
-		// Single pass to check for updates, determine highestShelfNumber, and process items
+		// Process items into bays
 		Object.values(data.final_skus).forEach((sku) => {
 			if (sku.positions) {
 				sku.positions.forEach((position) => {
@@ -247,14 +244,23 @@ const InstructApp = () => {
 
 						// Create an item object combining position and sku data
 						let item = { ...position, ...sku };
+						const bayNumber = position.bay || 1; // Default to bay 1 if not specified
+
+						// Initialize bay structures if they don't exist
+						[bays, baysForDeletion, baysForMoving, baysForAdding].forEach(bayObj => {
+							if (!bayObj[bayNumber]) {
+								bayObj[bayNumber] = {
+									shelves: {},
+									shelfP: []
+								};
+							}
+						});
 
 						// Process "move" update items
 						if (position.update === "move" && position.moved_from) {
-							// Parse the moved_from property
 							const [fromBay, fromShelf, fromHorizontal, fromVertical] =
 								position.moved_from.split("|").map(String);
 
-							// Create a copy of the item with moved_from values
 							let movedItem = {
 								...item,
 								bay: fromBay,
@@ -265,82 +271,64 @@ const InstructApp = () => {
 								moved_to: `${position.bay}|${position.shelf}|${position.horizontal}|${position.vertical}`,
 							};
 
-							if (position.shelf === "P") {
-								shelfPForMoving.push(movedItem);
+							// Add to moving bay
+							if (fromShelf === "P") {
+								baysForMoving[fromBay].shelfP.push(movedItem);
 							} else {
-								shelvesForMoving[fromShelf] = shelvesForMoving[fromShelf] || [];
-								shelvesForMoving[fromShelf].push(movedItem);
+								if (!baysForMoving[fromBay].shelves[fromShelf]) {
+									baysForMoving[fromBay].shelves[fromShelf] = [];
+								}
+								baysForMoving[fromBay].shelves[fromShelf].push(movedItem);
 							}
 						}
 
-						// Handle deletion separately to prevent adding to default shelves
+						// Handle items based on their update type
 						if (position.update === "delete") {
 							if (position.shelf === "P") {
-								shelfPForDeletion.push(item);
+								baysForDeletion[bayNumber].shelfP.push(item);
 							} else {
-								if (!shelvesForDeletion[position.shelf])
-									shelvesForDeletion[position.shelf] = [];
-
-								shelvesForDeletion[position.shelf].push(item);
+								if (!baysForDeletion[bayNumber].shelves[position.shelf]) {
+									baysForDeletion[bayNumber].shelves[position.shelf] = [];
+								}
+								baysForDeletion[bayNumber].shelves[position.shelf].push(item);
 							}
-							return;
-						}
-
-						// Handle added and moved items by adding them to their specific and default shelves
-						if (position.update === "new" || position.update === "move") {
-							let specificShelves =
-								position.update === "new" ? shelvesForAdding : shelvesForMoving;
-							let specificShelfP =
-								position.update === "new" ? shelfPForAdding : shelfPForMoving;
-
-							if (position.shelf === "P") {
-								specificShelfP.push(item);
-							} else {
-								if (!specificShelves[position.shelf])
-									specificShelves[position.shelf] = [];
-
-								specificShelves[position.shelf].push(item);
-							}
-							if (position.update === "move") {
+						} else {
+							// Add to appropriate bay structure
+							let targetBays = bays;
+							if (position.update === "new") targetBays = baysForAdding;
+							else if (position.update === "move") {
+								targetBays = baysForMoving;
 								itemCodes.push(item.code);
 							}
-						}
 
-						// Add all non-deleted items to default shelves
-						if (position.shelf === "P") {
-							shelfP.push(item);
-						} else {
-							if (!shelves[position.shelf]) shelves[position.shelf] = [];
-							shelves[position.shelf].push(item);
+							if (position.shelf === "P") {
+								targetBays[bayNumber].shelfP.push(item);
+							} else {
+								if (!targetBays[bayNumber].shelves[position.shelf]) {
+									targetBays[bayNumber].shelves[position.shelf] = [];
+								}
+								targetBays[bayNumber].shelves[position.shelf].push(item);
+							}
+
+							// Also add non-deleted items to main bays structure
+							if (position.update !== "delete") {
+								if (position.shelf === "P") {
+									bays[bayNumber].shelfP.push(item);
+								} else {
+									if (!bays[bayNumber].shelves[position.shelf]) {
+										bays[bayNumber].shelves[position.shelf] = [];
+									}
+									bays[bayNumber].shelves[position.shelf].push(item);
+								}
+							}
 						}
 					}
 				});
 			}
 		});
 
-		// Initialize arrays only if updates exist
-		if (updatesExist) {
-			for (let i = 1; i <= HighestShelfNumber; i++) {
-				let shelfKey = i.toString();
-				shelvesForAdding[shelfKey] = shelvesForAdding[shelfKey] || [];
-				shelvesForMoving[shelfKey] = shelvesForMoving[shelfKey] || [];
-				shelvesForDeletion[shelfKey] = shelvesForDeletion[shelfKey] || [];
-			}
-		}
-		// const ItemBayShelf = ({ item }) => {
-		// 	const [fromBay, fromShelf] = item.moved_from.split("|");
-		// 	const [toBay, toShelf] = item.moved_to.split("|");
-
-		// 	return (
-		// 		<>
-		// 			Move from Bay {fromBay}/Shelf {fromShelf}
-		// 			<br />
-		// 			to Bay {toBay}/Shelf {toShelf}
-		// 		</>
-		// 	);
-		// };
 		// Function to render shelf data
-		const renderShelf = (positions, shelfLabel, id = "") => {
+		const renderShelf = (positions, shelfLabel, id = "", bayNumber) => {
 			// Group by horizontal value
 			let groupedByHorizontal = positions.reduce((acc, item) => {
 				let horizontal = item.horizontal;
@@ -367,7 +355,7 @@ const InstructApp = () => {
 			return (
 				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
 					<div className="shelf-title common-container">
-						{shelfLabel === "P" ? null : <>BAY 1/SHELF {shelfLabel}</>}
+						{shelfLabel === "P" ? null : <>BAY {bayNumber}/SHELF {shelfLabel}</>}
 					</div>
 					<div className={`shelf shelf-${shelfLabel}`}>
 						{sortedGroupKeys.map((horizontal) => (
@@ -386,7 +374,7 @@ const InstructApp = () => {
 												}}
 												id={`${item.code}-movedFrom`}
 											>
-												{/* <ItemBayShelf item={item} /> */}
+												{<ItemBayShelf item={item} />}
 											</div>
 										) : (
 											<img
@@ -422,68 +410,15 @@ const InstructApp = () => {
 			);
 		};
 
-		// Function to generate the layout, duplicated and adjusted for items marked for deletion
-		const generateLayout = (
-			shelves,
-			shelfP,
-			titleSuffix = "",
-			id = "default",
-		) => (
+		// Modify generateLayout to handle bays
+		const generateLayout = (bays, titleSuffix = "", id = "default") => (
 			<>
 				<h2 className="noprint">
 					{selectedFixtureType} - {selectedRegion}
 				</h2>
-				<div className="admin-fixture" id={id}>
-					<div
-						className={`face-data-display ${titleSuffix ? "page-break" : ""}`}
-					>
-						<div className="print-header">
-							<img
-								src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
-								alt="Sephora Logo"
-								className="left-image"
-							/>
-							<p className="header-text">
-								{fixtureType} {region}
-								<br />
-								{updateSeason}
-								<br />
-								{executionWeek}
-								<br />
-								{branding}
-							</p>
-							<img src={brandImage} alt="Brand Logo" className="right-image" />
-						</div>
-						<h3>Graphic Layout: {titleSuffix}</h3>
-						{Object.entries(shelves).map(([shelfLabel, positions]) =>
-							renderShelf(positions, shelfLabel, id),
-						)}
-						<div className="footer-instructions-wrapper">
-							<div className="footer-instructions">
-								<p>
-									<span className="new">GREEN</span> = NEW Graphics
-								</p>{" "}
-								<p>
-									<span className="move">YELLOW</span>= MOVING Graphics
-								</p>
-								<p>
-									<span className="delete">RED</span>= REMOVED Graphics
-								</p>
-							</div>
-							<p className="text">
-								This graphic layout shows all of the graphics on your gondola by
-								location AFTER the update is complete.
-							</p>
-							<hr />
-							<p className="clean">
-								<strong>
-									To clean: Use a dry cloth only - No alcohol based products
-								</strong>
-							</p>
-						</div>
-					</div>
-					{shelfP.length > 0 && (
-						<div className="panel-data-display">
+				{Object.entries(bays).sort(([a], [b]) => a - b).map(([bayNumber, bayData]) => (
+					<div className="admin-fixture" id={id} key={bayNumber}>
+						<div className={`face-data-display ${titleSuffix ? "page-break" : ""}`}>
 							<div className="print-header">
 								<img
 									src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
@@ -499,15 +434,13 @@ const InstructApp = () => {
 									<br />
 									{branding}
 								</p>
-								<img
-									src={brandImage}
-									alt="Brand Logo"
-									className="right-image"
-								/>
+								<img src={brandImage} alt="Brand Logo" className="right-image" />
 							</div>
-							<h3>Backpanel: {titleSuffix}</h3>
-							{renderShelf(shelfP, "P")}
-							{/* <div className="footer-instructions-wrapper">
+							<h3>Graphic Layout: Bay {bayNumber} {titleSuffix}</h3>
+							{Object.entries(bayData.shelves).map(([shelfLabel, positions]) =>
+								renderShelf(positions, shelfLabel, id, bayNumber)
+							)}
+							<div className="footer-instructions-wrapper">
 								<div className="footer-instructions">
 									<p>
 										<span className="new">GREEN</span> = NEW Graphics
@@ -520,8 +453,8 @@ const InstructApp = () => {
 									</p>
 								</div>
 								<p className="text">
-									This graphic layout shows all of the graphics on your gondola
-									by location AFTER the update is complete.
+									This graphic layout shows all of the graphics on your gondola by
+									location AFTER the update is complete.
 								</p>
 								<hr />
 								<p className="clean">
@@ -529,41 +462,50 @@ const InstructApp = () => {
 										To clean: Use a dry cloth only - No alcohol based products
 									</strong>
 								</p>
-							</div> */}
+							</div>
 						</div>
-					)}
-				</div>
+						{bayData.shelfP.length > 0 && (
+							<div className="panel-data-display">
+								<div className="print-header">
+									<img
+										src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
+										alt="Sephora Logo"
+										className="left-image"
+									/>
+									<p className="header-text">
+										{fixtureType} {region}
+										<br />
+										{updateSeason}
+										<br />
+										{executionWeek}
+										<br />
+										{branding}
+									</p>
+									<img
+										src={brandImage}
+										alt="Brand Logo"
+										className="right-image"
+									/>
+								</div>
+								<h3>Backpanel: Bay {bayNumber} {titleSuffix}</h3>
+								{renderShelf(bayData.shelfP, "P", id, bayNumber)}
+							</div>
+						)}
+					</div>
+				))}
 			</>
 		);
 
-		// Render both layouts: one for non-deleted items, and one for deleted items
+		// Return the layouts
 		return (
 			<>
-				{generateLayout(shelves, shelfP)}
-				{(Object.keys(shelvesForAdding).length > 0 ||
-					shelfPForAdding.length > 0) &&
-					generateLayout(
-						shelvesForAdding,
-						shelfPForAdding,
-						"(Added Items)",
-						"added",
-					)}
-				{(Object.keys(shelvesForMoving).length > 0 ||
-					shelfPForMoving?.length > 0) &&
-					generateLayout(
-						shelvesForMoving,
-						shelfPForMoving,
-						"(Moved Items)",
-						"moved",
-					)}
-				{(Object.keys(shelvesForDeletion).length > 0 ||
-					shelfPForDeletion.length > 0) &&
-					generateLayout(
-						shelvesForDeletion,
-						shelfPForDeletion,
-						"(Removed Items)",
-						"deleted",
-					)}
+				{generateLayout(bays)}
+				{Object.keys(baysForAdding).length > 0 &&
+					generateLayout(baysForAdding, "(Added Items)", "added")}
+				{Object.keys(baysForMoving).length > 0 &&
+					generateLayout(baysForMoving, "(Moved Items)", "moved")}
+				{Object.keys(baysForDeletion).length > 0 &&
+					generateLayout(baysForDeletion, "(Removed Items)", "deleted")}
 			</>
 		);
 	};
@@ -592,8 +534,8 @@ const InstructApp = () => {
 							<button
 								onClick={() => setSelectedFixtureType(type)}
 								className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${selectedFixtureType === type
-										? " ui-checkboxradio-checked ui-state-active"
-										: ""
+									? " ui-checkboxradio-checked ui-state-active"
+									: ""
 									}`}
 							>
 								{type}
@@ -610,8 +552,8 @@ const InstructApp = () => {
 									<button
 										onClick={() => setSelectedRegion(region)}
 										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${selectedRegion === region
-												? " ui-checkboxradio-checked ui-state-active"
-												: ""
+											? " ui-checkboxradio-checked ui-state-active"
+											: ""
 											}`}
 									>
 										{region}

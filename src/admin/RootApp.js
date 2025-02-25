@@ -4,6 +4,8 @@ import React, { useState, useEffect, useMemo } from "@wordpress/element";
 import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
 import { fetchOptionData } from "../services/getOptionService";
+import ShelfRenderer from '../components/ShelfRenderer';
+import { getUniqueValues, organizeBayData } from '../utilities/shelfUtils';
 
 const RootApp = () => {
 	const [data, setData] = useState(null);
@@ -45,16 +47,6 @@ const RootApp = () => {
 	}, []);
 
 	// Function to get unique values for fixture_type or region
-	const getUniqueValues = (jsonData, key) => {
-		const values = new Set();
-		if (jsonData?.final_skus) {
-			Object.values(jsonData.final_skus).forEach((sku) => {
-				sku.positions.forEach((pos) => values.add(pos[key]));
-			});
-		}
-		return Array.from(values).sort();
-	};
-
 	const getRegionsForSelectedFixture = () => {
 		const regions = new Set();
 		if (data?.final_skus) {
@@ -93,147 +85,59 @@ const RootApp = () => {
 			return <p>No SKU data available. Please select a Promotion.</p>;
 		}
 
-		// Create a structure to hold bays data
-		let bays = {};
-
-		// Function to sort horizontal values (especially for shelf P)
-		const sortHorizontalValues = (a, b) => {
-			const order = ["LS", "M", "RS"];
-			return order.indexOf(a) - order.indexOf(b);
-		};
-
-		// Iterate over each SKU object in final_skus
-		Object.values(data.final_skus).forEach((sku) => {
-			if (sku.positions) {
-				sku.positions.forEach((position) => {
-					// Skip positions marked for deletion
-					if (position.update === "delete") return;
-
-					if (
-						position.fixture_type === selectedFixtureType &&
-						(!selectedRegion || position.region === selectedRegion)
-					) {
-						// Initialize bay if it doesn't exist
-						const bayNumber = position.bay || 1; // Default to bay 1 if not specified
-						if (!bays[bayNumber]) {
-							bays[bayNumber] = {
-								shelves: {},
-								shelfP: []
-							};
-						}
-
-						// Sort into appropriate shelf within the bay
-						if (position.shelf === "P") {
-							bays[bayNumber].shelfP.push({ ...position, ...sku });
-						} else {
-							if (!bays[bayNumber].shelves[position.shelf]) {
-								bays[bayNumber].shelves[position.shelf] = [];
-							}
-							bays[bayNumber].shelves[position.shelf].push({ ...position, ...sku });
-						}
-					}
-				});
-			}
-		});
-
-		// Function to render shelf data
-		const renderShelf = (positions, shelfLabel) => {
-			// Group by horizontal value
-			let groupedByHorizontal = positions.reduce((acc, item) => {
-				let horizontal = item.horizontal;
-				if (!acc[horizontal]) {
-					acc[horizontal] = [];
-				}
-				acc[horizontal].push(item);
-				return acc;
-			}, {});
-
-			// Sort groups by horizontal and reverse sort items within by vertical
-			let sortedGroupKeys = Object.keys(groupedByHorizontal).sort(
-				(a, b) => a - b,
-			);
-			sortedGroupKeys.forEach((horizontal) => {
-				groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical); // Reverse sorting by vertical
-			});
-			// Adjust sorting for 'P' shelf if horizontal values are not numeric
-			if (shelfLabel === "P") {
-				sortedGroupKeys.sort(sortHorizontalValues);
-			}
-
-			// Step 4: Render
-			return (
-				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
-					<div className="shelf-title common-container">
-						{shelfLabel === "P" ? null : <h3>Shelf {shelfLabel}</h3>}
-					</div>
-					<div className={`shelf shelf-${shelfLabel}`}>
-						{sortedGroupKeys.map((horizontal) => (
-							<div className="item-group" key={horizontal}>
-								{groupedByHorizontal[horizontal].map((item, index) => (
-									item.code ? (
-										<>
-											<div
-												className={`item position-${item.horizontal}-${item.vertical}`}
-												key={index}
-											>
-												<a
-													href="#"
-													onClick={() =>
-														openModal(
-															`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`,
-														)
-													}
-												>
-													<img
-														src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code
-															}.jpg`}
-														alt={`SKU ${item.code}`}
-														width={item.width * 5}
-														height={item.height * 5}
-														data-tooltip-id={item.code}
-													/>
-												</a>
-											</div>
-											<Tooltip id={item.code}>
-												<p>SKU: {item.code}</p>
-												<p>Product Type: {item.product_type}</p>
-												<p>Material: {item.material}</p>
-												<p>Finishing: {item.finishing}</p>
-												<p>Width: {item.width}</p>
-												<p>Height: {item.height}</p>
-												<p>
-													Horizontal: {item.horizontal}, Vertical: {item.vertical}
-												</p>
-												<p>Bay: {item.bay}</p>
-											</Tooltip>
-										</>
-									) : null
-								))}
-							</div>
-						))}
-					</div>
-				</div>
-			);
-		};
+		const bays = organizeBayData(data, selectedFixtureType, selectedRegion);
 
 		return (
 			<>
-				<h2>
-					{selectedFixtureType} - {selectedRegion}
-				</h2>
+				<h2>{selectedFixtureType} - {selectedRegion}</h2>
 				{Object.entries(bays).sort(([a], [b]) => a - b).map(([bayNumber, bayData]) => (
-					<div key={bayNumber} className="bay-container">
-						<h2>Bay {bayNumber}</h2>
+					<div key={bayNumber} className="bay-container" id={`bay-${bayNumber}`}>
+						{Object.keys(bays).length > 1 && (
+							<>
+								<h2>Bay {bayNumber}</h2>
+								<div className="bay-links">
+									{Object.keys(bays)
+										.sort((a, b) => a - b)
+										.filter(bayNum => bayNum !== bayNumber)  // Filter out current bay
+										.map((bayNum) => (
+											<a
+												key={bayNum}
+												href={`#bay-${bayNum}`}
+												className="bay-link"
+											>
+												Go to Bay {bayNum}
+											</a>
+										))}
+								</div>
+							</>
+						)}
 						<div className="admin-fixture">
 							<div className="face-data-display">
 								<h3>Face</h3>
-								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) =>
-									renderShelf(positions, shelfLabel)
-								)}
+								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
+									<ShelfRenderer
+										key={shelfLabel}
+										positions={positions}
+										shelfLabel={shelfLabel}
+										bayNumber={bayNumber}
+										data={data}
+										onImageClick={openModal}
+										showTooltip={true}
+									/>
+								))}
 							</div>
 							<div className="panel-data-display">
 								<h3>Panel</h3>
-								{bayData.shelfP.length > 0 && renderShelf(bayData.shelfP, "P")}
+								{bayData.shelfP.length > 0 && (
+									<ShelfRenderer
+										positions={bayData.shelfP}
+										shelfLabel="P"
+										bayNumber={bayNumber}
+										data={data}
+										onImageClick={openModal}
+										showTooltip={true}
+									/>
+								)}
 							</div>
 						</div>
 					</div>
