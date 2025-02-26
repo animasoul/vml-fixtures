@@ -5,6 +5,10 @@ import { fetchOptionData } from "../services/getOptionService";
 import UploadPdf from "./UploadPdf";
 import "./style-index.css";
 import { drawLineBetweenMovedItems } from "./svgHelpers";
+import {
+	organizeAllBayTypes,
+	sortHorizontalValues
+} from '../utilities/shelfUtils';
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
@@ -212,120 +216,16 @@ const InstructApp = () => {
 	}, [itemCodes, selectedFixtureType, selectedRegion, scaleChange]);
 
 	const processAndDisplayData = () => {
-		// Create bay structures for different types of items
-		let bays = {};
-		let baysForDeletion = {};
-		let baysForMoving = {};
-		let baysForAdding = {};
+		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
+			return <p>No SKU data available. Please select a Promotion.</p>;
+		}
 
-		const sortHorizontalValues = (a, b) => {
-			const order = ["LS", "M", "RS"];
-			return order.indexOf(a) - order.indexOf(b);
-		};
-
-		let HighestShelfNumber = 0;
-		let updatesExist = false;
-
-		// Process items into bays
-		Object.values(data.final_skus).forEach((sku) => {
-			if (sku.positions) {
-				sku.positions.forEach((position) => {
-					if (
-						position.fixture_type === selectedFixtureType &&
-						(!selectedRegion || position.region === selectedRegion)
-					) {
-						const shelfNumber = parseInt(position.shelf, 10);
-						if (!isNaN(shelfNumber) && position.shelf !== "P") {
-							HighestShelfNumber = Math.max(HighestShelfNumber, shelfNumber);
-						}
-						if (["new", "move", "delete"].includes(position.update)) {
-							updatesExist = true;
-						}
-
-						// Create an item object combining position and sku data
-						let item = { ...position, ...sku };
-						const bayNumber = position.bay || 1; // Default to bay 1 if not specified
-
-						// Initialize bay structures if they don't exist
-						[bays, baysForDeletion, baysForMoving, baysForAdding].forEach(bayObj => {
-							if (!bayObj[bayNumber]) {
-								bayObj[bayNumber] = {
-									shelves: {},
-									shelfP: []
-								};
-							}
-						});
-
-						// Process "move" update items
-						if (position.update === "move" && position.moved_from) {
-							const [fromBay, fromShelf, fromHorizontal, fromVertical] =
-								position.moved_from.split("|").map(String);
-
-							let movedItem = {
-								...item,
-								bay: fromBay,
-								shelf: fromShelf,
-								horizontal: fromHorizontal,
-								vertical: fromVertical,
-								moved_item: true,
-								moved_to: `${position.bay}|${position.shelf}|${position.horizontal}|${position.vertical}`,
-							};
-
-							// Add to moving bay
-							if (fromShelf === "P") {
-								baysForMoving[fromBay].shelfP.push(movedItem);
-							} else {
-								if (!baysForMoving[fromBay].shelves[fromShelf]) {
-									baysForMoving[fromBay].shelves[fromShelf] = [];
-								}
-								baysForMoving[fromBay].shelves[fromShelf].push(movedItem);
-							}
-						}
-
-						// Handle items based on their update type
-						if (position.update === "delete") {
-							if (position.shelf === "P") {
-								baysForDeletion[bayNumber].shelfP.push(item);
-							} else {
-								if (!baysForDeletion[bayNumber].shelves[position.shelf]) {
-									baysForDeletion[bayNumber].shelves[position.shelf] = [];
-								}
-								baysForDeletion[bayNumber].shelves[position.shelf].push(item);
-							}
-						} else {
-							// Add to appropriate bay structure
-							let targetBays = bays;
-							if (position.update === "new") targetBays = baysForAdding;
-							else if (position.update === "move") {
-								targetBays = baysForMoving;
-								itemCodes.push(item.code);
-							}
-
-							if (position.shelf === "P") {
-								targetBays[bayNumber].shelfP.push(item);
-							} else {
-								if (!targetBays[bayNumber].shelves[position.shelf]) {
-									targetBays[bayNumber].shelves[position.shelf] = [];
-								}
-								targetBays[bayNumber].shelves[position.shelf].push(item);
-							}
-
-							// Also add non-deleted items to main bays structure
-							if (position.update !== "delete") {
-								if (position.shelf === "P") {
-									bays[bayNumber].shelfP.push(item);
-								} else {
-									if (!bays[bayNumber].shelves[position.shelf]) {
-										bays[bayNumber].shelves[position.shelf] = [];
-									}
-									bays[bayNumber].shelves[position.shelf].push(item);
-								}
-							}
-						}
-					}
-				});
-			}
-		});
+		const {
+			default: bays,
+			new: baysForAdding,
+			move: baysForMoving,
+			delete: baysForDeletion
+		} = organizeAllBayTypes(data, selectedFixtureType, selectedRegion);
 
 		// Function to render shelf data
 		const renderShelf = (positions, shelfLabel, id = "", bayNumber) => {
@@ -384,6 +284,10 @@ const InstructApp = () => {
 												height={item.height * 7 * scale}
 												{...(id === "moved" && { id: `${item.code}-movedTo` })}
 												className={item.update}
+												data-bay={item.bay}
+												data-shelf={item.shelf}
+												data-horizontal={item.horizontal}
+												data-vertical={item.vertical}
 											/>
 										)}
 										{id === "moved" && item.moved_item && (
