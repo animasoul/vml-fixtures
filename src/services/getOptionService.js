@@ -15,7 +15,7 @@ export const fetchOptionData = async (noPromo = false) => {
 
 		const response = await fetch(url);
 		const data = await response.json();
-		console.log('Resonse data', data);
+		console.log('Response data', data);
 
 		// Log any SKUs with missing required fields
 		if (data?.data?.final_skus) {

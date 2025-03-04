@@ -452,7 +452,7 @@ const fetchOptionData = async (noPromo = false) => {
     const url = noPromo ? '/wp-json/vml-fixtures/v1/get-option?noPromo=true' : '/wp-json/vml-fixtures/v1/get-option';
     const response = await fetch(url);
     const data = await response.json();
-    console.log('Resonse data', data);
+    console.log('Response data', data);
 
     // Log any SKUs with missing required fields
     if (data?.data?.final_skus) {

@@ -251,30 +251,35 @@ const InstructApp = () => {
 		return Array.from(values).sort();
 	};
 
+	// Add this utility function at the top of your component
+	const matchesFixtureType = (itemFixtureType, selectedFixtureType) => {
+		if (!itemFixtureType || !selectedFixtureType) return false;
+
+		const baseItemType = itemFixtureType.split('(')[0];
+		const baseSelectedType = selectedFixtureType.split('(')[0];
+		return baseItemType === baseSelectedType;
+	};
+
+	// Then update the getRegionsForSelectedFixture function
 	const getRegionsForSelectedFixture = () => {
 		const regions = new Set();
 		if (data?.final_skus && selectedFixtureType) {
 			Object.values(data.final_skus).forEach((sku) => {
-				sku.positions.forEach((pos) => {
-					// Use the same flexible fixture type matching here
-					const baseFixtureType = pos.fixture_type.split('(')[0];
-					const baseSelectedFixtureType = selectedFixtureType.split('(')[0];
-					const fixtureMatches = baseFixtureType === baseSelectedFixtureType;
-
-					if (fixtureMatches) {
-						if (Array.isArray(pos.region)) {
-							console.log(`getRegionsForSelectedFixture - Adding array regions for SKU ${sku.code}:`, pos.region);
-							pos.region.forEach(r => regions.add(r));
-						} else {
-							// console.log(`getRegionsForSelectedFixture - Adding region for SKU ${sku.code}:`, pos.region);
-							regions.add(pos.region);
+				if (sku.positions) {
+					sku.positions.forEach((pos) => {
+						// Use the flexible matching here
+						if (matchesFixtureType(pos.fixture_type, selectedFixtureType)) {
+							if (Array.isArray(pos.region)) {
+								pos.region.forEach(r => regions.add(r));
+							} else {
+								regions.add(pos.region);
+							}
 						}
-					}
-				});
+					});
+				}
 			});
 		}
-		const result = Array.from(regions).sort();
-		return result;
+		return Array.from(regions).sort();
 	};
 
 	const uniqueFixtureTypes = useMemo(
