@@ -447,10 +447,12 @@ __webpack_require__.r(__webpack_exports__);
  * @param {string} promo - The promo parameter for the API.
  * @returns {Promise<any>} A promise that resolves to the fetched data.
  */
-const fetchOptionData = async () => {
+const fetchOptionData = async (noPromo = false) => {
   try {
-    const response = await fetch('/wp-json/vml-fixtures/v1/get-option');
+    const url = noPromo ? '/wp-json/vml-fixtures/v1/get-option?noPromo=true' : '/wp-json/vml-fixtures/v1/get-option';
+    const response = await fetch(url);
     const data = await response.json();
+    console.log('Resonse data', data);
 
     // Log any SKUs with missing required fields
     if (data?.data?.final_skus) {
@@ -657,7 +659,7 @@ const StoreApp = () => {
           const store = response.store;
           setSelectedStore(store);
           const brand = response.brand;
-          // console.log("Store:", store);
+          //console.log("Store:", store);
           // console.log("Brand:", brand);
           // Strip letters from the store code
           const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
@@ -671,6 +673,9 @@ const StoreApp = () => {
 
           if (jsonData?.final_stores) {
             const storeData = jsonData.final_stores[storeNumber];
+            if (!storeData) {
+              throw new Error(`Store data not found for store: ${store}`);
+            }
             const initialFixtureType = storeData.fixture_type;
             const initialRegion = storeData.region;
             setData(jsonData);
@@ -721,8 +726,9 @@ const StoreApp = () => {
     if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
       return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "No SKU data available.");
     }
-    let shelves = {}; // Object to hold shelves data
-    let shelfP = []; // Array to hold shelf 'P' data
+
+    // Organize data by bays
+    let bays = {};
 
     // Iterate over each SKU object in final_skus
     Object.values(data.final_skus).forEach(sku => {
@@ -733,16 +739,28 @@ const StoreApp = () => {
             return;
           }
           if (position.fixture_type === selectedFixtureType && (!selectedRegion || position.region === selectedRegion)) {
+            // Get bay number, default to 1 if not specified
+            const bayNumber = position.bay || 1;
+
+            // Initialize bay if it doesn't exist
+            if (!bays[bayNumber]) {
+              bays[bayNumber] = {
+                shelves: {},
+                shelfP: []
+              };
+            }
+
+            // Add to appropriate shelf
             if (position.shelf === "P") {
-              shelfP.push({
+              bays[bayNumber].shelfP.push({
                 ...position,
                 ...sku
               });
             } else {
-              if (!shelves[position.shelf]) {
-                shelves[position.shelf] = [];
+              if (!bays[bayNumber].shelves[position.shelf]) {
+                bays[bayNumber].shelves[position.shelf] = [];
               }
-              shelves[position.shelf].push({
+              bays[bayNumber].shelves[position.shelf].push({
                 ...position,
                 ...sku
               });
@@ -751,16 +769,21 @@ const StoreApp = () => {
         });
       }
     });
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, selectedFixtureType, " - ", selectedRegion), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, selectedFixtureType, " - ", selectedRegion), Object.entries(bays).sort(([a], [b]) => a - b).map(([bayNumber, bayData]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      key: bayNumber,
+      className: "bay-container",
+      id: `bay-${bayNumber}`
+    }, Object.keys(bays).length > 1 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Bay ", bayNumber), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "store-fixture"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "face-data-display",
       ref: faceDisplayRef
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_6__["default"], {
       positions: positions,
       shelfLabel: shelfLabel,
       data: data,
-      key: shelfLabel
+      key: shelfLabel,
+      bayNumber: bayNumber
     })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-btn"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_5__["default"], {
@@ -769,16 +792,17 @@ const StoreApp = () => {
     }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "panel-data-display",
       ref: panelDisplayRef
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_6__["default"], {
-      positions: shelfP,
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      positions: bayData.shelfP,
       shelfLabel: "P",
-      data: data
+      data: data,
+      bayNumber: bayNumber
     }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-btn"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_5__["default"], {
       onClickHandler: handleAddAllPanelFixtureClick,
       text: "Add All Panel items to cart"
-    }))))));
+    }))))))));
   };
   // Debug: Output raw data and selected values
   // console.log("Raw Data:", data);
@@ -869,7 +893,8 @@ __webpack_require__.r(__webpack_exports__);
 function StoreShelf({
   positions,
   shelfLabel,
-  data
+  data,
+  bayNumber = 1
 }) {
   // console.log("positions", positions);
   const shelfRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useRef)(null);
@@ -918,7 +943,7 @@ function StoreShelf({
     key: shelfLabel
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "shelf-title common-container"
-  }, shelfLabel === "P" ? null : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Shelf ", shelfLabel), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_4__["default"], {
+  }, shelfLabel === "P" ? null : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "BAY ", bayNumber, "/SHELF ", shelfLabel), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_4__["default"], {
     onClickHandler: handleAddAllShelfItems,
     text: `Add All Shelf ${shelfLabel} items to cart`
   }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -944,7 +969,8 @@ StoreShelf.propTypes = {
   shelfLabel: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string).isRequired,
   data: prop_types__WEBPACK_IMPORTED_MODULE_5___default().shape({
     ImageURL: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string)
-  }).isRequired
+  }).isRequired,
+  bayNumber: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().number)
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (StoreShelf);
 

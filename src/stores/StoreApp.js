@@ -125,7 +125,7 @@ const StoreApp = () => {
 					const store = response.store;
 					setSelectedStore(store);
 					const brand = response.brand;
-					// console.log("Store:", store);
+					//console.log("Store:", store);
 					// console.log("Brand:", brand);
 					// Strip letters from the store code
 					const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
@@ -139,6 +139,9 @@ const StoreApp = () => {
 
 					if (jsonData?.final_stores) {
 						const storeData = jsonData.final_stores[storeNumber];
+						if (!storeData) {
+							throw new Error(`Store data not found for store: ${store}`);
+						}
 						const initialFixtureType = storeData.fixture_type;
 						const initialRegion = storeData.region;
 
@@ -204,8 +207,8 @@ const StoreApp = () => {
 			return <p>No SKU data available.</p>;
 		}
 
-		let shelves = {}; // Object to hold shelves data
-		let shelfP = []; // Array to hold shelf 'P' data
+		// Organize data by bays
+		let bays = {};
 
 		// Iterate over each SKU object in final_skus
 		Object.values(data.final_skus).forEach((sku) => {
@@ -220,13 +223,25 @@ const StoreApp = () => {
 						position.fixture_type === selectedFixtureType &&
 						(!selectedRegion || position.region === selectedRegion)
 					) {
+						// Get bay number, default to 1 if not specified
+						const bayNumber = position.bay || 1;
+
+						// Initialize bay if it doesn't exist
+						if (!bays[bayNumber]) {
+							bays[bayNumber] = {
+								shelves: {},
+								shelfP: []
+							};
+						}
+
+						// Add to appropriate shelf
 						if (position.shelf === "P") {
-							shelfP.push({ ...position, ...sku });
+							bays[bayNumber].shelfP.push({ ...position, ...sku });
 						} else {
-							if (!shelves[position.shelf]) {
-								shelves[position.shelf] = [];
+							if (!bays[bayNumber].shelves[position.shelf]) {
+								bays[bayNumber].shelves[position.shelf] = [];
 							}
-							shelves[position.shelf].push({ ...position, ...sku });
+							bays[bayNumber].shelves[position.shelf].push({ ...position, ...sku });
 						}
 					}
 				});
@@ -238,39 +253,53 @@ const StoreApp = () => {
 				<h2>
 					{selectedFixtureType} - {selectedRegion}
 				</h2>
-				<div className="store-fixture">
-					<div className="face-data-display" ref={faceDisplayRef}>
-						<h3>Face</h3>
-						{Object.entries(shelves).map(([shelfLabel, positions]) => (
-							<StoreShelf
-								positions={positions}
-								shelfLabel={shelfLabel}
-								data={data}
-								key={shelfLabel}
-							/>
-						))}
-						<div className="footer-btn">
-							<AddButton
-								onClickHandler={handleAddAllFixtureClick}
-								text="Add All Face items to cart"
-							/>
-						</div>
-					</div>
-					<div className="panel-data-display" ref={panelDisplayRef}>
-						<h3>Panel</h3>
-						{shelfP.length > 0 && (
-							<>
-								<StoreShelf positions={shelfP} shelfLabel="P" data={data} />
+
+				{Object.entries(bays).sort(([a], [b]) => a - b).map(([bayNumber, bayData]) => (
+					<div key={bayNumber} className="bay-container" id={`bay-${bayNumber}`}>
+						{Object.keys(bays).length > 1 && (
+							<h2>Bay {bayNumber}</h2>
+						)}
+						<div className="store-fixture">
+							<div className="face-data-display" ref={faceDisplayRef}>
+								<h3>Face</h3>
+								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
+									<StoreShelf
+										positions={positions}
+										shelfLabel={shelfLabel}
+										data={data}
+										key={shelfLabel}
+										bayNumber={bayNumber}
+									/>
+								))}
 								<div className="footer-btn">
 									<AddButton
-										onClickHandler={handleAddAllPanelFixtureClick}
-										text="Add All Panel items to cart"
+										onClickHandler={handleAddAllFixtureClick}
+										text="Add All Face items to cart"
 									/>
 								</div>
-							</>
-						)}
+							</div>
+							<div className="panel-data-display" ref={panelDisplayRef}>
+								<h3>Panel</h3>
+								{bayData.shelfP.length > 0 && (
+									<>
+										<StoreShelf
+											positions={bayData.shelfP}
+											shelfLabel="P"
+											data={data}
+											bayNumber={bayNumber}
+										/>
+										<div className="footer-btn">
+											<AddButton
+												onClickHandler={handleAddAllPanelFixtureClick}
+												text="Add All Panel items to cart"
+											/>
+										</div>
+									</>
+								)}
+							</div>
+						</div>
 					</div>
-				</div>
+				))}
 			</>
 		);
 	};
@@ -309,8 +338,8 @@ const StoreApp = () => {
 									<button
 										onClick={() => setSelectedFixtureType(type)}
 										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${selectedFixtureType === type
-												? " ui-checkboxradio-checked ui-state-active"
-												: ""
+											? " ui-checkboxradio-checked ui-state-active"
+											: ""
 											}`}
 									>
 										{type}
@@ -327,8 +356,8 @@ const StoreApp = () => {
 											<button
 												onClick={() => setSelectedRegion(region)}
 												className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${selectedRegion === region
-														? " ui-checkboxradio-checked ui-state-active"
-														: ""
+													? " ui-checkboxradio-checked ui-state-active"
+													: ""
 													}`}
 											>
 												{region}

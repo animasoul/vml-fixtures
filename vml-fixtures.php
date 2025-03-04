@@ -91,6 +91,7 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
     $storeCode = $_SESSION['Store'] ?? null;
 
     $customer = $_SESSION['Customer']; // i.e. LUXSGH
+
     // Now find that user account to get the brand image
     $user = get_user_by('login', $customer);
     $image = get_field('brand_logo', 'user_' . $user->ID);

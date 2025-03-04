@@ -6,10 +6,16 @@
  * @param {string} promo - The promo parameter for the API.
  * @returns {Promise<any>} A promise that resolves to the fetched data.
  */
-export const fetchOptionData = async () => {
+export const fetchOptionData = async (noPromo = false) => {
 	try {
-		const response = await fetch('/wp-json/vml-fixtures/v1/get-option');
+
+		const url = noPromo
+			? '/wp-json/vml-fixtures/v1/get-option?noPromo=true'
+			: '/wp-json/vml-fixtures/v1/get-option';
+
+		const response = await fetch(url);
 		const data = await response.json();
+		console.log('Resonse data', data);
 
 		// Log any SKUs with missing required fields
 		if (data?.data?.final_skus) {

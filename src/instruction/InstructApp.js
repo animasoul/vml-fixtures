@@ -88,27 +88,102 @@ const InstructApp = () => {
 		async function fetchData() {
 			try {
 				const response = await fetchOptionData();
-				if (!response?.data) {
-					console.log("Please select a Promotion.");
+
+				if (!response.data) {
+					throw new Error("No data: Please select a Promotion.");
 				} else {
-					setBrandImage(response.logo);
 					const jsonData = response.data;
+
+					if (response.logo) {
+						setBrandImage(response.logo);
+					}
+
+					console.log("InstructApp - Fetched data:", {
+						hasData: !!jsonData,
+						hasFinalSkus: !!jsonData?.final_skus,
+						skuCount: jsonData?.final_skus ? Object.keys(jsonData.final_skus).length : 0
+					});
+
 					setData(jsonData);
 
+					// Check how fixture type and region are being set
 					const fixtureTypes = getUniqueValues(jsonData, "fixture_type");
-					const regions = getUniqueValues(jsonData, "region");
+					console.log("InstructApp - Available fixture types:", fixtureTypes);
 
-					const initialFixtureType = fixtureTypes[fixtureTypes.length - 1];
-					const initialRegion = regions[regions.length - 1];
+					if (fixtureTypes.length > 0) {
+						const initialFixtureType = fixtureTypes[fixtureTypes.length - 1];
+						console.log("InstructApp - Setting initial fixture type:", initialFixtureType);
+						setSelectedFixtureType(initialFixtureType);
 
-					setSelectedFixtureType(initialFixtureType);
-					setSelectedRegion(initialRegion);
-					setUpdateSeason(jsonData.PromoName);
-					setExecutionWeek("Execution Dates: " + jsonData.UpDate);
-					setBranding("Single Branded");
+						// Get regions for this fixture type
+						const regions = new Set();
+						if (jsonData?.final_skus) {
+							console.log("InstructApp - Analyzing regions for fixture type:", initialFixtureType);
+
+							// Track US regions specifically
+							let usRegionPositions = [];
+							// Define regionCounts variable
+							const regionCounts = {};
+
+							Object.values(jsonData.final_skus).forEach((sku) => {
+								if (sku.positions) {
+									sku.positions.forEach((pos) => {
+										// Specifically track positions with US region
+										if (pos.region === "US" || (Array.isArray(pos.region) && pos.region.includes("US"))) {
+											usRegionPositions.push({
+												sku: sku.code,
+												fixture_type: pos.fixture_type,
+												region: pos.region,
+												update: pos.update,
+												matches_selected_fixture: pos.fixture_type === initialFixtureType
+											});
+										}
+
+										// Count regions
+										if (pos.region) {
+											const regionKey = Array.isArray(pos.region) ? JSON.stringify(pos.region) : pos.region;
+											regionCounts[regionKey] = (regionCounts[regionKey] || 0) + 1;
+										}
+
+										// Use the same flexible fixture type matching here
+										const baseFixtureType = pos.fixture_type.split('(')[0];
+										const baseSelectedFixtureType = initialFixtureType.split('(')[0];
+										const fixtureMatches = baseFixtureType === baseSelectedFixtureType;
+
+										if (fixtureMatches) {
+											if (Array.isArray(pos.region)) {
+												console.log(`InstructApp - Adding array regions for SKU ${sku.code}:`, pos.region);
+												pos.region.forEach(r => regions.add(r));
+											} else {
+												// console.log(`InstructApp - Adding region for SKU ${sku.code}:`, pos.region);
+												regions.add(pos.region);
+											}
+										}
+									});
+								}
+							});
+
+							// console.log("InstructApp - Positions with US region:", usRegionPositions);
+							console.log("InstructApp - Selected fixture type:", initialFixtureType);
+							// console.log("InstructApp - Region counts:", regionCounts);
+						}
+
+						const regionArray = Array.from(regions).sort();
+						console.log("InstructApp - Available regions for fixture type:", regionArray);
+
+						if (regionArray.length > 0) {
+							console.log("InstructApp - Setting initial region:", regionArray[regionArray.length - 1]);
+							// console.log("InstructApp - All available regions (sorted):", regionArray);
+							setSelectedRegion(regionArray[regionArray.length - 1]);
+						} else {
+							console.warn("InstructApp - No regions found for fixture type:", initialFixtureType);
+						}
+					} else {
+						console.warn("InstructApp - No fixture types found in data");
+					}
 				}
 			} catch (error) {
-				console.error("Fetch Error:", error);
+				console.error("InstructApp - Fetch Error:", error);
 				setError(error.toString());
 			} finally {
 				setIsLoading(false);
@@ -122,10 +197,15 @@ const InstructApp = () => {
 		// Convert object values to an array for filtering and aggregation
 		const storesArray = Object.values(data.final_stores);
 
-		// Filter stores by the selected fixture type
-		const filteredStores = storesArray.filter(
-			(store) => store.fixture_type === selectedFixtureType,
-		);
+		// Filter stores by the selected fixture type using flexible matching
+		const filteredStores = storesArray.filter((store) => {
+			// Use the same flexible fixture type matching here
+			const baseFixtureType = store.fixture_type.split('(')[0];
+			const baseSelectedFixtureType = selectedFixtureType.split('(')[0];
+			return baseFixtureType === baseSelectedFixtureType;
+		});
+
+		console.log("Filtered stores for fixture type:", selectedFixtureType, filteredStores);
 
 		// Aggregate counts by region
 		const totalsByRegion = filteredStores.reduce((acc, store) => {
@@ -140,8 +220,10 @@ const InstructApp = () => {
 		// Calculate the total number of stores across all regions
 		const totalAcrossRegions = Object.values(totalsByRegion).reduce(
 			(sum, count) => sum + count,
-			0,
+			0
 		);
+
+		console.log("Store totals by region:", totalsByRegion, "Total:", totalAcrossRegions);
 
 		return { totalsByRegion, totalAcrossRegions };
 	};
@@ -171,16 +253,28 @@ const InstructApp = () => {
 
 	const getRegionsForSelectedFixture = () => {
 		const regions = new Set();
-		if (data?.final_skus) {
+		if (data?.final_skus && selectedFixtureType) {
 			Object.values(data.final_skus).forEach((sku) => {
 				sku.positions.forEach((pos) => {
-					if (pos.fixture_type === selectedFixtureType) {
-						regions.add(pos.region);
+					// Use the same flexible fixture type matching here
+					const baseFixtureType = pos.fixture_type.split('(')[0];
+					const baseSelectedFixtureType = selectedFixtureType.split('(')[0];
+					const fixtureMatches = baseFixtureType === baseSelectedFixtureType;
+
+					if (fixtureMatches) {
+						if (Array.isArray(pos.region)) {
+							console.log(`getRegionsForSelectedFixture - Adding array regions for SKU ${sku.code}:`, pos.region);
+							pos.region.forEach(r => regions.add(r));
+						} else {
+							// console.log(`getRegionsForSelectedFixture - Adding region for SKU ${sku.code}:`, pos.region);
+							regions.add(pos.region);
+						}
 					}
 				});
 			});
 		}
-		return Array.from(regions).sort();
+		const result = Array.from(regions).sort();
+		return result;
 	};
 
 	const uniqueFixtureTypes = useMemo(
@@ -188,8 +282,8 @@ const InstructApp = () => {
 		[data],
 	);
 	const uniqueRegions = useMemo(
-		() => getRegionsForSelectedFixture(),
-		[data, selectedFixtureType],
+		() => selectedFixtureType ? getRegionsForSelectedFixture() : [],
+		[data, selectedFixtureType]
 	);
 
 	const itemCodes = [];
@@ -217,15 +311,116 @@ const InstructApp = () => {
 
 	const processAndDisplayData = () => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
-			return <p>No SKU data available. Please select a Promotion.</p>;
+			console.log("InstructApp - Early return condition met:", {
+				dataExists: !!data,
+				finalSkusIsObject: data ? typeof data.final_skus === "object" : false,
+				selectedFixtureTypeExists: !!selectedFixtureType
+			});
+			return <p>No SKU data available.</p>;
 		}
 
-		const {
-			default: bays,
-			new: baysForAdding,
-			move: baysForMoving,
-			delete: baysForDeletion
-		} = organizeAllBayTypes(data, selectedFixtureType, selectedRegion);
+		// Create a map to store the best position for each unique location
+		const bestPositionsMap = new Map();
+
+		// First pass: Find the best position for each unique location
+		Object.values(data.final_skus).forEach((sku) => {
+			if (!sku.positions || !Array.isArray(sku.positions)) {
+				return;
+			}
+
+			sku.positions.forEach((position) => {
+				// Skip deleted positions
+				if (position.update === "delete") {
+					return;
+				}
+
+				// Check if this position matches the fixture type
+				const baseFixtureType = position.fixture_type.split('(')[0];
+				const baseSelectedFixtureType = selectedFixtureType.split('(')[0];
+				const fixtureMatches = baseFixtureType === baseSelectedFixtureType;
+
+				// Check if this position matches the region
+				let regionMatches = false;
+				if (!selectedRegion) {
+					regionMatches = true;
+				} else if (Array.isArray(position.region)) {
+					regionMatches = position.region.includes(selectedRegion);
+				} else if (selectedRegion.includes('-')) {
+					const selectedRegions = selectedRegion.split('-').map(r => r.trim());
+					regionMatches = selectedRegions.includes(position.region);
+				} else {
+					regionMatches = position.region === selectedRegion;
+				}
+
+				// If this position matches both fixture type and region
+				if (fixtureMatches && regionMatches) {
+					// Create a unique key for this location
+					const bay = position.bay || 1;
+					const shelf = position.shelf;
+					const horizontal = position.horizontal;
+					const vertical = position.vertical;
+					const locationKey = `${bay}-${shelf}-${horizontal}-${vertical}`;
+
+					// Check if we already have a position for this location
+					if (bestPositionsMap.has(locationKey)) {
+						const existingPosition = bestPositionsMap.get(locationKey);
+
+						// If the existing position is for a different SKU, log a warning
+						if (existingPosition.sku.code !== sku.code) {
+							console.warn(`InstructApp - Multiple SKUs at same location:`, {
+								location: locationKey,
+								existingSku: existingPosition.sku.code,
+								newSku: sku.code
+							});
+							// Keep the existing position in this case
+							return;
+						}
+
+						// If this is the same SKU but different fixture type, choose the best one
+						const exactMatchCurrent = position.fixture_type === selectedFixtureType;
+						const exactMatchExisting = existingPosition.position.fixture_type === selectedFixtureType;
+
+						// Prefer exact fixture type matches
+						if (exactMatchCurrent && !exactMatchExisting) {
+							// Replace with the current position
+							bestPositionsMap.set(locationKey, { position, sku });
+							console.log(`InstructApp - Replaced with exact fixture type match: ${position.fixture_type}`);
+						}
+						// Otherwise keep the existing one
+					} else {
+						// This is the first position for this location
+						bestPositionsMap.set(locationKey, { position, sku });
+					}
+				}
+			});
+		});
+
+		// Now build the bays object using only the best positions
+		let bays = {};
+
+		bestPositionsMap.forEach(({ position, sku }, locationKey) => {
+			const bay = position.bay || 1;
+
+			// Initialize bay if it doesn't exist
+			if (!bays[bay]) {
+				bays[bay] = {
+					shelves: {},
+					shelfP: []
+				};
+			}
+
+			// Add to appropriate shelf
+			if (position.shelf === "P") {
+				bays[bay].shelfP.push({ ...position, ...sku });
+			} else {
+				if (!bays[bay].shelves[position.shelf]) {
+					bays[bay].shelves[position.shelf] = [];
+				}
+				bays[bay].shelves[position.shelf].push({ ...position, ...sku });
+			}
+		});
+
+		console.log("InstructApp - Finished processing data. Bays object:", bays, "Bay count:", Object.keys(bays).length);
 
 		// Function to render shelf data
 		const renderShelf = (positions, shelfLabel, id = "", bayNumber) => {
@@ -404,12 +599,6 @@ const InstructApp = () => {
 		return (
 			<>
 				{generateLayout(bays)}
-				{Object.keys(baysForAdding).length > 0 &&
-					generateLayout(baysForAdding, "(Added Items)", "added")}
-				{Object.keys(baysForMoving).length > 0 &&
-					generateLayout(baysForMoving, "(Moved Items)", "moved")}
-				{Object.keys(baysForDeletion).length > 0 &&
-					generateLayout(baysForDeletion, "(Removed Items)", "deleted")}
 			</>
 		);
 	};

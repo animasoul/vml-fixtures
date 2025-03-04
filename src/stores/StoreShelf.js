@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import Item from "../components/Item";
 import AddButton from "../components/AddButton";
 
-function StoreShelf({ positions, shelfLabel, data }) {
+function StoreShelf({ positions, shelfLabel, data, bayNumber = 1 }) {
 	// console.log("positions", positions);
 	const shelfRef = useRef(null);
 	const handleAddAllShelfItems = async () => {
@@ -53,7 +53,7 @@ function StoreShelf({ positions, shelfLabel, data }) {
 			<div className="shelf-title common-container">
 				{shelfLabel === "P" ? null : (
 					<>
-						<h3>Shelf {shelfLabel}</h3>
+						<h3>BAY {bayNumber}/SHELF {shelfLabel}</h3>
 						<AddButton
 							onClickHandler={handleAddAllShelfItems}
 							text={`Add All Shelf ${shelfLabel} items to cart`}
@@ -94,6 +94,7 @@ StoreShelf.propTypes = {
 	data: PropTypes.shape({
 		ImageURL: PropTypes.string,
 	}).isRequired,
+	bayNumber: PropTypes.number,
 };
 
 export default StoreShelf;
