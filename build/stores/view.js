@@ -417,7 +417,7 @@ async function addToCart(productInfoArray) {
 
     // Assuming you have other global side-effects to manage like 'updateCartCount'
     // If they are not global, consider handling them differently
-    cart_info.count += productInfoArray.length;
+    cart_info.count = Number(cart_info.count) + productInfoArray.length;
     updateCartCount();
     return result;
   } catch (error) {
