@@ -34,11 +34,11 @@ const StoreApp = () => {
 			return false;
 		}
 
-		// Define which roles can change fixture/region
-		const allowedRoles = ['administrator', 'editor', 'store_manager'];
+		// Check if user has the customer role
+		const isCustomer = userRoles.includes('customer');
 
-		// Check if user has any of the allowed roles
-		return isAdmin || isEditor || userRoles.some(role => allowedRoles.includes(role));
+		// Show to everyone except customers
+		return !isCustomer;
 	};
 
 	const toggleDiv = () => {
