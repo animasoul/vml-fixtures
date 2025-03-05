@@ -1,3 +1,5 @@
+import { matchesFixtureType, createLocationKey } from './fixtureUtils';
+
 export const sortHorizontalValues = (a, b) => {
     const order = ["LS", "M", "RS"];
     return order.indexOf(a) - order.indexOf(b);
@@ -11,14 +13,6 @@ export const getUniqueValues = (jsonData, key) => {
         });
     }
     return Array.from(values).sort();
-};
-
-export const matchesFixtureType = (itemFixtureType, selectedFixtureType) => {
-    if (!itemFixtureType || !selectedFixtureType) return false;
-
-    const baseItemType = itemFixtureType.split('(')[0];
-    const baseSelectedType = selectedFixtureType.split('(')[0];
-    return baseItemType === baseSelectedType;
 };
 
 export const organizeBayData = (data, selectedFixtureType, selectedRegion, type = 'default') => {
@@ -141,15 +135,6 @@ export const organizeBayData = (data, selectedFixtureType, selectedRegion, type 
     }
 
     return bays;
-};
-
-// Helper function to create a unique key for a position
-export const createLocationKey = (position) => {
-    const bay = position.bay || 1;
-    const shelf = position.shelf;
-    const horizontal = position.horizontal;
-    const vertical = position.vertical;
-    return `${bay}-${shelf}-${horizontal}-${vertical}`;
 };
 
 export const organizeAllBayTypes = (data, selectedFixtureType, selectedRegion) => {

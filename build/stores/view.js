@@ -153,8 +153,8 @@ function Item({
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
     src: imageUrl,
     alt: `SKU ${details.SKU}`,
-    width: details.Width * 5,
-    height: details.Height * 5
+    width: details.Width * 10,
+    height: details.Height * 10
   }), type === "panel" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
     className: "smallp"
   }, details.Description), context === "admin" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react_tooltip__WEBPACK_IMPORTED_MODULE_1__.Tooltip, {

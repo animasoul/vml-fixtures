@@ -57,8 +57,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _style_index_css__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./style-index.css */ "./src/instruction/style-index.css");
 /* harmony import */ var _svgHelpers__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./svgHelpers */ "./src/instruction/svgHelpers.js");
 /* harmony import */ var _utilities_shelfUtils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../utilities/shelfUtils */ "./src/utilities/shelfUtils.js");
+/* harmony import */ var _utilities_fixtureUtils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../utilities/fixtureUtils */ "./src/utilities/fixtureUtils.js");
 
 // Desc: Root component for admin app
+
 
 
 
@@ -280,38 +282,8 @@ const InstructApp = () => {
     }
     return Array.from(values).sort();
   };
-
-  // Add this utility function at the top of your component
-  const matchesFixtureType = (itemFixtureType, selectedFixtureType) => {
-    if (!itemFixtureType || !selectedFixtureType) return false;
-    const baseItemType = itemFixtureType.split('(')[0];
-    const baseSelectedType = selectedFixtureType.split('(')[0];
-    return baseItemType === baseSelectedType;
-  };
-
-  // Then update the getRegionsForSelectedFixture function
-  const getRegionsForSelectedFixture = () => {
-    const regions = new Set();
-    if (data?.final_skus && selectedFixtureType) {
-      Object.values(data.final_skus).forEach(sku => {
-        if (sku.positions) {
-          sku.positions.forEach(pos => {
-            // Use the flexible matching here
-            if (matchesFixtureType(pos.fixture_type, selectedFixtureType)) {
-              if (Array.isArray(pos.region)) {
-                pos.region.forEach(r => regions.add(r));
-              } else {
-                regions.add(pos.region);
-              }
-            }
-          });
-        }
-      });
-    }
-    return Array.from(regions).sort();
-  };
   const uniqueFixtureTypes = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useMemo)(() => getUniqueValues(data, "fixture_type"), [data]);
-  const uniqueRegions = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useMemo)(() => selectedFixtureType ? getRegionsForSelectedFixture() : [], [data, selectedFixtureType]);
+  const uniqueRegions = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useMemo)(() => selectedFixtureType ? (0,_utilities_fixtureUtils__WEBPACK_IMPORTED_MODULE_8__.getRegionsForSelectedFixture)(data, selectedFixtureType) : [], [data, selectedFixtureType]);
   const itemCodes = [];
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useEffect)(() => {
     // Draw lines between moved items
@@ -984,6 +956,81 @@ const fetchOptionData = async (noPromo = false) => {
 
 /***/ }),
 
+/***/ "./src/utilities/fixtureUtils.js":
+/*!***************************************!*\
+  !*** ./src/utilities/fixtureUtils.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createLocationKey: () => (/* binding */ createLocationKey),
+/* harmony export */   getRegionsForSelectedFixture: () => (/* binding */ getRegionsForSelectedFixture),
+/* harmony export */   matchesFixtureType: () => (/* binding */ matchesFixtureType)
+/* harmony export */ });
+/**
+ * Utility functions for fixture data processing
+ */
+
+/**
+ * Checks if an item's fixture type matches the selected fixture type
+ * using the base fixture type (part before any parentheses)
+ * 
+ * @param {string} itemFixtureType - The fixture type of the item
+ * @param {string} selectedFixtureType - The selected fixture type
+ * @returns {boolean} - Whether the fixture types match
+ */
+function matchesFixtureType(itemFixtureType, selectedFixtureType) {
+  if (!itemFixtureType || !selectedFixtureType) return false;
+  const baseItemType = itemFixtureType.split('(')[0];
+  const baseSelectedType = selectedFixtureType.split('(')[0];
+  return baseItemType === baseSelectedType;
+}
+
+/**
+ * Gets regions for a selected fixture type
+ * 
+ * @param {Object} data - The fixture data
+ * @param {string} selectedFixtureType - The selected fixture type
+ * @returns {string[]} - Array of regions for the fixture type, sorted
+ */
+function getRegionsForSelectedFixture(data, selectedFixtureType) {
+  const regions = new Set();
+  if (data?.final_skus && selectedFixtureType) {
+    Object.values(data.final_skus).forEach(sku => {
+      if (sku.positions) {
+        sku.positions.forEach(pos => {
+          if (matchesFixtureType(pos.fixture_type, selectedFixtureType)) {
+            if (Array.isArray(pos.region)) {
+              pos.region.forEach(r => regions.add(r));
+            } else {
+              regions.add(pos.region);
+            }
+          }
+        });
+      }
+    });
+  }
+  return Array.from(regions).sort();
+}
+
+/**
+ * Creates a unique location key for a position
+ * 
+ * @param {Object} position - The position object
+ * @returns {string} - A unique key for the position's location
+ */
+function createLocationKey(position) {
+  const bay = position.bay || 1;
+  const shelf = position.shelf;
+  const horizontal = position.horizontal;
+  const vertical = position.vertical;
+  return `${bay}-${shelf}-${horizontal}-${vertical}`;
+}
+
+/***/ }),
+
 /***/ "./src/utilities/shelfUtils.js":
 /*!*************************************!*\
   !*** ./src/utilities/shelfUtils.js ***!
@@ -993,13 +1040,13 @@ const fetchOptionData = async (noPromo = false) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   createLocationKey: () => (/* binding */ createLocationKey),
 /* harmony export */   getUniqueValues: () => (/* binding */ getUniqueValues),
-/* harmony export */   matchesFixtureType: () => (/* binding */ matchesFixtureType),
 /* harmony export */   organizeAllBayTypes: () => (/* binding */ organizeAllBayTypes),
 /* harmony export */   organizeBayData: () => (/* binding */ organizeBayData),
 /* harmony export */   sortHorizontalValues: () => (/* binding */ sortHorizontalValues)
 /* harmony export */ });
+/* harmony import */ var _fixtureUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./fixtureUtils */ "./src/utilities/fixtureUtils.js");
+
 const sortHorizontalValues = (a, b) => {
   const order = ["LS", "M", "RS"];
   return order.indexOf(a) - order.indexOf(b);
@@ -1012,12 +1059,6 @@ const getUniqueValues = (jsonData, key) => {
     });
   }
   return Array.from(values).sort();
-};
-const matchesFixtureType = (itemFixtureType, selectedFixtureType) => {
-  if (!itemFixtureType || !selectedFixtureType) return false;
-  const baseItemType = itemFixtureType.split('(')[0];
-  const baseSelectedType = selectedFixtureType.split('(')[0];
-  return baseItemType === baseSelectedType;
 };
 const organizeBayData = (data, selectedFixtureType, selectedRegion, type = 'default') => {
   let bays = {};
@@ -1058,7 +1099,7 @@ const organizeBayData = (data, selectedFixtureType, selectedRegion, type = 'defa
       if (type === 'delete' && position.update !== "delete") return;
 
       // Use flexible fixture type matching
-      if (!matchesFixtureType(position.fixture_type, selectedFixtureType)) return;
+      if (!(0,_fixtureUtils__WEBPACK_IMPORTED_MODULE_0__.matchesFixtureType)(position.fixture_type, selectedFixtureType)) return;
 
       // Handle region matching with support for combined regions
       if (selectedRegion) {
@@ -1074,7 +1115,7 @@ const organizeBayData = (data, selectedFixtureType, selectedRegion, type = 'defa
       }
 
       // Create a unique key for this position's location
-      const locationKey = createLocationKey(position);
+      const locationKey = (0,_fixtureUtils__WEBPACK_IMPORTED_MODULE_0__.createLocationKey)(position);
 
       // If we haven't seen this location before, add it
       if (!bestPositionsMap.has(locationKey)) {
@@ -1144,15 +1185,6 @@ const organizeBayData = (data, selectedFixtureType, selectedRegion, type = 'defa
     console.warn(`Missing Data in ${type} view:`, missingDataItems);
   }
   return bays;
-};
-
-// Helper function to create a unique key for a position
-const createLocationKey = position => {
-  const bay = position.bay || 1;
-  const shelf = position.shelf;
-  const horizontal = position.horizontal;
-  const vertical = position.vertical;
-  return `${bay}-${shelf}-${horizontal}-${vertical}`;
 };
 const organizeAllBayTypes = (data, selectedFixtureType, selectedRegion) => {
   // Only log if there's no data

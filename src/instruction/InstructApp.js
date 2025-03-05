@@ -9,6 +9,7 @@ import {
 	organizeAllBayTypes,
 	sortHorizontalValues
 } from '../utilities/shelfUtils';
+import { matchesFixtureType, getRegionsForSelectedFixture } from '../utilities/fixtureUtils';
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
@@ -251,43 +252,12 @@ const InstructApp = () => {
 		return Array.from(values).sort();
 	};
 
-	// Add this utility function at the top of your component
-	const matchesFixtureType = (itemFixtureType, selectedFixtureType) => {
-		if (!itemFixtureType || !selectedFixtureType) return false;
-
-		const baseItemType = itemFixtureType.split('(')[0];
-		const baseSelectedType = selectedFixtureType.split('(')[0];
-		return baseItemType === baseSelectedType;
-	};
-
-	// Then update the getRegionsForSelectedFixture function
-	const getRegionsForSelectedFixture = () => {
-		const regions = new Set();
-		if (data?.final_skus && selectedFixtureType) {
-			Object.values(data.final_skus).forEach((sku) => {
-				if (sku.positions) {
-					sku.positions.forEach((pos) => {
-						// Use the flexible matching here
-						if (matchesFixtureType(pos.fixture_type, selectedFixtureType)) {
-							if (Array.isArray(pos.region)) {
-								pos.region.forEach(r => regions.add(r));
-							} else {
-								regions.add(pos.region);
-							}
-						}
-					});
-				}
-			});
-		}
-		return Array.from(regions).sort();
-	};
-
 	const uniqueFixtureTypes = useMemo(
 		() => getUniqueValues(data, "fixture_type"),
 		[data],
 	);
 	const uniqueRegions = useMemo(
-		() => selectedFixtureType ? getRegionsForSelectedFixture() : [],
+		() => selectedFixtureType ? getRegionsForSelectedFixture(data, selectedFixtureType) : [],
 		[data, selectedFixtureType]
 	);
 

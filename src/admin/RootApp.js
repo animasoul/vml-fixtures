@@ -6,14 +6,7 @@ import { Tooltip } from "react-tooltip";
 import { fetchOptionData } from "../services/getOptionService";
 import ShelfRenderer from '../components/ShelfRenderer';
 import { getUniqueValues, organizeBayData } from '../utilities/shelfUtils';
-
-const matchesFixtureType = (itemFixtureType, selectedFixtureType) => {
-	if (!itemFixtureType || !selectedFixtureType) return false;
-
-	const baseItemType = itemFixtureType.split('(')[0];
-	const baseSelectedType = selectedFixtureType.split('(')[0];
-	return baseItemType === baseSelectedType;
-};
+import { matchesFixtureType, getRegionsForSelectedFixture } from '../utilities/fixtureUtils';
 
 const RootApp = () => {
 	const [data, setData] = useState(null);
@@ -54,31 +47,13 @@ const RootApp = () => {
 		fetchData();
 	}, []);
 
-	// Function to get unique values for fixture_type or region
-	const getRegionsForSelectedFixture = () => {
-		const regions = new Set();
-		if (data?.final_skus) {
-			Object.values(data.final_skus).forEach((sku) => {
-				sku.positions.forEach((pos) => {
-					if (matchesFixtureType(pos.fixture_type, selectedFixtureType)) {
-						if (Array.isArray(pos.region)) {
-							pos.region.forEach(r => regions.add(r));
-						} else {
-							regions.add(pos.region);
-						}
-					}
-				});
-			});
-		}
-		return Array.from(regions).sort();
-	};
-
 	const uniqueFixtureTypes = useMemo(
 		() => getUniqueValues(data, "fixture_type"),
 		[data],
 	);
+
 	const uniqueRegions = useMemo(
-		() => getRegionsForSelectedFixture(),
+		() => selectedFixtureType ? getRegionsForSelectedFixture(data, selectedFixtureType) : [],
 		[data, selectedFixtureType],
 	);
 
