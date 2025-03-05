@@ -7,6 +7,14 @@ import { fetchOptionData } from "../services/getOptionService";
 import ShelfRenderer from '../components/ShelfRenderer';
 import { getUniqueValues, organizeBayData } from '../utilities/shelfUtils';
 
+const matchesFixtureType = (itemFixtureType, selectedFixtureType) => {
+	if (!itemFixtureType || !selectedFixtureType) return false;
+
+	const baseItemType = itemFixtureType.split('(')[0];
+	const baseSelectedType = selectedFixtureType.split('(')[0];
+	return baseItemType === baseSelectedType;
+};
+
 const RootApp = () => {
 	const [data, setData] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -52,8 +60,12 @@ const RootApp = () => {
 		if (data?.final_skus) {
 			Object.values(data.final_skus).forEach((sku) => {
 				sku.positions.forEach((pos) => {
-					if (pos.fixture_type === selectedFixtureType) {
-						regions.add(pos.region);
+					if (matchesFixtureType(pos.fixture_type, selectedFixtureType)) {
+						if (Array.isArray(pos.region)) {
+							pos.region.forEach(r => regions.add(r));
+						} else {
+							regions.add(pos.region);
+						}
 					}
 				});
 			});

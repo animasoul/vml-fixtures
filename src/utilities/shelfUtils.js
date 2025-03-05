@@ -13,9 +13,20 @@ export const getUniqueValues = (jsonData, key) => {
     return Array.from(values).sort();
 };
 
+export const matchesFixtureType = (itemFixtureType, selectedFixtureType) => {
+    if (!itemFixtureType || !selectedFixtureType) return false;
+
+    const baseItemType = itemFixtureType.split('(')[0];
+    const baseSelectedType = selectedFixtureType.split('(')[0];
+    return baseItemType === baseSelectedType;
+};
+
 export const organizeBayData = (data, selectedFixtureType, selectedRegion, type = 'default') => {
     let bays = {};
     let missingDataItems = [];
+
+    // Create a map to store the best position for each unique location
+    const bestPositionsMap = new Map();
 
     Object.values(data.final_skus).forEach((sku) => {
         // Check for missing essential SKU data
@@ -49,27 +60,79 @@ export const organizeBayData = (data, selectedFixtureType, selectedRegion, type 
             if (type === 'new' && position.update !== "new") return;
             if (type === 'move' && position.update !== "move") return;
             if (type === 'delete' && position.update !== "delete") return;
-            if (position.fixture_type !== selectedFixtureType) return;
-            if (selectedRegion && position.region !== selectedRegion) return;
 
-            const bayNumber = position.bay || 1;
-            if (!bays[bayNumber]) {
-                bays[bayNumber] = {
-                    shelves: {},
-                    shelfP: []
-                };
+            // Use flexible fixture type matching
+            if (!matchesFixtureType(position.fixture_type, selectedFixtureType)) return;
+
+            // Handle region matching with support for combined regions
+            if (selectedRegion) {
+                const posRegion = position.region;
+                const isMatch = Array.isArray(posRegion)
+                    ? posRegion.includes(selectedRegion)
+                    : posRegion === selectedRegion;
+
+                // Support for combined regions like "US - CA"
+                const isCombinedMatch = selectedRegion.includes('-') &&
+                    selectedRegion.split('-').some(r => {
+                        const trimmedRegion = r.trim();
+                        return Array.isArray(posRegion)
+                            ? posRegion.includes(trimmedRegion)
+                            : posRegion === trimmedRegion;
+                    });
+
+                if (!isMatch && !isCombinedMatch) return;
             }
 
-            const item = { ...position, ...sku };
-            if (position.shelf === "P") {
-                bays[bayNumber].shelfP.push(item);
+            // Create a unique key for this position's location
+            const locationKey = createLocationKey(position);
+
+            // If we haven't seen this location before, add it
+            if (!bestPositionsMap.has(locationKey)) {
+                bestPositionsMap.set(locationKey, { position, sku });
             } else {
-                if (!bays[bayNumber].shelves[position.shelf]) {
-                    bays[bayNumber].shelves[position.shelf] = [];
+                // If we have seen this location, check if this position is better
+                const existingEntry = bestPositionsMap.get(locationKey);
+                const existingFixtureType = existingEntry.position.fixture_type;
+
+                // If the existing position has the exact fixture type, keep it
+                if (existingFixtureType === selectedFixtureType && position.fixture_type !== selectedFixtureType) {
+                    return;
                 }
-                bays[bayNumber].shelves[position.shelf].push(item);
+
+                // If this position has the exact fixture type, use it
+                if (position.fixture_type === selectedFixtureType && existingFixtureType !== selectedFixtureType) {
+                    bestPositionsMap.set(locationKey, { position, sku });
+                    return;
+                }
+
+                // If both have the same fixture type match level, prefer newer positions
+                // Assuming positions with higher IDs are newer
+                if (position.id && existingEntry.position.id && position.id > existingEntry.position.id) {
+                    bestPositionsMap.set(locationKey, { position, sku });
+                }
             }
         });
+    });
+
+    // Build the bays object from the best positions
+    bestPositionsMap.forEach(({ position, sku }, locationKey) => {
+        const bayNumber = position.bay || 1;
+        if (!bays[bayNumber]) {
+            bays[bayNumber] = {
+                shelves: {},
+                shelfP: []
+            };
+        }
+
+        const item = { ...position, ...sku };
+        if (position.shelf === "P") {
+            bays[bayNumber].shelfP.push(item);
+        } else {
+            if (!bays[bayNumber].shelves[position.shelf]) {
+                bays[bayNumber].shelves[position.shelf] = [];
+            }
+            bays[bayNumber].shelves[position.shelf].push(item);
+        }
     });
 
     // Only log if there are missing data items
@@ -78,6 +141,15 @@ export const organizeBayData = (data, selectedFixtureType, selectedRegion, type 
     }
 
     return bays;
+};
+
+// Helper function to create a unique key for a position
+export const createLocationKey = (position) => {
+    const bay = position.bay || 1;
+    const shelf = position.shelf;
+    const horizontal = position.horizontal;
+    const vertical = position.vertical;
+    return `${bay}-${shelf}-${horizontal}-${vertical}`;
 };
 
 export const organizeAllBayTypes = (data, selectedFixtureType, selectedRegion) => {
