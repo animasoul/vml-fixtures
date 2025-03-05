@@ -1,11 +1,7 @@
 // Desc: Root component for store app
 import Loader from "../components/Loader";
-import React, {
-	useState,
-	useEffect,
-	useRef,
-	useMemo,
-} from "@wordpress/element";
+const React = window.React || require('react');
+const { useState, useEffect, useRef, useMemo } = window.React || require('react');
 import { fetchOptionData } from "../services/getOptionService";
 import { gatherProductInfoAndCallAPI } from "../utilities/gatherAndCallAPI";
 import AddButton from "../components/AddButton";
@@ -24,6 +20,26 @@ const StoreApp = () => {
 	const [isError, setIsError] = useState(false);
 
 	const [isDivVisible, setIsDivVisible] = useState(false);
+
+	// Get user role information from the global variable
+	const userRoles = window.vmlFixturesData?.userRoles || [];
+	const isAdmin = window.vmlFixturesData?.isAdmin || false;
+	const isEditor = window.vmlFixturesData?.isEditor || false;
+
+	// Function to check if user has permission to change fixture/region
+	const canChangeFixtureRegion = () => {
+		// If vmlFixturesData is not available, default to not showing the button
+		if (!window.vmlFixturesData) {
+			console.warn('vmlFixturesData not available - hiding fixture controls');
+			return false;
+		}
+
+		// Define which roles can change fixture/region
+		const allowedRoles = ['administrator', 'editor', 'store_manager'];
+
+		// Check if user has any of the allowed roles
+		return isAdmin || isEditor || userRoles.some(role => allowedRoles.includes(role));
+	};
 
 	const toggleDiv = () => {
 		setIsDivVisible(!isDivVisible);
@@ -320,16 +336,19 @@ const StoreApp = () => {
 
 	return (
 		<div style={{ position: "relative" }}>
-			<button
-				style={{ position: "absolute", top: "-10px", right: "0" }}
-				onClick={toggleDiv}
-				className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${isDivVisible ? " ui-checkboxradio-checked ui-state-active" : ""
-					}`}
-			>
-				{isDivVisible ? "↑" : "↓"} Change Fixture/Region
-			</button>
+			{/* Only render the button if user has permission */}
+			{canChangeFixtureRegion() && (
+				<button
+					style={{ position: "absolute", top: "-10px", right: "0" }}
+					onClick={toggleDiv}
+					className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${isDivVisible ? " ui-checkboxradio-checked ui-state-active" : ""}`}
+				>
+					{isDivVisible ? "↑" : "↓"} Change Fixture/Region
+				</button>
+			)}
 			<div className={`store-fixture-wrapper`}>
-				{isDivVisible && (
+				{/* Only show the fixture selection UI if the user has permission */}
+				{isDivVisible && canChangeFixtureRegion() && (
 					<div className="fixture-select">
 						<strong>Select Fixture</strong>
 						<ul className="buttons-row">

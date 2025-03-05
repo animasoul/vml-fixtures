@@ -542,39 +542,63 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _components_Loader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../components/Loader */ "./src/components/Loader.js");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _services_getOptionService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/getOptionService */ "./src/services/getOptionService.js");
-/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
-/* harmony import */ var _components_AddButton__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../components/AddButton */ "./src/components/AddButton.js");
-/* harmony import */ var _StoreShelf__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./StoreShelf */ "./src/stores/StoreShelf.js");
+/* harmony import */ var _services_getOptionService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/getOptionService */ "./src/services/getOptionService.js");
+/* harmony import */ var _utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../utilities/gatherAndCallAPI */ "./src/utilities/gatherAndCallAPI.js");
+/* harmony import */ var _components_AddButton__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../components/AddButton */ "./src/components/AddButton.js");
+/* harmony import */ var _StoreShelf__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./StoreShelf */ "./src/stores/StoreShelf.js");
 
 // Desc: Root component for store app
 
-
+const React = window.React || __webpack_require__(/*! react */ "react");
+const {
+  useState,
+  useEffect,
+  useRef,
+  useMemo
+} = window.React || __webpack_require__(/*! react */ "react");
 
 
 
 
 const StoreApp = () => {
-  const [data, setData] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [isLoading, setIsLoading] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(true);
-  const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [selectedFixtureType, setSelectedFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [selectedRegion, setSelectedRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [selectedStore, setSelectedStore] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const [showButton, setShowButton] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(true);
-  const [message, setMessage] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)("");
-  const [isError, setIsError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
-  const [isDivVisible, setIsDivVisible] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
+  const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedFixtureType, setSelectedFixtureType] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [selectedStore, setSelectedStore] = useState(null);
+  const [showButton, setShowButton] = useState(true);
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isDivVisible, setIsDivVisible] = useState(false);
+
+  // Get user role information from the global variable
+  const userRoles = window.vmlFixturesData?.userRoles || [];
+  const isAdmin = window.vmlFixturesData?.isAdmin || false;
+  const isEditor = window.vmlFixturesData?.isEditor || false;
+
+  // Function to check if user has permission to change fixture/region
+  const canChangeFixtureRegion = () => {
+    // If vmlFixturesData is not available, default to not showing the button
+    if (!window.vmlFixturesData) {
+      console.warn('vmlFixturesData not available - hiding fixture controls');
+      return false;
+    }
+
+    // Define which roles can change fixture/region
+    const allowedRoles = ['administrator', 'editor', 'store_manager'];
+
+    // Check if user has any of the allowed roles
+    return isAdmin || isEditor || userRoles.some(role => allowedRoles.includes(role));
+  };
   const toggleDiv = () => {
     setIsDivVisible(!isDivVisible);
   };
 
   // Create a ref for the face data display div
-  const faceDisplayRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
+  const faceDisplayRef = useRef(null);
   // Create a ref for the panel data display div
-  const panelDisplayRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useRef)(null);
+  const panelDisplayRef = useRef(null);
 
   /**
    * Handle the addition of all fixtures to cart
@@ -583,7 +607,7 @@ const StoreApp = () => {
     // Use the ref to get the panelDisplayElement
     const panelDisplayElement = panelDisplayRef.current;
     if (panelDisplayElement) {
-      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__.gatherProductInfoAndCallAPI)(panelDisplayElement);
+      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__.gatherProductInfoAndCallAPI)(panelDisplayElement);
     }
     throw new Error("Unable to locate panel data for addition to cart.");
   };
@@ -595,7 +619,7 @@ const StoreApp = () => {
     // Use the ref to get the faceDisplayElement
     const faceDisplayElement = faceDisplayRef.current;
     if (faceDisplayElement) {
-      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_4__.gatherProductInfoAndCallAPI)(faceDisplayElement);
+      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__.gatherProductInfoAndCallAPI)(faceDisplayElement);
     }
     throw new Error("Unable to locate face data for addition to cart.");
   };
@@ -647,11 +671,11 @@ const StoreApp = () => {
     }
   };
 
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
+  useEffect(() => {
     async function fetchData() {
       try {
         const noPromo = true;
-        const response = await (0,_services_getOptionService__WEBPACK_IMPORTED_MODULE_3__.fetchOptionData)(noPromo);
+        const response = await (0,_services_getOptionService__WEBPACK_IMPORTED_MODULE_2__.fetchOptionData)(noPromo);
         if (!response.data) {
           throw new Error("No data received for this store/fixture.");
         } else {
@@ -720,8 +744,8 @@ const StoreApp = () => {
     }
     return Array.from(regions).sort();
   };
-  const uniqueFixtureTypes = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useMemo)(() => getUniqueValues(data, "fixture_type"), [data]);
-  const uniqueRegions = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useMemo)(() => getRegionsForSelectedFixture(), [data, selectedFixtureType]);
+  const uniqueFixtureTypes = useMemo(() => getUniqueValues(data, "fixture_type"), [data]);
+  const uniqueRegions = useMemo(() => getRegionsForSelectedFixture(), [data, selectedFixtureType]);
   const processAndDisplayData = () => {
     if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
       return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "No SKU data available.");
@@ -778,7 +802,7 @@ const StoreApp = () => {
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "face-data-display",
       ref: faceDisplayRef
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_5__["default"], {
       positions: positions,
       shelfLabel: shelfLabel,
       data: data,
@@ -786,20 +810,20 @@ const StoreApp = () => {
       bayNumber: bayNumber
     })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-btn"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_4__["default"], {
       onClickHandler: handleAddAllFixtureClick,
       text: "Add All Face items to cart"
     }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "panel-data-display",
       ref: panelDisplayRef
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_5__["default"], {
       positions: bayData.shelfP,
       shelfLabel: "P",
       data: data,
       bayNumber: bayNumber
     }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-btn"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_5__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_4__["default"], {
       onClickHandler: handleAddAllPanelFixtureClick,
       text: "Add All Panel items to cart"
     }))))))));
@@ -820,7 +844,7 @@ const StoreApp = () => {
     style: {
       position: "relative"
     }
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+  }, canChangeFixtureRegion() && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     style: {
       position: "absolute",
       top: "-10px",
@@ -830,7 +854,7 @@ const StoreApp = () => {
     className: `ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${isDivVisible ? " ui-checkboxradio-checked ui-state-active" : ""}`
   }, isDivVisible ? "↑" : "↓", " Change Fixture/Region"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `store-fixture-wrapper`
-  }, isDivVisible && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, isDivVisible && canChangeFixtureRegion() && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "fixture-select"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, "Select Fixture"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", {
     className: "buttons-row"

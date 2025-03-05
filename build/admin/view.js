@@ -43,6 +43,15 @@ const RootApp = () => {
   // State for modal
   const [isModalOpen, setIsModalOpen] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
   const [selectedImageUrl, setSelectedImageUrl] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
+  const userRoles = window.vmlFixturesData?.userRoles || [];
+  const isAdmin = window.vmlFixturesData?.isAdmin || false;
+  const isEditor = window.vmlFixturesData?.isEditor || false;
+
+  // Function to check if user has permission
+  const hasAdminPermission = () => {
+    // For admin functionality, you might want to be more restrictive
+    return isAdmin || userRoles.includes('administrator');
+  };
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
     async function fetchData() {
       try {

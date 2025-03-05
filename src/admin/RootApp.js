@@ -18,6 +18,16 @@ const RootApp = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedImageUrl, setSelectedImageUrl] = useState(null);
 
+	const userRoles = window.vmlFixturesData?.userRoles || [];
+	const isAdmin = window.vmlFixturesData?.isAdmin || false;
+	const isEditor = window.vmlFixturesData?.isEditor || false;
+
+	// Function to check if user has permission
+	const hasAdminPermission = () => {
+		// For admin functionality, you might want to be more restrictive
+		return isAdmin || userRoles.includes('administrator');
+	};
+
 	useEffect(() => {
 		async function fetchData() {
 			try {
