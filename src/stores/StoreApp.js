@@ -14,6 +14,7 @@ const StoreApp = () => {
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
 	const [selectedStore, setSelectedStore] = useState(null);
+	const [userRoles, setUserRoles] = useState([]);
 
 	const [showButton, setShowButton] = useState(true);
 	const [message, setMessage] = useState("");
@@ -21,19 +22,8 @@ const StoreApp = () => {
 
 	const [isDivVisible, setIsDivVisible] = useState(false);
 
-	// Get user role information from the global variable
-	const userRoles = window.vmlFixturesData?.userRoles || [];
-	const isAdmin = window.vmlFixturesData?.isAdmin || false;
-	const isEditor = window.vmlFixturesData?.isEditor || false;
-
 	// Function to check if user has permission to change fixture/region
 	const canChangeFixtureRegion = () => {
-		// If vmlFixturesData is not available, default to not showing the button
-		if (!window.vmlFixturesData) {
-			console.warn('vmlFixturesData not available - hiding fixture controls');
-			return false;
-		}
-
 		// Check if user has the customer role
 		const isCustomer = userRoles.includes('customer');
 
@@ -138,6 +128,13 @@ const StoreApp = () => {
 					throw new Error("No data received for this store/fixture.");
 				} else {
 					const jsonData = response.data;
+					setData(jsonData);
+
+					// Set user roles from the API response
+					if (response.userRoles) {
+						setUserRoles(response.userRoles);
+					}
+
 					const store = response.store;
 					setSelectedStore(store);
 					const brand = response.brand;
@@ -161,7 +158,6 @@ const StoreApp = () => {
 						const initialFixtureType = storeData.fixture_type;
 						const initialRegion = storeData.region;
 
-						setData(jsonData);
 						setSelectedFixtureType(initialFixtureType);
 						setSelectedRegion(initialRegion);
 					} else {

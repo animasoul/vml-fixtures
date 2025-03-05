@@ -40,17 +40,20 @@ const RootApp = () => {
   const [error, setError] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
   const [selectedFixtureType, setSelectedFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
   const [selectedRegion, setSelectedRegion] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
+  const [userRoles, setUserRoles] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)([]);
   // State for modal
   const [isModalOpen, setIsModalOpen] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
   const [selectedImageUrl, setSelectedImageUrl] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
-  const userRoles = window.vmlFixturesData?.userRoles || [];
   const isAdmin = window.vmlFixturesData?.isAdmin || false;
   const isEditor = window.vmlFixturesData?.isEditor || false;
 
   // Function to check if user has permission
   const hasAdminPermission = () => {
-    // For admin functionality, you might want to be more restrictive
-    return isAdmin || userRoles.includes('administrator');
+    // Check if user has the customer role
+    const isCustomer = userRoles.includes('customer');
+
+    // Show to everyone except customers
+    return !isCustomer;
   };
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useEffect)(() => {
     async function fetchData() {
@@ -61,6 +64,11 @@ const RootApp = () => {
         } else {
           const jsonData = response.data;
           setData(jsonData);
+
+          // Set user roles from the API response
+          if (response.userRoles) {
+            setUserRoles(response.userRoles);
+          }
           const fixtureTypes = (0,_utilities_shelfUtils__WEBPACK_IMPORTED_MODULE_7__.getUniqueValues)(jsonData, "fixture_type");
           const regions = (0,_utilities_shelfUtils__WEBPACK_IMPORTED_MODULE_7__.getUniqueValues)(jsonData, "region");
           const initialFixtureType = fixtureTypes[fixtureTypes.length - 1];
@@ -390,7 +398,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 const fetchOptionData = async (noPromo = false) => {
   try {
-    const url = noPromo ? '/wp-json/vml-fixtures/v1/get-option?noPromo=true' : '/wp-json/vml-fixtures/v1/get-option';
+    const url = noPromo ? `/wp-json/vml-fixtures/v1/get-option?noPromo=true&_wpnonce=${wpApiSettings.nonce}` : `/wp-json/vml-fixtures/v1/get-option?_wpnonce=${wpApiSettings.nonce}`;
     const response = await fetch(url);
     const data = await response.json();
     console.log('Response data', data);

@@ -449,7 +449,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 const fetchOptionData = async (noPromo = false) => {
   try {
-    const url = noPromo ? '/wp-json/vml-fixtures/v1/get-option?noPromo=true' : '/wp-json/vml-fixtures/v1/get-option';
+    const url = noPromo ? `/wp-json/vml-fixtures/v1/get-option?noPromo=true&_wpnonce=${wpApiSettings.nonce}` : `/wp-json/vml-fixtures/v1/get-option?_wpnonce=${wpApiSettings.nonce}`;
     const response = await fetch(url);
     const data = await response.json();
     console.log('Response data', data);
@@ -567,29 +567,19 @@ const StoreApp = () => {
   const [selectedFixtureType, setSelectedFixtureType] = useState(null);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedStore, setSelectedStore] = useState(null);
+  const [userRoles, setUserRoles] = useState([]);
   const [showButton, setShowButton] = useState(true);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [isDivVisible, setIsDivVisible] = useState(false);
 
-  // Get user role information from the global variable
-  const userRoles = window.vmlFixturesData?.userRoles || [];
-  const isAdmin = window.vmlFixturesData?.isAdmin || false;
-  const isEditor = window.vmlFixturesData?.isEditor || false;
-
   // Function to check if user has permission to change fixture/region
   const canChangeFixtureRegion = () => {
-    // If vmlFixturesData is not available, default to not showing the button
-    if (!window.vmlFixturesData) {
-      console.warn('vmlFixturesData not available - hiding fixture controls');
-      return false;
-    }
+    // Check if user has the customer role
+    const isCustomer = userRoles.includes('customer');
 
-    // Define which roles can change fixture/region
-    const allowedRoles = ['administrator', 'editor', 'store_manager'];
-
-    // Check if user has any of the allowed roles
-    return isAdmin || isEditor || userRoles.some(role => allowedRoles.includes(role));
+    // Show to everyone except customers
+    return !isCustomer;
   };
   const toggleDiv = () => {
     setIsDivVisible(!isDivVisible);
@@ -680,6 +670,12 @@ const StoreApp = () => {
           throw new Error("No data received for this store/fixture.");
         } else {
           const jsonData = response.data;
+          setData(jsonData);
+
+          // Set user roles from the API response
+          if (response.userRoles) {
+            setUserRoles(response.userRoles);
+          }
           const store = response.store;
           setSelectedStore(store);
           const brand = response.brand;
@@ -702,7 +698,6 @@ const StoreApp = () => {
             }
             const initialFixtureType = storeData.fixture_type;
             const initialRegion = storeData.region;
-            setData(jsonData);
             setSelectedFixtureType(initialFixtureType);
             setSelectedRegion(initialRegion);
           } else {

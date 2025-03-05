@@ -877,7 +877,7 @@ __webpack_require__.r(__webpack_exports__);
  */
 const fetchOptionData = async (noPromo = false) => {
   try {
-    const url = noPromo ? '/wp-json/vml-fixtures/v1/get-option?noPromo=true' : '/wp-json/vml-fixtures/v1/get-option';
+    const url = noPromo ? `/wp-json/vml-fixtures/v1/get-option?noPromo=true&_wpnonce=${wpApiSettings.nonce}` : `/wp-json/vml-fixtures/v1/get-option?_wpnonce=${wpApiSettings.nonce}`;
     const response = await fetch(url);
     const data = await response.json();
     console.log('Response data', data);

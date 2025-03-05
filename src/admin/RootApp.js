@@ -14,18 +14,21 @@ const RootApp = () => {
 	const [error, setError] = useState(null);
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
+	const [userRoles, setUserRoles] = useState([]);
 	// State for modal
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedImageUrl, setSelectedImageUrl] = useState(null);
 
-	const userRoles = window.vmlFixturesData?.userRoles || [];
 	const isAdmin = window.vmlFixturesData?.isAdmin || false;
 	const isEditor = window.vmlFixturesData?.isEditor || false;
 
 	// Function to check if user has permission
 	const hasAdminPermission = () => {
-		// For admin functionality, you might want to be more restrictive
-		return isAdmin || userRoles.includes('administrator');
+		// Check if user has the customer role
+		const isCustomer = userRoles.includes('customer');
+
+		// Show to everyone except customers
+		return !isCustomer;
 	};
 
 	useEffect(() => {
@@ -37,6 +40,12 @@ const RootApp = () => {
 				} else {
 					const jsonData = response.data;
 					setData(jsonData);
+
+					// Set user roles from the API response
+					if (response.userRoles) {
+						setUserRoles(response.userRoles);
+					}
+
 					const fixtureTypes = getUniqueValues(jsonData, "fixture_type");
 					const regions = getUniqueValues(jsonData, "region");
 
