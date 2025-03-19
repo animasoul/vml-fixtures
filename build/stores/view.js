@@ -679,27 +679,41 @@ const StoreApp = () => {
           const store = response.store;
           setSelectedStore(store);
           const brand = response.brand;
-          //console.log("Store:", store);
-          // console.log("Brand:", brand);
+
           // Strip letters from the store code
           const storeNumber = parseInt(store.replace(/\D/g, ""), 10);
-
-          // console.log("Store Number:", storeNumber);
-          // if storeNumber is null or undefined, return error saying that a store must be selected
-          if (!storeNumber) {
-            throw new Error("Please select a store.");
-          }
-          // Retrieve fixture_type and region using storeNumber
-
           if (jsonData?.final_stores) {
-            const storeData = jsonData.final_stores[storeNumber];
-            if (!storeData) {
-              throw new Error(`Store data not found for store: ${store}`);
+            // Check if storeNumber exists and is valid
+            if (storeNumber && jsonData.final_stores[storeNumber]) {
+              const storeData = jsonData.final_stores[storeNumber];
+              const initialFixtureType = storeData.fixture_type;
+              const initialRegion = storeData.region;
+              setSelectedFixtureType(initialFixtureType);
+              setSelectedRegion(initialRegion);
+            } else {
+              // If storeNumber is missing or invalid but we have fixture data,
+              // use the first available fixture type and region from the SKUs
+              console.warn("Store number missing or invalid, using default fixture data");
+
+              // Get first available fixture type and region from SKUs
+              if (jsonData?.final_skus) {
+                let foundFixture = false;
+                Object.values(jsonData.final_skus).some(sku => {
+                  if (sku.positions && sku.positions.length > 0) {
+                    setSelectedFixtureType(sku.positions[0].fixture_type);
+                    setSelectedRegion(sku.positions[0].region);
+                    foundFixture = true;
+                    return true;
+                  }
+                  return false;
+                });
+                if (!foundFixture) {
+                  throw new Error("No fixture data found in SKUs.");
+                }
+              } else {
+                throw new Error("No fixture data available.");
+              }
             }
-            const initialFixtureType = storeData.fixture_type;
-            const initialRegion = storeData.region;
-            setSelectedFixtureType(initialFixtureType);
-            setSelectedRegion(initialRegion);
           } else {
             // Handle case where storeData is not found
             console.error("Store data not found for store number:", storeNumber);
@@ -949,7 +963,14 @@ function StoreShelf({
   // Sort groups by horizontal and reverse sort items within by vertical
   let sortedGroupKeys = Object.keys(groupedByHorizontal).sort((a, b) => a - b);
   sortedGroupKeys.forEach(horizontal => {
-    groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical); // Reverse sorting by vertical
+    // Only reverse sort by vertical if it's NOT a panel shelf
+    if (shelfLabel === "P") {
+      // For panel shelf, use normal (ascending) vertical order
+      groupedByHorizontal[horizontal].sort((a, b) => a.vertical - b.vertical);
+    } else {
+      // For regular shelves, use reverse (descending) vertical order
+      groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical);
+    }
   });
   // Adjust sorting for 'P' shelf if horizontal values are not numeric
   if (shelfLabel === "P") {

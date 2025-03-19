@@ -345,7 +345,14 @@ const ShelfRenderer = ({
   // Sort groups
   let sortedGroupKeys = Object.keys(groupedByHorizontal).sort((a, b) => a - b);
   sortedGroupKeys.forEach(horizontal => {
-    groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical);
+    // Only reverse sort by vertical if it's NOT a panel shelf
+    if (shelfLabel === "P") {
+      // For panel shelf, use normal (ascending) vertical order
+      groupedByHorizontal[horizontal].sort((a, b) => a.vertical - b.vertical);
+    } else {
+      // For regular shelves, use reverse (descending) vertical order
+      groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical);
+    }
   });
   if (shelfLabel === "P") {
     sortedGroupKeys.sort(sortHorizontalValues);
