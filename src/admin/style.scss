@@ -28,11 +28,18 @@
 	.admin-fixture {
 		display: flex;
 		gap: 1em;
+		width: 100%;
 		.face-data-display {
-			flex: 1.5;
+			flex: 0 0 50%; /* don't grow, don't shrink, start at 50% */
 		}
 		.panel-data-display {
-			flex: 1;
+			flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
+		}
+		.side-panels-display {
+			flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
+		}
+		.back-panels-display {
+			flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
 		}
 	}
 	.shelf-title {
@@ -67,7 +74,6 @@
 		margin: 0 0.2em;
 
 		.item {
-			// border: 1px solid #000;
 			margin: 0.5em auto;
 			background-size: cover;
 			text-align: center;
@@ -83,6 +89,5 @@
 		display: flex;
 		flex-direction: column;
 		padding: 0.2em;
-		// border: 1px solid #ccc;
 	}
 }

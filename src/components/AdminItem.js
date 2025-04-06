@@ -29,8 +29,8 @@ const AdminItem = ({ item, data, onImageClick, showTooltip }) => {
                     <img
                         src={imageUrl}
                         alt={`SKU ${item.code}`}
-                        width={item.width * 10}
-                        height={item.height * 10}
+                        width={item.width * 5}
+                        height={item.height * 5}
                         data-tooltip-id={item.code}
                         onError={(e) => {
                             console.warn(`Image failed to load for SKU ${item.code}`);

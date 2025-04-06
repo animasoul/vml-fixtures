@@ -885,9 +885,31 @@ __webpack_require__.r(__webpack_exports__);
 const fetchOptionData = async (noPromo = false) => {
   try {
     const url = noPromo ? `/wp-json/vml-fixtures/v1/get-option?noPromo=true&_wpnonce=${wpApiSettings.nonce}` : `/wp-json/vml-fixtures/v1/get-option?_wpnonce=${wpApiSettings.nonce}`;
+    console.log('Fetching data from:', url);
     const response = await fetch(url);
-    const data = await response.json();
-    console.log('Response data', data);
+
+    // Log the raw response
+    console.log('Raw response:', response);
+
+    // Check if response is ok
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Get the raw text first
+    const rawText = await response.text();
+    console.log('Raw response text:', rawText);
+
+    // Try to parse the JSON
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (parseError) {
+      console.error('JSON Parse Error:', parseError);
+      console.error('Failed to parse text:', rawText);
+      throw new Error('Failed to parse JSON response');
+    }
+    console.log('Parsed data:', data);
 
     // Log any SKUs with missing required fields
     if (data?.data?.final_skus) {

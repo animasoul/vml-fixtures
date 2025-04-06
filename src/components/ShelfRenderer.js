@@ -10,7 +10,8 @@ const ShelfRenderer = ({
     showTooltip = false,
     isInstruction = false,
     data,
-    id = ""
+    id = "",
+    panelType = null // New prop to specify panel type: "side" or "back"
 }) => {
     const sortHorizontalValues = (a, b) => {
         const order = ["LS", "M", "RS"];
@@ -42,6 +43,17 @@ const ShelfRenderer = ({
 
     if (shelfLabel === "P") {
         sortedGroupKeys.sort(sortHorizontalValues);
+    }
+
+    // Filter panel items based on panelType
+    if (shelfLabel === "P" && panelType) {
+        if (panelType === "side") {
+            // For side panels, only include LS and RS
+            sortedGroupKeys = sortedGroupKeys.filter(key => key === "LS" || key === "RS");
+        } else if (panelType === "back") {
+            // For back panels, only include M
+            sortedGroupKeys = sortedGroupKeys.filter(key => key === "M");
+        }
     }
 
     return (

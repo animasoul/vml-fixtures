@@ -30,12 +30,19 @@
 .wp-block-vml-fixtures-admin .admin-fixture {
   display: flex;
   gap: 1em;
+  width: 100%;
 }
 .wp-block-vml-fixtures-admin .admin-fixture .face-data-display {
-  flex: 1.5;
+  flex: 0 0 50%; /* don't grow, don't shrink, start at 50% */
 }
 .wp-block-vml-fixtures-admin .admin-fixture .panel-data-display {
-  flex: 1;
+  flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
+}
+.wp-block-vml-fixtures-admin .admin-fixture .side-panels-display {
+  flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
+}
+.wp-block-vml-fixtures-admin .admin-fixture .back-panels-display {
+  flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
 }
 .wp-block-vml-fixtures-admin .shelf-title {
   display: flex;

@@ -124,14 +124,25 @@ const RootApp = () => {
       onImageClick: openModal,
       showTooltip: true
     }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: "panel-data-display"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      className: "side-panels-display"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Side Panels"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
       positions: bayData.shelfP,
       shelfLabel: "P",
       bayNumber: bayNumber,
       data: data,
       onImageClick: openModal,
-      showTooltip: true
+      showTooltip: true,
+      panelType: "side"
+    })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "back-panels-display"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Back Panels"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      positions: bayData.shelfP,
+      shelfLabel: "P",
+      bayNumber: bayNumber,
+      data: data,
+      onImageClick: openModal,
+      showTooltip: true,
+      panelType: "back"
     }))))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)((react_modal__WEBPACK_IMPORTED_MODULE_3___default()), {
       isOpen: isModalOpen,
       onRequestClose: closeModal,
@@ -248,8 +259,8 @@ const AdminItem = ({
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
     src: imageUrl,
     alt: `SKU ${item.code}`,
-    width: item.width * 10,
-    height: item.height * 10,
+    width: item.width * 5,
+    height: item.height * 5,
     "data-tooltip-id": item.code,
     onError: e => {
       console.warn(`Image failed to load for SKU ${item.code}`);
@@ -325,7 +336,8 @@ const ShelfRenderer = ({
   showTooltip = false,
   isInstruction = false,
   data,
-  id = ""
+  id = "",
+  panelType = null // New prop to specify panel type: "side" or "back"
 }) => {
   const sortHorizontalValues = (a, b) => {
     const order = ["LS", "M", "RS"];
@@ -356,6 +368,17 @@ const ShelfRenderer = ({
   });
   if (shelfLabel === "P") {
     sortedGroupKeys.sort(sortHorizontalValues);
+  }
+
+  // Filter panel items based on panelType
+  if (shelfLabel === "P" && panelType) {
+    if (panelType === "side") {
+      // For side panels, only include LS and RS
+      sortedGroupKeys = sortedGroupKeys.filter(key => key === "LS" || key === "RS");
+    } else if (panelType === "back") {
+      // For back panels, only include M
+      sortedGroupKeys = sortedGroupKeys.filter(key => key === "M");
+    }
   }
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `face-shelf face-shelf-${shelfLabel}`
@@ -406,9 +429,31 @@ __webpack_require__.r(__webpack_exports__);
 const fetchOptionData = async (noPromo = false) => {
   try {
     const url = noPromo ? `/wp-json/vml-fixtures/v1/get-option?noPromo=true&_wpnonce=${wpApiSettings.nonce}` : `/wp-json/vml-fixtures/v1/get-option?_wpnonce=${wpApiSettings.nonce}`;
+    console.log('Fetching data from:', url);
     const response = await fetch(url);
-    const data = await response.json();
-    console.log('Response data', data);
+
+    // Log the raw response
+    console.log('Raw response:', response);
+
+    // Check if response is ok
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Get the raw text first
+    const rawText = await response.text();
+    console.log('Raw response text:', rawText);
+
+    // Try to parse the JSON
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (parseError) {
+      console.error('JSON Parse Error:', parseError);
+      console.error('Failed to parse text:', rawText);
+      throw new Error('Failed to parse JSON response');
+    }
+    console.log('Parsed data:', data);
 
     // Log any SKUs with missing required fields
     if (data?.data?.final_skus) {

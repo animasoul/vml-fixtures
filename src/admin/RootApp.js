@@ -132,8 +132,8 @@ const RootApp = () => {
 									/>
 								))}
 							</div>
-							<div className="panel-data-display">
-								<h3>Panel</h3>
+							<div className="side-panels-display">
+								<h3>Side Panels</h3>
 								{bayData.shelfP.length > 0 && (
 									<ShelfRenderer
 										positions={bayData.shelfP}
@@ -142,6 +142,21 @@ const RootApp = () => {
 										data={data}
 										onImageClick={openModal}
 										showTooltip={true}
+										panelType="side"
+									/>
+								)}
+							</div>
+							<div className="back-panels-display">
+								<h3>Back Panels</h3>
+								{bayData.shelfP.length > 0 && (
+									<ShelfRenderer
+										positions={bayData.shelfP}
+										shelfLabel="P"
+										bayNumber={bayNumber}
+										data={data}
+										onImageClick={openModal}
+										showTooltip={true}
+										panelType="back"
 									/>
 								)}
 							</div>
