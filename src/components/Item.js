@@ -56,8 +56,8 @@ function Item({ item, context, type, imageUrl }) {
 			<img
 				src={imageUrl}
 				alt={`SKU ${details.SKU}`}
-				width={details.Width * 10}
-				height={details.Height * 10}
+				width={details.Width * 5}
+				height={details.Height * 5}
 			/>
 			{type === "panel" && <p className="smallp">{details.Description}</p>}
 			{context === "admin" && (

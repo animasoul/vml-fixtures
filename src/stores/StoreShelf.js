@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import Item from "../components/Item";
 import AddButton from "../components/AddButton";
 
-function StoreShelf({ positions, shelfLabel, data, bayNumber = 1 }) {
+function StoreShelf({ positions, shelfLabel, data, bayNumber = 1, panelType = null }) {
 	// console.log("positions", positions);
 	const shelfRef = useRef(null);
 	const handleAddAllShelfItems = async () => {
@@ -54,6 +54,17 @@ function StoreShelf({ positions, shelfLabel, data, bayNumber = 1 }) {
 		sortedGroupKeys.sort(sortHorizontalValues);
 	}
 
+	// Filter panel items based on panelType
+	if (shelfLabel === "P" && panelType) {
+		if (panelType === "side") {
+			// For side panels, only include LS and RS
+			sortedGroupKeys = sortedGroupKeys.filter(key => key === "LS" || key === "RS");
+		} else if (panelType === "back") {
+			// For back panels, only include M
+			sortedGroupKeys = sortedGroupKeys.filter(key => key === "M");
+		}
+	}
+
 	// Step 4: Render
 	return (
 		<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
@@ -98,10 +109,9 @@ StoreShelf.propTypes = {
 		}),
 	).isRequired,
 	shelfLabel: PropTypes.string.isRequired,
-	data: PropTypes.shape({
-		ImageURL: PropTypes.string,
-	}).isRequired,
+	data: PropTypes.object.isRequired,
 	bayNumber: PropTypes.number,
+	panelType: PropTypes.oneOf(["side", "back", null])
 };
 
 export default StoreShelf;

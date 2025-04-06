@@ -73,6 +73,21 @@ button.addToCartBtn {
 		.panel-data-display {
 			flex: 1;
 		}
+
+		&.three-column-layout {
+			display: grid;
+			grid-template-columns: 50% 25% 25%;
+			gap: 0.5em;
+
+			.face-data-display {
+				flex: none;
+			}
+
+			.side-panels-display,
+			.back-panels-display {
+				flex: none;
+			}
+		}
 	}
 	.new-selection {
 		display: flex;
@@ -115,6 +130,7 @@ button.addToCartBtn {
 		.item {
 			margin: 0.5em auto;
 			background-size: cover;
+			text-align: center;
 
 			.smallp {
 				font-size: 0.8em;

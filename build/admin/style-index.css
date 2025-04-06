@@ -29,7 +29,7 @@
 }
 .wp-block-vml-fixtures-admin .admin-fixture {
   display: flex;
-  gap: 1em;
+  gap: 0.5em;
   width: 100%;
 }
 .wp-block-vml-fixtures-admin .admin-fixture .face-data-display {

@@ -37,20 +37,34 @@ const StoreApp = () => {
 
 	// Create a ref for the face data display div
 	const faceDisplayRef = useRef(null);
-	// Create a ref for the panel data display div
-	const panelDisplayRef = useRef(null);
+	// Create refs for the panel data display divs
+	const sidePanelsDisplayRef = useRef(null);
+	const backPanelsDisplayRef = useRef(null);
 
 	/**
 	 * Handle the addition of all fixtures to cart
 	 */
-	const handleAddAllPanelFixtureClick = async () => {
-		// Use the ref to get the panelDisplayElement
-		const panelDisplayElement = panelDisplayRef.current;
+	const handleAddAllSidePanelFixtureClick = async () => {
+		// Use the ref to get the sidePanelsDisplayElement
+		const sidePanelsDisplayElement = sidePanelsDisplayRef.current;
 
-		if (panelDisplayElement) {
-			return gatherProductInfoAndCallAPI(panelDisplayElement);
+		if (sidePanelsDisplayElement) {
+			return gatherProductInfoAndCallAPI(sidePanelsDisplayElement);
 		}
-		throw new Error("Unable to locate panel data for addition to cart.");
+		throw new Error("Unable to locate side panel data for addition to cart.");
+	};
+
+	/**
+	 * Handle the addition of all fixtures to cart
+	 */
+	const handleAddAllBackPanelFixtureClick = async () => {
+		// Use the ref to get the backPanelsDisplayElement
+		const backPanelsDisplayElement = backPanelsDisplayRef.current;
+
+		if (backPanelsDisplayElement) {
+			return gatherProductInfoAndCallAPI(backPanelsDisplayElement);
+		}
+		throw new Error("Unable to locate back panel data for addition to cart.");
 	};
 
 	/**
@@ -162,8 +176,10 @@ const StoreApp = () => {
 								let foundFixture = false;
 								Object.values(jsonData.final_skus).some((sku) => {
 									if (sku.positions && sku.positions.length > 0) {
-										setSelectedFixtureType(sku.positions[0].fixture_type);
-										setSelectedRegion(sku.positions[0].region);
+										// Get the first fixture type and region from the SKUs
+										const firstPosition = sku.positions[0];
+										setSelectedFixtureType(firstPosition.fixture_type);
+										setSelectedRegion(firstPosition.region);
 										foundFixture = true;
 										return true;
 									}
@@ -205,7 +221,8 @@ const StoreApp = () => {
 				sku.positions.forEach((pos) => values.add(pos[key]));
 			});
 		}
-		return Array.from(values).sort();
+		// Return the values in the order they were added, without sorting
+		return Array.from(values);
 	};
 
 	const getRegionsForSelectedFixture = () => {
@@ -230,6 +247,27 @@ const StoreApp = () => {
 		() => getRegionsForSelectedFixture(),
 		[data, selectedFixtureType],
 	);
+
+	// Set default fixture type if none is selected
+	useEffect(() => {
+		// Only set the default fixture type if we have fixture types and no fixture type is selected
+		// AND we're not in the initial loading state
+		if (uniqueFixtureTypes.length > 0 && !selectedFixtureType && !isLoading) {
+			// Create a reversed copy of the array and select the first one
+			const reversedTypes = [...uniqueFixtureTypes].reverse();
+			setSelectedFixtureType(reversedTypes[0]);
+		}
+	}, [uniqueFixtureTypes, selectedFixtureType, isLoading]);
+
+	// Force select the first fixture type after the component has fully loaded
+	useEffect(() => {
+		// Only run this effect once after the component has fully loaded
+		if (!isLoading && uniqueFixtureTypes.length > 0) {
+			// Create a reversed copy of the array and select the first one
+			const reversedTypes = [...uniqueFixtureTypes].reverse();
+			setSelectedFixtureType(reversedTypes[0]);
+		}
+	}, [isLoading, uniqueFixtureTypes]);
 
 	const processAndDisplayData = () => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
@@ -259,13 +297,22 @@ const StoreApp = () => {
 						if (!bays[bayNumber]) {
 							bays[bayNumber] = {
 								shelves: {},
-								shelfP: []
+								sidePanels: [],
+								backPanels: []
 							};
 						}
 
 						// Add to appropriate shelf
 						if (position.shelf === "P") {
-							bays[bayNumber].shelfP.push({ ...position, ...sku });
+							// Separate panels into side panels (LS, RS) and back panels (M)
+							if (position.horizontal === "LS" || position.horizontal === "RS") {
+								bays[bayNumber].sidePanels.push({ ...position, ...sku });
+							} else if (position.horizontal === "M") {
+								bays[bayNumber].backPanels.push({ ...position, ...sku });
+							} else {
+								// For any other panel positions, add to side panels
+								bays[bayNumber].sidePanels.push({ ...position, ...sku });
+							}
 						} else {
 							if (!bays[bayNumber].shelves[position.shelf]) {
 								bays[bayNumber].shelves[position.shelf] = [];
@@ -288,7 +335,7 @@ const StoreApp = () => {
 						{Object.keys(bays).length > 1 && (
 							<h2>Bay {bayNumber}</h2>
 						)}
-						<div className="store-fixture">
+						<div className="store-fixture three-column-layout">
 							<div className="face-data-display" ref={faceDisplayRef}>
 								<h3>Face</h3>
 								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
@@ -307,20 +354,41 @@ const StoreApp = () => {
 									/>
 								</div>
 							</div>
-							<div className="panel-data-display" ref={panelDisplayRef}>
-								<h3>Panel</h3>
-								{bayData.shelfP.length > 0 && (
+							<div className="side-panels-display" ref={sidePanelsDisplayRef}>
+								<h3>Side Panels</h3>
+								{bayData.sidePanels.length > 0 && (
 									<>
 										<StoreShelf
-											positions={bayData.shelfP}
+											positions={bayData.sidePanels}
 											shelfLabel="P"
 											data={data}
 											bayNumber={bayNumber}
+											panelType="side"
 										/>
 										<div className="footer-btn">
 											<AddButton
-												onClickHandler={handleAddAllPanelFixtureClick}
-												text="Add All Panel items to cart"
+												onClickHandler={handleAddAllSidePanelFixtureClick}
+												text="Add All Side Panel items to cart"
+											/>
+										</div>
+									</>
+								)}
+							</div>
+							<div className="back-panels-display" ref={backPanelsDisplayRef}>
+								<h3>Back Panels</h3>
+								{bayData.backPanels.length > 0 && (
+									<>
+										<StoreShelf
+											positions={bayData.backPanels}
+											shelfLabel="P"
+											data={data}
+											bayNumber={bayNumber}
+											panelType="back"
+										/>
+										<div className="footer-btn">
+											<AddButton
+												onClickHandler={handleAddAllBackPanelFixtureClick}
+												text="Add All Back Panel items to cart"
 											/>
 										</div>
 									</>

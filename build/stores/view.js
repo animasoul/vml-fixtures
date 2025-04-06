@@ -153,8 +153,8 @@ function Item({
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
     src: imageUrl,
     alt: `SKU ${details.SKU}`,
-    width: details.Width * 10,
-    height: details.Height * 10
+    width: details.Width * 5,
+    height: details.Height * 5
   }), type === "panel" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", {
     className: "smallp"
   }, details.Description), context === "admin" && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react_tooltip__WEBPACK_IMPORTED_MODULE_1__.Tooltip, {
@@ -609,19 +609,32 @@ const StoreApp = () => {
 
   // Create a ref for the face data display div
   const faceDisplayRef = useRef(null);
-  // Create a ref for the panel data display div
-  const panelDisplayRef = useRef(null);
+  // Create refs for the panel data display divs
+  const sidePanelsDisplayRef = useRef(null);
+  const backPanelsDisplayRef = useRef(null);
 
   /**
    * Handle the addition of all fixtures to cart
    */
-  const handleAddAllPanelFixtureClick = async () => {
-    // Use the ref to get the panelDisplayElement
-    const panelDisplayElement = panelDisplayRef.current;
-    if (panelDisplayElement) {
-      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__.gatherProductInfoAndCallAPI)(panelDisplayElement);
+  const handleAddAllSidePanelFixtureClick = async () => {
+    // Use the ref to get the sidePanelsDisplayElement
+    const sidePanelsDisplayElement = sidePanelsDisplayRef.current;
+    if (sidePanelsDisplayElement) {
+      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__.gatherProductInfoAndCallAPI)(sidePanelsDisplayElement);
     }
-    throw new Error("Unable to locate panel data for addition to cart.");
+    throw new Error("Unable to locate side panel data for addition to cart.");
+  };
+
+  /**
+   * Handle the addition of all fixtures to cart
+   */
+  const handleAddAllBackPanelFixtureClick = async () => {
+    // Use the ref to get the backPanelsDisplayElement
+    const backPanelsDisplayElement = backPanelsDisplayRef.current;
+    if (backPanelsDisplayElement) {
+      return (0,_utilities_gatherAndCallAPI__WEBPACK_IMPORTED_MODULE_3__.gatherProductInfoAndCallAPI)(backPanelsDisplayElement);
+    }
+    throw new Error("Unable to locate back panel data for addition to cart.");
   };
 
   /**
@@ -722,8 +735,10 @@ const StoreApp = () => {
                 let foundFixture = false;
                 Object.values(jsonData.final_skus).some(sku => {
                   if (sku.positions && sku.positions.length > 0) {
-                    setSelectedFixtureType(sku.positions[0].fixture_type);
-                    setSelectedRegion(sku.positions[0].region);
+                    // Get the first fixture type and region from the SKUs
+                    const firstPosition = sku.positions[0];
+                    setSelectedFixtureType(firstPosition.fixture_type);
+                    setSelectedRegion(firstPosition.region);
                     foundFixture = true;
                     return true;
                   }
@@ -760,7 +775,8 @@ const StoreApp = () => {
         sku.positions.forEach(pos => values.add(pos[key]));
       });
     }
-    return Array.from(values).sort();
+    // Return the values in the order they were added, without sorting
+    return Array.from(values);
   };
   const getRegionsForSelectedFixture = () => {
     const regions = new Set();
@@ -777,6 +793,27 @@ const StoreApp = () => {
   };
   const uniqueFixtureTypes = useMemo(() => getUniqueValues(data, "fixture_type"), [data]);
   const uniqueRegions = useMemo(() => getRegionsForSelectedFixture(), [data, selectedFixtureType]);
+
+  // Set default fixture type if none is selected
+  useEffect(() => {
+    // Only set the default fixture type if we have fixture types and no fixture type is selected
+    // AND we're not in the initial loading state
+    if (uniqueFixtureTypes.length > 0 && !selectedFixtureType && !isLoading) {
+      // Create a reversed copy of the array and select the first one
+      const reversedTypes = [...uniqueFixtureTypes].reverse();
+      setSelectedFixtureType(reversedTypes[0]);
+    }
+  }, [uniqueFixtureTypes, selectedFixtureType, isLoading]);
+
+  // Force select the first fixture type after the component has fully loaded
+  useEffect(() => {
+    // Only run this effect once after the component has fully loaded
+    if (!isLoading && uniqueFixtureTypes.length > 0) {
+      // Create a reversed copy of the array and select the first one
+      const reversedTypes = [...uniqueFixtureTypes].reverse();
+      setSelectedFixtureType(reversedTypes[0]);
+    }
+  }, [isLoading, uniqueFixtureTypes]);
   const processAndDisplayData = () => {
     if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
       return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "No SKU data available.");
@@ -801,16 +838,31 @@ const StoreApp = () => {
             if (!bays[bayNumber]) {
               bays[bayNumber] = {
                 shelves: {},
-                shelfP: []
+                sidePanels: [],
+                backPanels: []
               };
             }
 
             // Add to appropriate shelf
             if (position.shelf === "P") {
-              bays[bayNumber].shelfP.push({
-                ...position,
-                ...sku
-              });
+              // Separate panels into side panels (LS, RS) and back panels (M)
+              if (position.horizontal === "LS" || position.horizontal === "RS") {
+                bays[bayNumber].sidePanels.push({
+                  ...position,
+                  ...sku
+                });
+              } else if (position.horizontal === "M") {
+                bays[bayNumber].backPanels.push({
+                  ...position,
+                  ...sku
+                });
+              } else {
+                // For any other panel positions, add to side panels
+                bays[bayNumber].sidePanels.push({
+                  ...position,
+                  ...sku
+                });
+              }
             } else {
               if (!bays[bayNumber].shelves[position.shelf]) {
                 bays[bayNumber].shelves[position.shelf] = [];
@@ -829,7 +881,7 @@ const StoreApp = () => {
       className: "bay-container",
       id: `bay-${bayNumber}`
     }, Object.keys(bays).length > 1 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Bay ", bayNumber), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: "store-fixture"
+      className: "store-fixture three-column-layout"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "face-data-display",
       ref: faceDisplayRef
@@ -845,18 +897,33 @@ const StoreApp = () => {
       onClickHandler: handleAddAllFixtureClick,
       text: "Add All Face items to cart"
     }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-      className: "panel-data-display",
-      ref: panelDisplayRef
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Panel"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_5__["default"], {
-      positions: bayData.shelfP,
+      className: "side-panels-display",
+      ref: sidePanelsDisplayRef
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Side Panels"), bayData.sidePanels.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      positions: bayData.sidePanels,
       shelfLabel: "P",
       data: data,
-      bayNumber: bayNumber
+      bayNumber: bayNumber,
+      panelType: "side"
     }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "footer-btn"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_4__["default"], {
-      onClickHandler: handleAddAllPanelFixtureClick,
-      text: "Add All Panel items to cart"
+      onClickHandler: handleAddAllSidePanelFixtureClick,
+      text: "Add All Side Panel items to cart"
+    })))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "back-panels-display",
+      ref: backPanelsDisplayRef
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Back Panels"), bayData.backPanels.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_StoreShelf__WEBPACK_IMPORTED_MODULE_5__["default"], {
+      positions: bayData.backPanels,
+      shelfLabel: "P",
+      data: data,
+      bayNumber: bayNumber,
+      panelType: "back"
+    }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "footer-btn"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_AddButton__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      onClickHandler: handleAddAllBackPanelFixtureClick,
+      text: "Add All Back Panel items to cart"
     }))))))));
   };
   // Debug: Output raw data and selected values
@@ -949,7 +1016,8 @@ function StoreShelf({
   positions,
   shelfLabel,
   data,
-  bayNumber = 1
+  bayNumber = 1,
+  panelType = null
 }) {
   // console.log("positions", positions);
   const shelfRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useRef)(null);
@@ -999,6 +1067,17 @@ function StoreShelf({
     sortedGroupKeys.sort(sortHorizontalValues);
   }
 
+  // Filter panel items based on panelType
+  if (shelfLabel === "P" && panelType) {
+    if (panelType === "side") {
+      // For side panels, only include LS and RS
+      sortedGroupKeys = sortedGroupKeys.filter(key => key === "LS" || key === "RS");
+    } else if (panelType === "back") {
+      // For back panels, only include M
+      sortedGroupKeys = sortedGroupKeys.filter(key => key === "M");
+    }
+  }
+
   // Step 4: Render
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `face-shelf face-shelf-${shelfLabel}`,
@@ -1029,10 +1108,9 @@ StoreShelf.propTypes = {
     shelf: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string)
   })).isRequired,
   shelfLabel: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string).isRequired,
-  data: prop_types__WEBPACK_IMPORTED_MODULE_5___default().shape({
-    ImageURL: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().string)
-  }).isRequired,
-  bayNumber: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().number)
+  data: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().object).isRequired,
+  bayNumber: (prop_types__WEBPACK_IMPORTED_MODULE_5___default().number),
+  panelType: prop_types__WEBPACK_IMPORTED_MODULE_5___default().oneOf(["side", "back", null])
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (StoreShelf);
 

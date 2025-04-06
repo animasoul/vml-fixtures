@@ -73,6 +73,18 @@ button.addToCartBtn:disabled {
 .wp-block-vml-fixtures-store .store-fixture .panel-data-display {
   flex: 1;
 }
+.wp-block-vml-fixtures-store .store-fixture.three-column-layout {
+  display: grid;
+  grid-template-columns: 50% 25% 25%;
+  gap: 0.5em;
+}
+.wp-block-vml-fixtures-store .store-fixture.three-column-layout .face-data-display {
+  flex: none;
+}
+.wp-block-vml-fixtures-store .store-fixture.three-column-layout .side-panels-display,
+.wp-block-vml-fixtures-store .store-fixture.three-column-layout .back-panels-display {
+  flex: none;
+}
 .wp-block-vml-fixtures-store .new-selection {
   display: flex;
   flex-direction: row;
@@ -112,6 +124,7 @@ button.addToCartBtn:disabled {
 .wp-block-vml-fixtures-store .item-group .item {
   margin: 0.5em auto;
   background-size: cover;
+  text-align: center;
 }
 .wp-block-vml-fixtures-store .item-group .item .smallp {
   font-size: 0.8em;
