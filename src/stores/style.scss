@@ -149,4 +149,13 @@ button.addToCartBtn {
 		flex-direction: column;
 		padding: 0.2em;
 	}
+
+	.disabled-message {
+		color: #666;
+		font-style: italic;
+		padding: 8px 16px;
+		background-color: #f5f5f5;
+		border-radius: 4px;
+		margin: 0 8px;
+	}
 }

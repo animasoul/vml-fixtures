@@ -1,7 +1,7 @@
 import { matchesFixtureType, createLocationKey } from './fixtureUtils';
 
 export const sortHorizontalValues = (a, b) => {
-    const order = ["LS", "M", "RS"];
+    const order = ["CS", "LS", "M", "RS"];
     return order.indexOf(a) - order.indexOf(b);
 };
 

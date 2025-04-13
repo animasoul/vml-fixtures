@@ -7,7 +7,7 @@ import ItemModal from "./ItemModal";
 // Item Component
 // Represents an individual item with its details and behavior based on the context.
 
-function Item({ item, context, type, imageUrl }) {
+function Item({ item, context, type, imageUrl, disableAddToCart = false }) {
 	const [showModal, setShowModal] = useState(false);
 	// Create a ref for the tooltip/modal. useRef() will generate a unique reference object.
 	const uniqRef = useRef();
@@ -84,6 +84,7 @@ function Item({ item, context, type, imageUrl }) {
 					details={details}
 					isOpen={showModal}
 					onClose={() => setShowModal(false)}
+					disableAddToCart={disableAddToCart}
 				/>
 			)}
 		</div>
@@ -107,6 +108,7 @@ Item.propTypes = {
 	context: PropTypes.oneOf(["admin", "store"]).isRequired,
 	type: PropTypes.string, // Specify possible values if they're known
 	imageUrl: PropTypes.string,
+	disableAddToCart: PropTypes.bool,
 };
 
 export default Item;

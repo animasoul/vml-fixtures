@@ -304,14 +304,14 @@ const StoreApp = () => {
 
 						// Add to appropriate shelf
 						if (position.shelf === "P") {
-							// Separate panels into side panels (LS, RS) and back panels (M)
-							if (position.horizontal === "LS" || position.horizontal === "RS") {
+							// Separate panels into side panels (LS, RS, CS) and back panels (M)
+							if (position.horizontal === "LS" || position.horizontal === "RS" || position.horizontal === "CS") {
 								bays[bayNumber].sidePanels.push({ ...position, ...sku });
 							} else if (position.horizontal === "M") {
 								bays[bayNumber].backPanels.push({ ...position, ...sku });
 							} else {
-								// For any other panel positions, add to side panels
-								bays[bayNumber].sidePanels.push({ ...position, ...sku });
+								// For any other panel positions, add to back panels
+								bays[bayNumber].backPanels.push({ ...position, ...sku });
 							}
 						} else {
 							if (!bays[bayNumber].shelves[position.shelf]) {

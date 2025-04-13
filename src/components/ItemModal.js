@@ -8,7 +8,7 @@ import { addSingleProductToCart } from "../utilities/addSingleProductToCart";
 // This should ideally be set only once in your app.
 Modal.setAppElement("#content");
 
-function ItemModal({ isOpen, onClose, modalId, largeImgSrc, details }) {
+function ItemModal({ isOpen, onClose, modalId, largeImgSrc, details, disableAddToCart = false }) {
 	const handleAddItemToCart = async (itemDetails) => {
 		try {
 			if (!itemDetails) {
@@ -65,10 +65,16 @@ function ItemModal({ isOpen, onClose, modalId, largeImgSrc, details }) {
 				>
 					Close
 				</button>
-				<AddButton
-					onClickHandler={() => handleAddItemToCart(details)}
-					text={`Add item to cart`}
-				/>
+				{disableAddToCart ? (
+					<div className="disabled-message">
+						Single item cannot be added to cart
+					</div>
+				) : (
+					<AddButton
+						onClickHandler={() => handleAddItemToCart(details)}
+						text={`Add item to cart`}
+					/>
+				)}
 			</div>
 			<img
 				src={largeImgSrc}
@@ -93,10 +99,16 @@ function ItemModal({ isOpen, onClose, modalId, largeImgSrc, details }) {
 				>
 					Close
 				</button>
-				<AddButton
-					onClickHandler={() => handleAddItemToCart(details)}
-					text={`Add item to cart`}
-				/>
+				{disableAddToCart ? (
+					<div className="disabled-message">
+						Single item cannot be added to cart
+					</div>
+				) : (
+					<AddButton
+						onClickHandler={() => handleAddItemToCart(details)}
+						text={`Add item to cart`}
+					/>
+				)}
 			</div>
 		</Modal>
 	);
@@ -112,6 +124,7 @@ ItemModal.propTypes = {
 		ProductID: PropTypes.string,
 		Code: PropTypes.string,
 	}).isRequired,
+	disableAddToCart: PropTypes.bool,
 };
 
 export default ItemModal;

@@ -104,6 +104,21 @@
 		flex-direction: column;
 		padding: 0.2em;
 	}
+
+	/* Special styling for CS row in panel rendering */
+	.shelf-P .cs-row {
+		display: flex !important;
+		flex-direction: row !important;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+	}
+
+	.shelf-P .cs-row .item {
+		margin: 10px;
+	}
+
 	.footer-instructions {
 		display: flex;
 		justify-content: space-between;

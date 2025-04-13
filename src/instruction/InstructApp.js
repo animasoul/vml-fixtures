@@ -428,7 +428,127 @@ const InstructApp = () => {
 				sortedGroupKeys.sort(sortHorizontalValues);
 			}
 
-			// Step 4: Render
+			// Special handling for panel rendering with CS horizontal value
+			if (shelfLabel === "P" && groupedByHorizontal["CS"]) {
+				// Remove CS from the sortedGroupKeys to handle it separately
+				sortedGroupKeys = sortedGroupKeys.filter(key => key !== "CS");
+
+				// Step 4: Render with CS at the top
+				return (
+					<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
+						<div className="shelf-title common-container">
+							{shelfLabel === "P" ? null : <>BAY {bayNumber}/SHELF {shelfLabel}</>}
+						</div>
+						<div className={`shelf shelf-${shelfLabel}`}>
+							{/* Render CS items as a row at the top */}
+							<div className="item-group cs-row">
+								{groupedByHorizontal["CS"].map((item, index) => (
+									<div
+										className={`item position-${item.horizontal}-${item.vertical}`}
+										key={`cs-${index}`}
+									>
+										{item.moved_item ? (
+											<div
+												className={`moved-item`}
+												style={{
+													width: `${item.width * 7 * scale}px`,
+													height: `${item.height * 7 * scale}px`,
+												}}
+												id={`${item.code}-movedFrom`}
+											>
+												{<ItemBayShelf item={item} />}
+											</div>
+										) : (
+											<img
+												src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
+												alt={`SKU ${item.code}`}
+												width={item.width * 7 * scale}
+												height={item.height * 7 * scale}
+												{...(id === "moved" && { id: `${item.code}-movedTo` })}
+												className={item.update}
+												data-bay={item.bay}
+												data-shelf={item.shelf}
+												data-horizontal={item.horizontal}
+												data-vertical={item.vertical}
+											/>
+										)}
+										{id === "moved" && item.moved_item && (
+											<>
+												<svg
+													id={`${item.code}-svg-container`}
+													style={{
+														position: "absolute",
+														top: "0",
+														left: "0",
+														width: "100%",
+														height: "100%",
+														zIndex: "1000",
+													}}
+												></svg>
+											</>
+										)}
+									</div>
+								))}
+							</div>
+
+							{/* Render other items as columns */}
+							{sortedGroupKeys.map((horizontal) => (
+								<div className="item-group" key={horizontal}>
+									{groupedByHorizontal[horizontal].map((item, index) => (
+										<div
+											className={`item position-${item.horizontal}-${item.vertical}`}
+											key={index}
+										>
+											{item.moved_item ? (
+												<div
+													className={`moved-item`}
+													style={{
+														width: `${item.width * 7 * scale}px`,
+														height: `${item.height * 7 * scale}px`,
+													}}
+													id={`${item.code}-movedFrom`}
+												>
+													{<ItemBayShelf item={item} />}
+												</div>
+											) : (
+												<img
+													src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
+													alt={`SKU ${item.code}`}
+													width={item.width * 7 * scale}
+													height={item.height * 7 * scale}
+													{...(id === "moved" && { id: `${item.code}-movedTo` })}
+													className={item.update}
+													data-bay={item.bay}
+													data-shelf={item.shelf}
+													data-horizontal={item.horizontal}
+													data-vertical={item.vertical}
+												/>
+											)}
+											{id === "moved" && item.moved_item && (
+												<>
+													<svg
+														id={`${item.code}-svg-container`}
+														style={{
+															position: "absolute",
+															top: "0",
+															left: "0",
+															width: "100%",
+															height: "100%",
+															zIndex: "1000",
+														}}
+													></svg>
+												</>
+											)}
+										</div>
+									))}
+								</div>
+							))}
+						</div>
+					</div>
+				);
+			}
+
+			// Step 4: Render (original code for non-CS case)
 			return (
 				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
 					<div className="shelf-title common-container">
