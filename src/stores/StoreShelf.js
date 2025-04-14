@@ -24,7 +24,7 @@ function StoreShelf({ positions, shelfLabel, data, bayNumber = 1, panelType = nu
 		}
 	};
 	const sortHorizontalValues = (a, b) => {
-		const order = ["LS", "M", "RS"];
+		const order = ["CS", "LS", "M", "RS"];
 		return order.indexOf(a) - order.indexOf(b);
 	};
 	// Group by horizontal value
@@ -57,8 +57,8 @@ function StoreShelf({ positions, shelfLabel, data, bayNumber = 1, panelType = nu
 	// Filter panel items based on panelType
 	if (shelfLabel === "P" && panelType) {
 		if (panelType === "side") {
-			// For side panels, only include LS and RS
-			sortedGroupKeys = sortedGroupKeys.filter(key => key === "LS" || key === "RS");
+			// For side panels, only include CS, LS and RS
+			sortedGroupKeys = sortedGroupKeys.filter(key => key === "CS" || key === "LS" || key === "RS");
 		} else if (panelType === "back") {
 			// For back panels, only include M
 			sortedGroupKeys = sortedGroupKeys.filter(key => key === "M");
@@ -92,6 +92,7 @@ function StoreShelf({ positions, shelfLabel, data, bayNumber = 1, panelType = nu
 								context="store"
 								type="face"
 								imageUrl={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
+								disableAddToCart={shelfLabel === "P" && panelType === "side"}
 							/>
 						))}
 					</div>
