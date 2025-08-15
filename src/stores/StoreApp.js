@@ -164,6 +164,7 @@ const StoreApp = () => {
 							const initialFixtureType = storeData.fixture_type;
 							const initialRegion = storeData.region;
 
+							console.log("Setting fixture type from store data:", initialFixtureType, "for store:", storeNumber);
 							setSelectedFixtureType(initialFixtureType);
 							setSelectedRegion(initialRegion);
 						} else {
@@ -255,19 +256,10 @@ const StoreApp = () => {
 		if (uniqueFixtureTypes.length > 0 && !selectedFixtureType && !isLoading) {
 			// Create a reversed copy of the array and select the first one
 			const reversedTypes = [...uniqueFixtureTypes].reverse();
+			console.log("Setting default fixture type:", reversedTypes[0], "from available types:", uniqueFixtureTypes);
 			setSelectedFixtureType(reversedTypes[0]);
 		}
 	}, [uniqueFixtureTypes, selectedFixtureType, isLoading]);
-
-	// Force select the first fixture type after the component has fully loaded
-	useEffect(() => {
-		// Only run this effect once after the component has fully loaded
-		if (!isLoading && uniqueFixtureTypes.length > 0) {
-			// Create a reversed copy of the array and select the first one
-			const reversedTypes = [...uniqueFixtureTypes].reverse();
-			setSelectedFixtureType(reversedTypes[0]);
-		}
-	}, [isLoading, uniqueFixtureTypes]);
 
 	const processAndDisplayData = () => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
