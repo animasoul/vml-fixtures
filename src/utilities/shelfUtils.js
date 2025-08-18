@@ -55,7 +55,7 @@ export const organizeBayData = (data, selectedFixtureType, selectedRegion, type 
             if (type === 'move' && position.update !== "move") return;
             if (type === 'delete' && position.update !== "delete") return;
 
-            // Use flexible fixture type matching
+            // Use exact fixture type matching
             if (!matchesFixtureType(position.fixture_type, selectedFixtureType)) return;
 
             // Handle region matching with support for combined regions

@@ -146,12 +146,8 @@ const InstructApp = () => {
 											regionCounts[regionKey] = (regionCounts[regionKey] || 0) + 1;
 										}
 
-										// Use the same flexible fixture type matching here
-										const baseFixtureType = pos.fixture_type.split('(')[0];
-										const baseSelectedFixtureType = initialFixtureType.split('(')[0];
-										const fixtureMatches = baseFixtureType === baseSelectedFixtureType;
-
-										if (fixtureMatches) {
+										// Use exact fixture type matching
+										if (matchesFixtureType(pos.fixture_type, initialFixtureType)) {
 											if (Array.isArray(pos.region)) {
 												console.log(`InstructApp - Adding array regions for SKU ${sku.code}:`, pos.region);
 												pos.region.forEach(r => regions.add(r));
@@ -198,12 +194,9 @@ const InstructApp = () => {
 		// Convert object values to an array for filtering and aggregation
 		const storesArray = Object.values(data.final_stores);
 
-		// Filter stores by the selected fixture type using flexible matching
+		// Filter stores by the selected fixture type using exact matching
 		const filteredStores = storesArray.filter((store) => {
-			// Use the same flexible fixture type matching here
-			const baseFixtureType = store.fixture_type.split('(')[0];
-			const baseSelectedFixtureType = selectedFixtureType.split('(')[0];
-			return baseFixtureType === baseSelectedFixtureType;
+			return matchesFixtureType(store.fixture_type, selectedFixtureType);
 		});
 
 		console.log("Filtered stores for fixture type:", selectedFixtureType, filteredStores);
@@ -309,10 +302,8 @@ const InstructApp = () => {
 					return;
 				}
 
-				// Check if this position matches the fixture type
-				const baseFixtureType = position.fixture_type.split('(')[0];
-				const baseSelectedFixtureType = selectedFixtureType.split('(')[0];
-				const fixtureMatches = baseFixtureType === baseSelectedFixtureType;
+				// Check if this position matches the fixture type using exact matching
+				const fixtureMatches = matchesFixtureType(position.fixture_type, selectedFixtureType);
 
 				// Check if this position matches the region
 				let regionMatches = false;

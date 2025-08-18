@@ -4,7 +4,7 @@
 
 /**
  * Checks if an item's fixture type matches the selected fixture type
- * using the base fixture type (part before any parentheses)
+ * using exact matching instead of base fixture type matching
  * 
  * @param {string} itemFixtureType - The fixture type of the item
  * @param {string} selectedFixtureType - The selected fixture type
@@ -13,9 +13,8 @@
 export function matchesFixtureType(itemFixtureType, selectedFixtureType) {
     if (!itemFixtureType || !selectedFixtureType) return false;
 
-    const baseItemType = itemFixtureType.split('(')[0];
-    const baseSelectedType = selectedFixtureType.split('(')[0];
-    return baseItemType === baseSelectedType;
+    // Use exact matching instead of base type matching
+    return itemFixtureType === selectedFixtureType;
 }
 
 /**
