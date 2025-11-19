@@ -261,13 +261,14 @@ const StoreApp = () => {
 		}
 	}, [uniqueFixtureTypes, selectedFixtureType, isLoading]);
 
-	const processAndDisplayData = () => {
+	// Memoize bays calculation to ensure it recalculates when fixture type or region changes
+	const bays = useMemo(() => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
-			return <p>No SKU data available.</p>;
+			return {};
 		}
 
 		// Organize data by bays
-		let bays = {};
+		let baysResult = {};
 
 		// Iterate over each SKU object in final_skus
 		Object.values(data.final_skus).forEach((sku) => {
@@ -286,8 +287,8 @@ const StoreApp = () => {
 						const bayNumber = position.bay || 1;
 
 						// Initialize bay if it doesn't exist
-						if (!bays[bayNumber]) {
-							bays[bayNumber] = {
+						if (!baysResult[bayNumber]) {
+							baysResult[bayNumber] = {
 								shelves: {},
 								sidePanels: [],
 								backPanels: []
@@ -298,23 +299,31 @@ const StoreApp = () => {
 						if (position.shelf === "P") {
 							// Separate panels into side panels (LS, RS, CS) and back panels (M)
 							if (position.horizontal === "LS" || position.horizontal === "RS" || position.horizontal === "CS") {
-								bays[bayNumber].sidePanels.push({ ...position, ...sku });
+								baysResult[bayNumber].sidePanels.push({ ...position, ...sku });
 							} else if (position.horizontal === "M") {
-								bays[bayNumber].backPanels.push({ ...position, ...sku });
+								baysResult[bayNumber].backPanels.push({ ...position, ...sku });
 							} else {
 								// For any other panel positions, add to back panels
-								bays[bayNumber].backPanels.push({ ...position, ...sku });
+								baysResult[bayNumber].backPanels.push({ ...position, ...sku });
 							}
 						} else {
-							if (!bays[bayNumber].shelves[position.shelf]) {
-								bays[bayNumber].shelves[position.shelf] = [];
+							if (!baysResult[bayNumber].shelves[position.shelf]) {
+								baysResult[bayNumber].shelves[position.shelf] = [];
 							}
-							bays[bayNumber].shelves[position.shelf].push({ ...position, ...sku });
+							baysResult[bayNumber].shelves[position.shelf].push({ ...position, ...sku });
 						}
 					}
 				});
 			}
 		});
+
+		return baysResult;
+	}, [data, selectedFixtureType, selectedRegion]);
+
+	const processAndDisplayData = () => {
+		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
+			return <p>No SKU data available.</p>;
+		}
 
 		return (
 			<>
@@ -351,6 +360,7 @@ const StoreApp = () => {
 								{bayData.sidePanels.length > 0 && (
 									<>
 										<StoreShelf
+											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
 											positions={bayData.sidePanels}
 											shelfLabel="P"
 											data={data}
@@ -371,6 +381,7 @@ const StoreApp = () => {
 								{bayData.backPanels.length > 0 && (
 									<>
 										<StoreShelf
+											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
 											positions={bayData.backPanels}
 											shelfLabel="P"
 											data={data}
@@ -485,3 +496,4 @@ const StoreApp = () => {
 };
 
 export default StoreApp;
+

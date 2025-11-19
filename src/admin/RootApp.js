@@ -76,6 +76,14 @@ const RootApp = () => {
 		[data, selectedFixtureType],
 	);
 
+	// Memoize bays calculation to ensure it recalculates when fixture type or region changes
+	const bays = useMemo(() => {
+		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
+			return {};
+		}
+		return organizeBayData(data, selectedFixtureType, selectedRegion);
+	}, [data, selectedFixtureType, selectedRegion]);
+
 	const openModal = (imageUrl) => {
 		setSelectedImageUrl(imageUrl);
 		setIsModalOpen(true);
@@ -90,8 +98,6 @@ const RootApp = () => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
 			return <p>No SKU data available. Please select a Promotion.</p>;
 		}
-
-		const bays = organizeBayData(data, selectedFixtureType, selectedRegion);
 
 		return (
 			<>
@@ -136,6 +142,7 @@ const RootApp = () => {
 								<h3>Side Panels</h3>
 								{bayData.shelfP.length > 0 && (
 									<ShelfRenderer
+										key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
 										positions={bayData.shelfP}
 										shelfLabel="P"
 										bayNumber={bayNumber}
@@ -150,6 +157,7 @@ const RootApp = () => {
 								<h3>Back Panels</h3>
 								{bayData.shelfP.length > 0 && (
 									<ShelfRenderer
+										key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
 										positions={bayData.shelfP}
 										shelfLabel="P"
 										bayNumber={bayNumber}
