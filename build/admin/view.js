@@ -44,6 +44,14 @@ const RootApp = () => {
   // State for modal
   const [isModalOpen, setIsModalOpen] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
   const [selectedImageUrl, setSelectedImageUrl] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(null);
+
+  // Image scaling for print output
+  const [scaleChange, setScaleChange] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(0);
+  const scale = 1 + scaleChange;
+  const scalePercentage = Math.round(scale * 100);
+  const increaseSize = () => setScaleChange(prev => prev + 0.1);
+  const decreaseSize = () => setScaleChange(prev => prev - 0.1);
+  const handlePrint = () => window.print();
   const isAdmin = window.vmlFixturesData?.isAdmin || false;
   const isEditor = window.vmlFixturesData?.isEditor || false;
 
@@ -114,7 +122,7 @@ const RootApp = () => {
       key: bayNumber,
       className: `bay-container${isTwoUp ? ' bay-container--two-up' : ''}`,
       id: `bay-${bayNumber}`
-    }, bayCount > 1 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Bay ", bayNumber), !isTwoUp && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    }, bayCount > 1 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, !isTwoUp && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "bay-links"
     }, Object.keys(bays).sort((a, b) => a - b).filter(bayNum => bayNum !== bayNumber).map(bayNum => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
       key: bayNum,
@@ -124,14 +132,15 @@ const RootApp = () => {
       className: "admin-fixture"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "face-data-display"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Bay ", bayNumber, " Face"), Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
       key: shelfLabel,
       positions: positions,
       shelfLabel: shelfLabel,
       bayNumber: bayNumber,
       data: data,
       onImageClick: openModal,
-      showTooltip: true
+      showTooltip: true,
+      scale: scale
     }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "side-panels-display"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Side Panels"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
@@ -142,7 +151,8 @@ const RootApp = () => {
       data: data,
       onImageClick: openModal,
       showTooltip: true,
-      panelType: "side"
+      panelType: "side",
+      scale: scale
     })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "back-panels-display"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Back Panels"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
@@ -153,7 +163,8 @@ const RootApp = () => {
       data: data,
       onImageClick: openModal,
       showTooltip: true,
-      panelType: "back"
+      panelType: "back",
+      scale: scale
     }))));
     const renderTwoUp = () => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "bays-two-up"
@@ -163,16 +174,17 @@ const RootApp = () => {
       key: bayNumber,
       className: "bay-face-cell",
       id: `bay-${bayNumber}`
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Bay ", bayNumber), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "face-data-display"
-    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Face"), Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Bay ", bayNumber, " Face"), Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
       key: shelfLabel,
       positions: positions,
       shelfLabel: shelfLabel,
       bayNumber: bayNumber,
       data: data,
       onImageClick: openModal,
-      showTooltip: true
+      showTooltip: true,
+      scale: scale
     })))))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "bays-panels-row"
     }, sortedBayEntries.map(([bayNumber, bayData]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -188,7 +200,8 @@ const RootApp = () => {
       data: data,
       onImageClick: openModal,
       showTooltip: true,
-      panelType: "side"
+      panelType: "side",
+      scale: scale
     })), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
       className: "back-panels-display"
     }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h3", null, "Bay ", bayNumber, " Back Panels"), bayData.shelfP.length > 0 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_components_ShelfRenderer__WEBPACK_IMPORTED_MODULE_6__["default"], {
@@ -199,9 +212,25 @@ const RootApp = () => {
       data: data,
       onImageClick: openModal,
       showTooltip: true,
-      panelType: "back"
+      panelType: "back",
+      scale: scale
     }))))));
-    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, selectedFixtureType, " - ", selectedRegion), isTwoUp ? renderTwoUp() : sortedBayEntries.map(renderBay), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)((react_modal__WEBPACK_IMPORTED_MODULE_3___default()), {
+    return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, "Print"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "noprint print-toolbar"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+      className: "ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label",
+      onClick: handlePrint
+    }, "Print bays"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+      className: "scale-controls"
+    }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", null, "Enlarge/reduce image sizes to fit printer output: ", scalePercentage, "%"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+      className: "ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label",
+      onClick: decreaseSize,
+      "aria-label": "Decrease image size"
+    }, "-"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+      className: "ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label",
+      onClick: increaseSize,
+      "aria-label": "Increase image size"
+    }, "+"))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, selectedFixtureType, " - ", selectedRegion), isTwoUp ? renderTwoUp() : sortedBayEntries.map(renderBay), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)((react_modal__WEBPACK_IMPORTED_MODULE_3___default()), {
       isOpen: isModalOpen,
       onRequestClose: closeModal,
       contentLabel: "Image Modal",
@@ -309,7 +338,8 @@ const AdminItem = ({
   item,
   data,
   onImageClick,
-  showTooltip
+  showTooltip,
+  scale = 1
 }) => {
   // Only log if essential data is missing
   if (!item?.code || !data?.Customer) {
@@ -326,8 +356,8 @@ const AdminItem = ({
   if (!item.ImageURL && !data.ImageURL) {
     console.warn('No ImageURL found for SKU:', item.code);
   }
-  const itemWidth = item.width * 5;
-  const itemHeight = item.height * 5;
+  const itemWidth = item.width * 5 * scale;
+  const itemHeight = item.height * 5 * scale;
   const skuRef = useFitText(item.code, itemWidth);
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `item position-${item.horizontal}-${item.vertical}`,
@@ -484,7 +514,8 @@ const ShelfRenderer = ({
     item: item,
     data: data,
     onImageClick: onImageClick,
-    showTooltip: showTooltip
+    showTooltip: showTooltip,
+    scale: scale
   }))))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ShelfRenderer);

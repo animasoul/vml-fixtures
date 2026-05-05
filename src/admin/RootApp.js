@@ -19,6 +19,14 @@ const RootApp = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedImageUrl, setSelectedImageUrl] = useState(null);
 
+	// Image scaling for print output
+	const [scaleChange, setScaleChange] = useState(0);
+	const scale = 1 + scaleChange;
+	const scalePercentage = Math.round(scale * 100);
+	const increaseSize = () => setScaleChange((prev) => prev + 0.1);
+	const decreaseSize = () => setScaleChange((prev) => prev - 0.1);
+	const handlePrint = () => window.print();
+
 	const isAdmin = window.vmlFixturesData?.isAdmin || false;
 	const isEditor = window.vmlFixturesData?.isEditor || false;
 
@@ -111,7 +119,6 @@ const RootApp = () => {
 			>
 				{bayCount > 1 && (
 					<>
-						<h2>Bay {bayNumber}</h2>
 						{!isTwoUp && (
 							<div className="bay-links">
 								{Object.keys(bays)
@@ -132,7 +139,7 @@ const RootApp = () => {
 				)}
 				<div className="admin-fixture">
 					<div className="face-data-display">
-						<h3>Face</h3>
+						<h3>Bay {bayNumber} Face</h3>
 						{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
 							<ShelfRenderer
 								key={shelfLabel}
@@ -142,6 +149,7 @@ const RootApp = () => {
 								data={data}
 								onImageClick={openModal}
 								showTooltip={true}
+								scale={scale}
 							/>
 						))}
 					</div>
@@ -157,6 +165,7 @@ const RootApp = () => {
 								onImageClick={openModal}
 								showTooltip={true}
 								panelType="side"
+								scale={scale}
 							/>
 						)}
 					</div>
@@ -172,6 +181,7 @@ const RootApp = () => {
 								onImageClick={openModal}
 								showTooltip={true}
 								panelType="back"
+								scale={scale}
 							/>
 						)}
 					</div>
@@ -188,9 +198,8 @@ const RootApp = () => {
 							className="bay-face-cell"
 							id={`bay-${bayNumber}`}
 						>
-							<h2>Bay {bayNumber}</h2>
 							<div className="face-data-display">
-								<h3>Face</h3>
+								<h3>Bay {bayNumber} Face</h3>
 								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
 									<ShelfRenderer
 										key={shelfLabel}
@@ -200,6 +209,7 @@ const RootApp = () => {
 										data={data}
 										onImageClick={openModal}
 										showTooltip={true}
+										scale={scale}
 									/>
 								))}
 							</div>
@@ -221,6 +231,7 @@ const RootApp = () => {
 										onImageClick={openModal}
 										showTooltip={true}
 										panelType="side"
+										scale={scale}
 									/>
 								)}
 							</div>
@@ -236,6 +247,7 @@ const RootApp = () => {
 										onImageClick={openModal}
 										showTooltip={true}
 										panelType="back"
+										scale={scale}
 									/>
 								)}
 							</div>
@@ -247,6 +259,32 @@ const RootApp = () => {
 
 		return (
 			<>
+				<strong>Print</strong>
+				<div className="noprint print-toolbar">
+					<button
+						className="ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
+						onClick={handlePrint}
+					>
+						Print bays
+					</button>
+					<div className="scale-controls">
+						<span>Enlarge/reduce image sizes to fit printer output: {scalePercentage}%</span>
+						<button
+							className="ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
+							onClick={decreaseSize}
+							aria-label="Decrease image size"
+						>
+							-
+						</button>
+						<button
+							className="ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
+							onClick={increaseSize}
+							aria-label="Increase image size"
+						>
+							+
+						</button>
+					</div>
+				</div>
 				<h2>{selectedFixtureType} - {selectedRegion}</h2>
 				{isTwoUp ? renderTwoUp() : sortedBayEntries.map(renderBay)}
 				<Modal

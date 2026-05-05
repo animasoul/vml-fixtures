@@ -22,7 +22,7 @@ const useFitText = (text, containerWidth) => {
     return ref;
 };
 
-const AdminItem = ({ item, data, onImageClick, showTooltip }) => {
+const AdminItem = ({ item, data, onImageClick, showTooltip, scale = 1 }) => {
     // Only log if essential data is missing
     if (!item?.code || !data?.Customer) {
         console.error('Missing required data for AdminItem:', {
@@ -40,8 +40,8 @@ const AdminItem = ({ item, data, onImageClick, showTooltip }) => {
         console.warn('No ImageURL found for SKU:', item.code);
     }
 
-    const itemWidth = item.width * 5;
-    const itemHeight = item.height * 5;
+    const itemWidth = item.width * 5 * scale;
+    const itemHeight = item.height * 5 * scale;
     const skuRef = useFitText(item.code, itemWidth);
 
     return (

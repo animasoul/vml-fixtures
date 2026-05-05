@@ -144,4 +144,66 @@
 		flex-direction: column;
 		padding: 0.2em;
 	}
+	.print-toolbar {
+		display: flex;
+		align-items: center;
+		gap: 1em;
+		flex-wrap: wrap;
+		margin: 0.5em 0 1em;
+		padding: 0.5em 0.75em;
+		background: #f6f7f7;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		width: 70%;
+
+		.scale-controls {
+			display: flex;
+			align-items: center;
+			gap: 0.5em;
+
+			span {
+				font-weight: 600;
+			}
+			button {
+				min-width: 2em;
+			}
+		}
+	}
+}
+
+@media print {
+	// @page {
+	// 	margin: 1.5cm 1.25cm;
+	// }
+	.noprint,
+	.ekit-template-content-header,
+	.ekit-template-content-footer,
+	.ekit-template-content-sidebar,
+	.promotion_info,
+	header.page-header,
+	.fixture-select > .buttons-row,
+	.fixture-select > strong {
+		display: none !important;
+	}
+	body {
+		background-color: white !important;
+	}
+	body:not([class*="elementor-page-"]) .site-main {
+		max-width: 100% !important;
+	}
+	.wp-block-vml-fixtures-admin {
+		/* keep first heading from being clipped at top of page */
+		padding: 0.5cm;
+		> h2:first-child,
+		.fixture-select > h2:first-of-type {
+			margin-top: 0;
+			padding-top: 0.25cm;
+			margin-bottom: 0;
+		}
+		.bay-container,
+		.bays-faces-row,
+		.bays-panels-row {
+			page-break-inside: avoid;
+		}
+	}
 }

@@ -79,6 +79,7 @@ const ShelfRenderer = ({
                                     data={data}
                                     onImageClick={onImageClick}
                                     showTooltip={showTooltip}
+                                    scale={scale}
                                 />
                         ))}
                     </div>
