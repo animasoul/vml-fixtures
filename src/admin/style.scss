@@ -42,14 +42,56 @@
 			flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
 		}
 	}
-	/* 2-bay layout: faces in one horizontal row, side+back panels in row below */
+	/* 2-bay layout: faces aligned shelf-by-shelf side-by-side, panels row below */
 	.bays-two-up {
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
 		width: 100%;
 
-		.bays-faces-row,
+		/* Stack of bay headers + shelf rows; each row holds both bays' cells */
+		.bays-faces-aligned {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5em;
+			width: 100%;
+
+			.bay-headers {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+			}
+
+			.bay-col-header {
+				min-width: 0;
+
+				h2,
+				h3 {
+					margin: 0 0 0.25em;
+				}
+			}
+
+			.shelf-row {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				align-items: stretch;
+				border: 1px solid #ccc;
+			}
+
+			.shelf-cell {
+				min-width: 0; /* allow grid cell to shrink below content size */
+			}
+
+			/* inner shelf borders are redundant once the row has its own border */
+			.shelf-row .face-shelf {
+				border: none;
+				margin-bottom: 0;
+			}
+
+			.shelf-cell--empty {
+				min-height: 0;
+			}
+		}
+
 		.bays-panels-row {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
@@ -57,12 +99,8 @@
 			width: 100%;
 		}
 
-		.bay-face-cell,
 		.bay-panels-cell {
-			min-width: 0; /* allow grid item to shrink below content size */
-		}
-
-		.bay-panels-cell {
+			min-width: 0;
 			display: flex;
 			gap: 0.5em;
 

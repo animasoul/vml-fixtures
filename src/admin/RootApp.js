@@ -1,6 +1,6 @@
 // Desc: Root component for admin app
 import Loader from "../components/Loader";
-import React, { useState, useEffect, useMemo } from "@wordpress/element";
+import { useState, useEffect, useMemo } from "@wordpress/element";
 import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
 import { fetchOptionData } from "../services/getOptionService";
@@ -194,30 +194,53 @@ const RootApp = () => {
 			</div>
 		);
 
-		const renderTwoUp = () => (
+		const renderTwoUp = () => {
+			const [[bay1Number, bay1Data], [bay2Number, bay2Data]] = sortedBayEntries;
+
+			// Union of shelf labels across both bays, numerically sorted (with string fallback)
+			const allShelfLabels = [...new Set([
+				...Object.keys(bay1Data.shelves),
+				...Object.keys(bay2Data.shelves),
+			])].sort((a, b) => {
+				const an = parseFloat(a);
+				const bn = parseFloat(b);
+				if (!isNaN(an) && !isNaN(bn)) return an - bn;
+				return String(a).localeCompare(String(b));
+			});
+
+			const renderShelfCell = (bayNumber, bayData, shelfLabel) => {
+				const positions = bayData.shelves[shelfLabel];
+				if (!positions) return <div className="shelf-cell shelf-cell--empty" />;
+				return (
+					<div className="shelf-cell">
+						<ShelfRenderer
+							positions={positions}
+							shelfLabel={shelfLabel}
+							bayNumber={bayNumber}
+							data={data}
+							onImageClick={openModal}
+							showTooltip={true}
+							scale={scale}
+						/>
+					</div>
+				);
+			};
+
+			return (
 			<div className="bays-two-up">
-				<div className="bays-faces-row">
-					{sortedBayEntries.map(([bayNumber, bayData]) => (
-						<div
-							key={bayNumber}
-							className="bay-face-cell"
-							id={`bay-${bayNumber}`}
-						>
-							<div className="face-data-display">
-								<h3>Bay {bayNumber} Face</h3>
-								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
-									<ShelfRenderer
-										key={shelfLabel}
-										positions={positions}
-										shelfLabel={shelfLabel}
-										bayNumber={bayNumber}
-										data={data}
-										onImageClick={openModal}
-										showTooltip={true}
-										scale={scale}
-									/>
-								))}
-							</div>
+				<div className="bays-faces-aligned">
+					<div className="bay-headers">
+						<div className="bay-col-header" id={`bay-${bay1Number}`}>
+							<h3>Bay {bay1Number} Face</h3>
+						</div>
+						<div className="bay-col-header" id={`bay-${bay2Number}`}>
+							<h3>Bay {bay2Number} Face</h3>
+						</div>
+					</div>
+					{allShelfLabels.map((shelfLabel) => (
+						<div key={shelfLabel} className="shelf-row">
+							{renderShelfCell(bay1Number, bay1Data, shelfLabel)}
+							{renderShelfCell(bay2Number, bay2Data, shelfLabel)}
 						</div>
 					))}
 				</div>
@@ -265,7 +288,8 @@ const RootApp = () => {
 					})}
 				</div>
 			</div>
-		);
+			);
+		};
 
 		return (
 			<>
