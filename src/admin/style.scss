@@ -42,6 +42,37 @@
 			flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
 		}
 	}
+	/* 2-bay layout: faces in one horizontal row, side+back panels in row below */
+	.bays-two-up {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+		width: 100%;
+
+		.bays-faces-row,
+		.bays-panels-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 1em;
+			width: 100%;
+		}
+
+		.bay-face-cell,
+		.bay-panels-cell {
+			min-width: 0; /* allow grid item to shrink below content size */
+		}
+
+		.bay-panels-cell {
+			display: flex;
+			gap: 0.5em;
+
+			.side-panels-display,
+			.back-panels-display {
+				flex: 1 1 50%;
+				min-width: 0;
+			}
+		}
+	}
 	.shelf-title {
 		display: flex;
 		flex-direction: row;
@@ -74,9 +105,32 @@
 		margin: 0 0.2em;
 
 		.item {
+			container-type: inline-size;
 			margin: 0.5em auto;
 			background-size: cover;
 			text-align: center;
+
+			> a {
+				display: block;
+				text-decoration: none;
+			}
+
+			img {
+				display: block;
+				max-width: 100%;
+				height: auto;
+			}
+
+			.item-sku {
+				width: 100%;
+				box-sizing: border-box;
+				overflow: hidden;
+				white-space: nowrap;
+				text-align: center;
+				font-size: clamp(0.5rem, 18cqw, 1rem);
+				line-height: 1.1;
+				color: #000;
+			}
 
 			.smallp {
 				font-size: 0.8em;

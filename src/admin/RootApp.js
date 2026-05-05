@@ -99,31 +99,96 @@ const RootApp = () => {
 			return <p>No SKU data available. Please select a Promotion.</p>;
 		}
 
-		return (
-			<>
-				<h2>{selectedFixtureType} - {selectedRegion}</h2>
-				{Object.entries(bays).sort(([a], [b]) => a - b).map(([bayNumber, bayData]) => (
-					<div key={bayNumber} className="bay-container" id={`bay-${bayNumber}`}>
-						{Object.keys(bays).length > 1 && (
-							<>
-								<h2>Bay {bayNumber}</h2>
-								<div className="bay-links">
-									{Object.keys(bays)
-										.sort((a, b) => a - b)
-										.filter(bayNum => bayNum !== bayNumber)  // Filter out current bay
-										.map((bayNum) => (
-											<a
-												key={bayNum}
-												href={`#bay-${bayNum}`}
-												className="bay-link"
-											>
-												Go to Bay {bayNum}
-											</a>
-										))}
-								</div>
-							</>
+		const sortedBayEntries = Object.entries(bays).sort(([a], [b]) => a - b);
+		const bayCount = sortedBayEntries.length;
+		const isTwoUp = bayCount === 2;
+
+		const renderBay = ([bayNumber, bayData]) => (
+			<div
+				key={bayNumber}
+				className={`bay-container${isTwoUp ? ' bay-container--two-up' : ''}`}
+				id={`bay-${bayNumber}`}
+			>
+				{bayCount > 1 && (
+					<>
+						<h2>Bay {bayNumber}</h2>
+						{!isTwoUp && (
+							<div className="bay-links">
+								{Object.keys(bays)
+									.sort((a, b) => a - b)
+									.filter(bayNum => bayNum !== bayNumber)
+									.map((bayNum) => (
+										<a
+											key={bayNum}
+											href={`#bay-${bayNum}`}
+											className="bay-link"
+										>
+											Go to Bay {bayNum}
+										</a>
+									))}
+							</div>
 						)}
-						<div className="admin-fixture">
+					</>
+				)}
+				<div className="admin-fixture">
+					<div className="face-data-display">
+						<h3>Face</h3>
+						{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
+							<ShelfRenderer
+								key={shelfLabel}
+								positions={positions}
+								shelfLabel={shelfLabel}
+								bayNumber={bayNumber}
+								data={data}
+								onImageClick={openModal}
+								showTooltip={true}
+							/>
+						))}
+					</div>
+					<div className="side-panels-display">
+						<h3>Side Panels</h3>
+						{bayData.shelfP.length > 0 && (
+							<ShelfRenderer
+								key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
+								positions={bayData.shelfP}
+								shelfLabel="P"
+								bayNumber={bayNumber}
+								data={data}
+								onImageClick={openModal}
+								showTooltip={true}
+								panelType="side"
+							/>
+						)}
+					</div>
+					<div className="back-panels-display">
+						<h3>Back Panels</h3>
+						{bayData.shelfP.length > 0 && (
+							<ShelfRenderer
+								key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
+								positions={bayData.shelfP}
+								shelfLabel="P"
+								bayNumber={bayNumber}
+								data={data}
+								onImageClick={openModal}
+								showTooltip={true}
+								panelType="back"
+							/>
+						)}
+					</div>
+				</div>
+			</div>
+		);
+
+		const renderTwoUp = () => (
+			<div className="bays-two-up">
+				<div className="bays-faces-row">
+					{sortedBayEntries.map(([bayNumber, bayData]) => (
+						<div
+							key={bayNumber}
+							className="bay-face-cell"
+							id={`bay-${bayNumber}`}
+						>
+							<h2>Bay {bayNumber}</h2>
 							<div className="face-data-display">
 								<h3>Face</h3>
 								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
@@ -138,8 +203,14 @@ const RootApp = () => {
 									/>
 								))}
 							</div>
+						</div>
+					))}
+				</div>
+				<div className="bays-panels-row">
+					{sortedBayEntries.map(([bayNumber, bayData]) => (
+						<div key={bayNumber} className="bay-panels-cell">
 							<div className="side-panels-display">
-								<h3>Side Panels</h3>
+								<h3>Bay {bayNumber} Side Panels</h3>
 								{bayData.shelfP.length > 0 && (
 									<ShelfRenderer
 										key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
@@ -154,7 +225,7 @@ const RootApp = () => {
 								)}
 							</div>
 							<div className="back-panels-display">
-								<h3>Back Panels</h3>
+								<h3>Bay {bayNumber} Back Panels</h3>
 								{bayData.shelfP.length > 0 && (
 									<ShelfRenderer
 										key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
@@ -169,8 +240,15 @@ const RootApp = () => {
 								)}
 							</div>
 						</div>
-					</div>
-				))}
+					))}
+				</div>
+			</div>
+		);
+
+		return (
+			<>
+				<h2>{selectedFixtureType} - {selectedRegion}</h2>
+				{isTwoUp ? renderTwoUp() : sortedBayEntries.map(renderBay)}
 				<Modal
 					isOpen={isModalOpen}
 					onRequestClose={closeModal}

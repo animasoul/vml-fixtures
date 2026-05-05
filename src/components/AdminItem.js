@@ -1,5 +1,26 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { Tooltip } from "react-tooltip";
+
+// Shrinks the SKU label's font-size until the text fits its container width.
+const useFitText = (text, containerWidth) => {
+    const ref = useRef(null);
+
+    useLayoutEffect(() => {
+        const el = ref.current;
+        if (!el || !containerWidth) return;
+
+        el.style.fontSize = '';
+        let size = parseFloat(window.getComputedStyle(el).fontSize) || 14;
+        const minSize = 6;
+
+        while (el.scrollWidth > el.clientWidth && size > minSize) {
+            size -= 0.5;
+            el.style.fontSize = `${size}px`;
+        }
+    }, [text, containerWidth]);
+
+    return ref;
+};
 
 const AdminItem = ({ item, data, onImageClick, showTooltip }) => {
     // Only log if essential data is missing
@@ -19,9 +40,16 @@ const AdminItem = ({ item, data, onImageClick, showTooltip }) => {
         console.warn('No ImageURL found for SKU:', item.code);
     }
 
+    const itemWidth = item.width * 5;
+    const itemHeight = item.height * 5;
+    const skuRef = useFitText(item.code, itemWidth);
+
     return (
         <>
-            <div className={`item position-${item.horizontal}-${item.vertical}`}>
+            <div
+                className={`item position-${item.horizontal}-${item.vertical}`}
+                style={{ width: itemWidth }}
+            >
                 <a
                     href="#"
                     onClick={() => onImageClick(imageUrl)}
@@ -29,8 +57,8 @@ const AdminItem = ({ item, data, onImageClick, showTooltip }) => {
                     <img
                         src={imageUrl}
                         alt={`SKU ${item.code}`}
-                        width={item.width * 5}
-                        height={item.height * 5}
+                        width={itemWidth}
+                        height={itemHeight}
                         data-tooltip-id={item.code}
                         onError={(e) => {
                             console.warn(`Image failed to load for SKU ${item.code}`);
@@ -38,6 +66,7 @@ const AdminItem = ({ item, data, onImageClick, showTooltip }) => {
                             e.target.alt = `SKU ${item.code} (image not found)`;
                         }}
                     />
+                    <div className="item-sku" ref={skuRef}>{item.code}</div>
                 </a>
             </div>
             {showTooltip && (
