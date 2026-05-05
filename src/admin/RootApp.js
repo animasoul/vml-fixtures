@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
 import { fetchOptionData } from "../services/getOptionService";
 import ShelfRenderer from '../components/ShelfRenderer';
+import AdminItem from '../components/AdminItem';
 import { getUniqueValues, organizeBayData } from '../utilities/shelfUtils';
 import { matchesFixtureType, getRegionsForSelectedFixture } from '../utilities/fixtureUtils';
 
@@ -208,9 +209,19 @@ const RootApp = () => {
 				return String(a).localeCompare(String(b));
 			});
 
-			const renderShelfCell = (bayNumber, bayData, shelfLabel) => {
-				const positions = bayData.shelves[shelfLabel];
-				if (!positions) return <div className="shelf-cell shelf-cell--empty" />;
+			// Items wider than this threshold (raw API width) get pulled out and
+			// rendered centered across both bay columns at the bottom of the row.
+			const WIDE_ITEM_THRESHOLD = 50;
+			const itemWidthNum = (i) => parseFloat(i?.width);
+			const isWideItem = (i) => {
+				const w = itemWidthNum(i);
+				return Number.isFinite(w) && w > WIDE_ITEM_THRESHOLD;
+			};
+
+			const renderShelfCell = (bayNumber, positions, shelfLabel) => {
+				if (!positions || positions.length === 0) {
+					return <div className="shelf-cell shelf-cell--empty" />;
+				}
 				return (
 					<div className="shelf-cell">
 						<ShelfRenderer
@@ -227,67 +238,106 @@ const RootApp = () => {
 			};
 
 			return (
-			<div className="bays-two-up">
-				<div className="bays-faces-aligned">
-					<div className="bay-headers">
-						<div className="bay-col-header" id={`bay-${bay1Number}`}>
-							<h3>Bay {bay1Number} Face</h3>
-						</div>
-						<div className="bay-col-header" id={`bay-${bay2Number}`}>
-							<h3>Bay {bay2Number} Face</h3>
-						</div>
-					</div>
-					{allShelfLabels.map((shelfLabel) => (
-						<div key={shelfLabel} className="shelf-row">
-							{renderShelfCell(bay1Number, bay1Data, shelfLabel)}
-							{renderShelfCell(bay2Number, bay2Data, shelfLabel)}
-						</div>
-					))}
-				</div>
-				<div className="bays-panels-row">
-					{sortedBayEntries.map(([bayNumber, bayData]) => {
-						const showSide = hasSidePanels(bayData.shelfP);
-						const showBack = hasBackPanels(bayData.shelfP);
-						if (!showSide && !showBack) return null;
-						return (
-							<div key={bayNumber} className="bay-panels-cell">
-								{showSide && (
-									<div className="side-panels-display">
-										<h3>Bay {bayNumber} Side Panels</h3>
-										<ShelfRenderer
-											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
-											positions={bayData.shelfP}
-											shelfLabel="P"
-											bayNumber={bayNumber}
-											data={data}
-											onImageClick={openModal}
-											showTooltip={true}
-											panelType="side"
-											scale={scale}
-										/>
-									</div>
-								)}
-								{showBack && (
-									<div className="back-panels-display">
-										<h3>Bay {bayNumber} Back Panels</h3>
-										<ShelfRenderer
-											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
-											positions={bayData.shelfP}
-											shelfLabel="P"
-											bayNumber={bayNumber}
-											data={data}
-											onImageClick={openModal}
-											showTooltip={true}
-											panelType="back"
-											scale={scale}
-										/>
-									</div>
-								)}
+				<div className="bays-two-up">
+					<div className="bays-faces-aligned">
+						<div className="bay-headers">
+							<div className="bay-col-header" id={`bay-${bay1Number}`}>
+								<h3>Bay {bay1Number} Face</h3>
 							</div>
-						);
-					})}
+							<div className="bay-col-header" id={`bay-${bay2Number}`}>
+								<h3>Bay {bay2Number} Face</h3>
+							</div>
+						</div>
+						{allShelfLabels.map((shelfLabel) => {
+							const bay1Items = bay1Data.shelves[shelfLabel] || [];
+							const bay2Items = bay2Data.shelves[shelfLabel] || [];
+
+							const bay1Regular = bay1Items.filter((i) => !isWideItem(i));
+							const bay2Regular = bay2Items.filter((i) => !isWideItem(i));
+							const wideItems = [
+								...bay1Items.filter(isWideItem),
+								...bay2Items.filter(isWideItem),
+							];
+
+							// Debug: surface any items with a non-parseable width
+							const unparseable = [...bay1Items, ...bay2Items].filter(
+								(i) => i.width !== undefined && !Number.isFinite(parseFloat(i.width))
+							);
+							if (unparseable.length > 0) {
+								console.warn(
+									`Shelf ${shelfLabel}: items with non-numeric width`,
+									unparseable.map((i) => ({ code: i.code, width: i.width }))
+								);
+							}
+
+							return (
+								<div key={shelfLabel} className="shelf-row">
+									<div className="shelf-row__cells">
+										{renderShelfCell(bay1Number, bay1Regular, shelfLabel)}
+										{renderShelfCell(bay2Number, bay2Regular, shelfLabel)}
+									</div>
+									{wideItems.length > 0 && (
+										<div className="shelf-row__wide">
+											{wideItems.map((item, idx) => (
+												<AdminItem
+													key={`${item.code}-${idx}`}
+													item={item}
+													data={data}
+													onImageClick={openModal}
+													showTooltip={true}
+													scale={scale * 2}
+												/>
+											))}
+										</div>
+									)}
+								</div>
+							);
+						})}
+					</div>
+					<div className="bays-panels-row">
+						{sortedBayEntries.map(([bayNumber, bayData]) => {
+							const showSide = hasSidePanels(bayData.shelfP);
+							const showBack = hasBackPanels(bayData.shelfP);
+							if (!showSide && !showBack) return null;
+							return (
+								<div key={bayNumber} className="bay-panels-cell">
+									{showSide && (
+										<div className="side-panels-display">
+											<h3>Bay {bayNumber} Side Panels</h3>
+											<ShelfRenderer
+												key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
+												positions={bayData.shelfP}
+												shelfLabel="P"
+												bayNumber={bayNumber}
+												data={data}
+												onImageClick={openModal}
+												showTooltip={true}
+												panelType="side"
+												scale={scale}
+											/>
+										</div>
+									)}
+									{showBack && (
+										<div className="back-panels-display">
+											<h3>Bay {bayNumber} Back Panels</h3>
+											<ShelfRenderer
+												key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
+												positions={bayData.shelfP}
+												shelfLabel="P"
+												bayNumber={bayNumber}
+												data={data}
+												onImageClick={openModal}
+												showTooltip={true}
+												panelType="back"
+												scale={scale}
+											/>
+										</div>
+									)}
+								</div>
+							);
+						})}
+					</div>
 				</div>
-			</div>
 			);
 		};
 

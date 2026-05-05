@@ -71,10 +71,29 @@
 			}
 
 			.shelf-row {
+				display: flex;
+				flex-direction: column;
+				border: 1px solid #ccc;
+			}
+
+			.shelf-row__cells {
 				display: grid;
 				grid-template-columns: 1fr 1fr;
 				align-items: stretch;
-				border: 1px solid #ccc;
+			}
+
+			/* wide items pulled out of either bay - centered, span full row */
+			.shelf-row__wide {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-items: flex-end;
+				gap: 0.5em;
+				padding: 0.25em 0.5em;
+				a {
+					text-decoration: none;
+					color: #000;
+				}
 			}
 
 			.shelf-cell {
@@ -89,6 +108,15 @@
 
 			.shelf-cell--empty {
 				min-height: 0;
+			}
+
+			/* center the shelf title; apply same centering to wide items' anchor + sku */
+			.shelf-title.common-container,
+			.shelf-row__wide .item,
+			.shelf-row__wide .item > a,
+			.shelf-row__wide .item .item-sku {
+				justify-content: center;
+				text-align: center;
 			}
 		}
 
