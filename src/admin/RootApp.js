@@ -111,6 +111,11 @@ const RootApp = () => {
 		const bayCount = sortedBayEntries.length;
 		const isTwoUp = bayCount === 2;
 
+		const hasSidePanels = (shelfP = []) =>
+			shelfP.some((i) => ["LS", "CS", "RS"].includes(i.horizontal));
+		const hasBackPanels = (shelfP = []) =>
+			shelfP.some((i) => i.horizontal === "M");
+
 		const renderBay = ([bayNumber, bayData]) => (
 			<div
 				key={bayNumber}
@@ -153,9 +158,9 @@ const RootApp = () => {
 							/>
 						))}
 					</div>
-					<div className="side-panels-display">
-						<h3>Side Panels</h3>
-						{bayData.shelfP.length > 0 && (
+					{hasSidePanels(bayData.shelfP) && (
+						<div className="side-panels-display">
+							<h3>Side Panels</h3>
 							<ShelfRenderer
 								key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
 								positions={bayData.shelfP}
@@ -167,11 +172,11 @@ const RootApp = () => {
 								panelType="side"
 								scale={scale}
 							/>
-						)}
-					</div>
-					<div className="back-panels-display">
-						<h3>Back Panels</h3>
-						{bayData.shelfP.length > 0 && (
+						</div>
+					)}
+					{hasBackPanels(bayData.shelfP) && (
+						<div className="back-panels-display">
+							<h3>Back Panels</h3>
 							<ShelfRenderer
 								key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
 								positions={bayData.shelfP}
@@ -183,8 +188,8 @@ const RootApp = () => {
 								panelType="back"
 								scale={scale}
 							/>
-						)}
-					</div>
+						</div>
+					)}
 				</div>
 			</div>
 		);
@@ -217,42 +222,47 @@ const RootApp = () => {
 					))}
 				</div>
 				<div className="bays-panels-row">
-					{sortedBayEntries.map(([bayNumber, bayData]) => (
-						<div key={bayNumber} className="bay-panels-cell">
-							<div className="side-panels-display">
-								<h3>Bay {bayNumber} Side Panels</h3>
-								{bayData.shelfP.length > 0 && (
-									<ShelfRenderer
-										key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
-										positions={bayData.shelfP}
-										shelfLabel="P"
-										bayNumber={bayNumber}
-										data={data}
-										onImageClick={openModal}
-										showTooltip={true}
-										panelType="side"
-										scale={scale}
-									/>
+					{sortedBayEntries.map(([bayNumber, bayData]) => {
+						const showSide = hasSidePanels(bayData.shelfP);
+						const showBack = hasBackPanels(bayData.shelfP);
+						if (!showSide && !showBack) return null;
+						return (
+							<div key={bayNumber} className="bay-panels-cell">
+								{showSide && (
+									<div className="side-panels-display">
+										<h3>Bay {bayNumber} Side Panels</h3>
+										<ShelfRenderer
+											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
+											positions={bayData.shelfP}
+											shelfLabel="P"
+											bayNumber={bayNumber}
+											data={data}
+											onImageClick={openModal}
+											showTooltip={true}
+											panelType="side"
+											scale={scale}
+										/>
+									</div>
+								)}
+								{showBack && (
+									<div className="back-panels-display">
+										<h3>Bay {bayNumber} Back Panels</h3>
+										<ShelfRenderer
+											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
+											positions={bayData.shelfP}
+											shelfLabel="P"
+											bayNumber={bayNumber}
+											data={data}
+											onImageClick={openModal}
+											showTooltip={true}
+											panelType="back"
+											scale={scale}
+										/>
+									</div>
 								)}
 							</div>
-							<div className="back-panels-display">
-								<h3>Bay {bayNumber} Back Panels</h3>
-								{bayData.shelfP.length > 0 && (
-									<ShelfRenderer
-										key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
-										positions={bayData.shelfP}
-										shelfLabel="P"
-										bayNumber={bayNumber}
-										data={data}
-										onImageClick={openModal}
-										showTooltip={true}
-										panelType="back"
-										scale={scale}
-									/>
-								)}
-							</div>
-						</div>
-					))}
+						);
+					})}
 				</div>
 			</div>
 		);

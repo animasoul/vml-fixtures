@@ -1,14 +1,1 @@
-/*!*************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/instruction/style-index.css ***!
-  \*************************************************************************************************************************************************************************************/
-.ekit-template-content-header,
-.ekit-template-content-footer,
-.page-header {
-	display: none !important;
-}
-body {
-	background-color: #fff !important;
-}
-
-
-/*# sourceMappingURL=view.css.map*/
+.ekit-template-content-footer,.ekit-template-content-header,.page-header{display:none!important}body{background-color:#fff!important}

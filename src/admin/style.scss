@@ -53,7 +53,7 @@
 		.bays-panels-row {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
-			gap: 1em;
+			gap: 0.5em;
 			width: 100%;
 		}
 
@@ -172,9 +172,6 @@
 }
 
 @media print {
-	// @page {
-	// 	margin: 1.5cm 1.25cm;
-	// }
 	.noprint,
 	.ekit-template-content-header,
 	.ekit-template-content-footer,
