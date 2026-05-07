@@ -29,6 +29,9 @@
 		display: flex;
 		gap: 0.5em;
 		width: 100%;
+		h3 {
+			text-align: center;
+		}
 		.face-data-display {
 			flex: 0 0 50%; /* don't grow, don't shrink, start at 50% */
 		}
@@ -48,6 +51,9 @@
 		flex-direction: column;
 		gap: 1em;
 		width: 100%;
+		h3 {
+			text-align: center;
+		}
 
 		/* Stack of bay headers + shelf rows; each row holds both bays' cells */
 		.bays-faces-aligned {
@@ -190,8 +196,9 @@
 			.item-sku {
 				width: 100%;
 				box-sizing: border-box;
-				overflow: hidden;
-				white-space: nowrap;
+				overflow: visible;
+				white-space: wrap;
+				overflow-wrap: break-word;
 				text-align: center;
 				font-size: clamp(0.5rem, 18cqw, 1rem);
 				line-height: 1.1;

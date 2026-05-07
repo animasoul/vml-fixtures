@@ -11,7 +11,7 @@ const useFitText = (text, containerWidth) => {
 
         el.style.fontSize = '';
         let size = parseFloat(window.getComputedStyle(el).fontSize) || 14;
-        const minSize = 6;
+        const minSize = 7;
 
         while (el.scrollWidth > el.clientWidth && size > minSize) {
             size -= 0.5;
@@ -40,8 +40,12 @@ const AdminItem = ({ item, data, onImageClick, showTooltip, scale = 1 }) => {
         console.warn('No ImageURL found for SKU:', item.code);
     }
 
-    const itemWidth = item.width * 5 * scale;
-    const itemHeight = item.height * 5 * scale;
+    const minItemWidth = 40;
+    const baseItemWidth = item.width * 5 * scale;
+    const baseItemHeight = item.height * 5 * scale;
+    const itemScale = Math.max(1, minItemWidth / baseItemWidth);
+    const itemWidth = Math.round(baseItemWidth * itemScale);
+    const itemHeight = Math.round(baseItemHeight * itemScale);
     const skuRef = useFitText(item.code, itemWidth);
 
     return (
