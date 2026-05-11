@@ -103,7 +103,18 @@
 			}
 
 			.shelf-cell {
+				display: flex;
 				min-width: 0; /* allow grid cell to shrink below content size */
+			}
+
+			.shelf-cell .face-shelf {
+				display: flex;
+				flex: 1 1 auto;
+				flex-direction: column;
+			}
+
+			.shelf-cell .shelf {
+				flex: 1 1 auto;
 			}
 
 			/* inner shelf borders are redundant once the row has its own border */
@@ -163,7 +174,7 @@
 	.shelf {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
+		align-items: stretch;
 		justify-content: center;
 		h3 {
 			flex-basis: 100%;
@@ -172,8 +183,15 @@
 	}
 	.group-position-8 {
 		flex-basis: 100%;
+		justify-content: flex-end !important;
+	}
+	.group-position-8-2 {
+		justify-content: flex-start !important;
 	}
 	.item-group {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
 		margin: 0 0.2em;
 
 		.item {
@@ -200,7 +218,7 @@
 				white-space: wrap;
 				overflow-wrap: break-word;
 				text-align: center;
-				font-size: clamp(0.5rem, 18cqw, 1rem);
+				font-size: clamp(0.5rem, 18cqw, 10px);
 				line-height: 1.1;
 				color: #000;
 			}

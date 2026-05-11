@@ -1,9 +1,30 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Tooltip } from "react-tooltip";
 
-// Shrinks the SKU label's font-size until the text fits its container width.
+const getTextWithFirstHyphenBreak = (text) => {
+    const hyphenIndex = text.indexOf('-');
+
+    if (hyphenIndex === -1) {
+        return text;
+    }
+
+    return (
+        <>
+            {text.slice(0, hyphenIndex + 1)}
+            <br />
+            {text.slice(hyphenIndex + 1)}
+        </>
+    );
+};
+
+// Breaks at the first hyphen if needed, then shrinks the SKU label until it fits.
 const useFitText = (text, containerWidth) => {
     const ref = useRef(null);
+    const [breakAtFirstHyphen, setBreakAtFirstHyphen] = useState(false);
+
+    useLayoutEffect(() => {
+        setBreakAtFirstHyphen(false);
+    }, [text, containerWidth]);
 
     useLayoutEffect(() => {
         const el = ref.current;
@@ -13,13 +34,25 @@ const useFitText = (text, containerWidth) => {
         let size = parseFloat(window.getComputedStyle(el).fontSize) || 14;
         const minSize = 7;
 
+        if (
+            !breakAtFirstHyphen &&
+            text.includes('-') &&
+            el.scrollWidth > el.clientWidth
+        ) {
+            setBreakAtFirstHyphen(true);
+            return;
+        }
+
         while (el.scrollWidth > el.clientWidth && size > minSize) {
             size -= 0.5;
             el.style.fontSize = `${size}px`;
         }
-    }, [text, containerWidth]);
+    }, [text, containerWidth, breakAtFirstHyphen]);
 
-    return ref;
+    return [
+        ref,
+        breakAtFirstHyphen ? getTextWithFirstHyphenBreak(text) : text
+    ];
 };
 
 const AdminItem = ({ item, data, onImageClick, showTooltip, scale = 1 }) => {
@@ -41,12 +74,12 @@ const AdminItem = ({ item, data, onImageClick, showTooltip, scale = 1 }) => {
     }
 
     const minItemWidth = 40;
-    const baseItemWidth = item.width * 5 * scale;
-    const baseItemHeight = item.height * 5 * scale;
+    const baseItemWidth = item.width * 7 * scale;
+    const baseItemHeight = item.height * 7 * scale;
     const itemScale = Math.max(1, minItemWidth / baseItemWidth);
     const itemWidth = Math.round(baseItemWidth * itemScale);
     const itemHeight = Math.round(baseItemHeight * itemScale);
-    const skuRef = useFitText(item.code, itemWidth);
+    const [skuRef, skuText] = useFitText(item.code, itemWidth);
 
     return (
         <>
@@ -70,7 +103,7 @@ const AdminItem = ({ item, data, onImageClick, showTooltip, scale = 1 }) => {
                             e.target.alt = `SKU ${item.code} (image not found)`;
                         }}
                     />
-                    <div className="item-sku" ref={skuRef}>{item.code}</div>
+                    <div className="item-sku" ref={skuRef}>{skuText}</div>
                 </a>
             </div>
             {showTooltip && (
