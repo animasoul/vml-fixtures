@@ -33,8 +33,93 @@ function create_block_vml_fixtures_block_init() {
 		'admin' => $admin_block->script,
 		'instruction' => $instruction_block->script
 	);
+
+	$GLOBALS['vml_fixtures_instruction_view_script_handles'] = $instruction_block->view_script_handles;
 }
 add_action('init', 'create_block_vml_fixtures_block_init');
+
+function vml_fixtures_get_instruction_text_strings() {
+	return array(
+		'noDataPromotion' => __('No data: Please select a Promotion.', 'vml-fixtures'),
+		'noSkuData' => __('No SKU data available.', 'vml-fixtures'),
+		'pleaseSelectPromotion' => __('Please select a Promotion', 'vml-fixtures'),
+		'sephoraLogo' => __('Sephora Logo', 'vml-fixtures'),
+		'brandLogo' => __('Brand Logo', 'vml-fixtures'),
+		'skuAlt' => __('SKU %s', 'vml-fixtures'),
+		'bayShelf' => __('BAY %s/SHELF %s', 'vml-fixtures'),
+		'graphicLayoutBay' => __('Graphic Layout: Bay %s', 'vml-fixtures'),
+		'backpanelBay' => __('Backpanel: Bay %s', 'vml-fixtures'),
+		'green' => __('GREEN', 'vml-fixtures'),
+		'yellow' => __('YELLOW', 'vml-fixtures'),
+		'red' => __('RED', 'vml-fixtures'),
+		'newGraphics' => __('NEW Graphics', 'vml-fixtures'),
+		'movingGraphics' => __('MOVING Graphics', 'vml-fixtures'),
+		'removedGraphics' => __('REMOVED Graphics', 'vml-fixtures'),
+		'layoutDescription' => __('This graphic layout shows all of the graphics on your gondola by location AFTER the update is complete.', 'vml-fixtures'),
+		'cleanInstructions' => __('To clean: Use a dry cloth only - No alcohol based products', 'vml-fixtures'),
+		'selectFixture' => __('Select Fixture', 'vml-fixtures'),
+		'selectRegion' => __('Select Region', 'vml-fixtures'),
+		'instructionSheetToPdf' => __('Instruction sheet to PDF', 'vml-fixtures'),
+		'stores' => __('Stores', 'vml-fixtures'),
+		'totalAcrossRegions' => __('Total across all regions: %s Stores', 'vml-fixtures'),
+		'headerInformation' => __('Enter the header of the PDF information', 'vml-fixtures'),
+		'sameUsCaRegions' => __('This fixture has same US CA regions', 'vml-fixtures'),
+		'sameAllRegions' => __('This fixture has same ALL regions', 'vml-fixtures'),
+		'combine' => __('Combine?', 'vml-fixtures'),
+		'fixture' => __('Fixture:', 'vml-fixtures'),
+		'fixtureType' => __('Fixture Type', 'vml-fixtures'),
+		'region' => __('Region', 'vml-fixtures'),
+		'regionLabel' => __('Region:', 'vml-fixtures'),
+		'updates' => __('Updates:', 'vml-fixtures'),
+		'updateSeason' => __('Update Season', 'vml-fixtures'),
+		'executionDates' => __('Execution Dates', 'vml-fixtures'),
+		'executionDatesLabel' => __('Execution Dates:', 'vml-fixtures'),
+		'type' => __('Type:', 'vml-fixtures'),
+		'branding' => __('Branding', 'vml-fixtures'),
+		'enlargeReduceImageSizes' => __('Enlarge/reduce image sizes', 'vml-fixtures'),
+		'toFitPrinterOutput' => __('to fit printer output', 'vml-fixtures'),
+		'uploadPdfFirstPage' => __('Upload PDF of the first page', 'vml-fixtures'),
+		'uploadPdf' => __('Upload PDF', 'vml-fixtures'),
+		'loading' => __('Loading...', 'vml-fixtures'),
+	);
+}
+
+function vml_fixtures_render_instruction_text_seed() {
+	$strings = vml_fixtures_get_instruction_text_strings();
+	$html = '<div class="vml-fixtures-instruction-translation-seed" aria-hidden="true" style="position:absolute;left:-99999px;top:auto;width:1px;height:1px;overflow:hidden;">';
+
+	foreach ($strings as $key => $text) {
+		$html .= sprintf(
+			'<span data-vml-fixtures-instruction-key="%s">%s</span>',
+			esc_attr($key),
+			esc_html($text)
+		);
+	}
+
+	$html .= '</div>';
+
+	return $html;
+}
+
+function vml_fixtures_add_instruction_text_seed($block_content, $block) {
+	if (!isset($block['blockName']) || $block['blockName'] !== 'vml-fixtures/instruct') {
+		return $block_content;
+	}
+
+	return $block_content . vml_fixtures_render_instruction_text_seed();
+}
+add_filter('render_block', 'vml_fixtures_add_instruction_text_seed', 10, 2);
+
+function vml_fixtures_localize_instruction_view_script() {
+	$handles = isset($GLOBALS['vml_fixtures_instruction_view_script_handles'])
+		? $GLOBALS['vml_fixtures_instruction_view_script_handles']
+		: array();
+
+	foreach ((array) $handles as $handle) {
+		wp_localize_script($handle, 'vmlFixturesInstructionText', vml_fixtures_get_instruction_text_strings());
+	}
+}
+add_action('wp_enqueue_scripts', 'vml_fixtures_localize_instruction_view_script', 20);
 
 // Register the AJAX action for authenticated users
 add_action('wp_ajax_get_sorted_data', 'wp_ajax_get_sorted_data_callback');

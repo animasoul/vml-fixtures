@@ -1,6 +1,7 @@
 import Loader from "../components/Loader";
 import React, { useState } from "@wordpress/element";
 import { Document, Page, Thumbnail, pdfjs } from "react-pdf";
+import { t } from "./translations";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 export default function UploadPdf() {
@@ -43,7 +44,7 @@ export default function UploadPdf() {
 
 	return (
 		<div className="uploadPdf">
-			<p className="noprint">Upload PDF of the first page</p>
+			<p className="noprint">{t("uploadPdfFirstPage")}</p>
 			<input
 				type="file"
 				onChange={handleFileChange}
@@ -55,9 +56,9 @@ export default function UploadPdf() {
 				onClick={uploadFile}
 				className="noprint ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
 			>
-				Upload PDF
+				{t("uploadPdf")}
 			</button>
-			{isFileLoading && <Loader />}
+			{isFileLoading && <Loader text={t("loading")} />}
 			{pdfUrl ? (
 				<>
 					<Document file={pdfUrl} className="print-pdf">

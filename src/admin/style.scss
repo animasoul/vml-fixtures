@@ -134,6 +134,7 @@
 			.shelf-row__wide .item .item-sku {
 				justify-content: center;
 				text-align: center;
+				font-size: clamp(0.5rem, 18cqw, 10px);
 			}
 		}
 

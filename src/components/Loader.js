@@ -1,6 +1,6 @@
 import PropagateLoader from "react-spinners/PropagateLoader";
 
-function Loader() {
+function Loader({ text = "Loading..." }) {
 	const override = {
 		display: "block",
 		margin: "0 auto",
@@ -9,7 +9,7 @@ function Loader() {
 	};
 	return (
 		<div className="loading">
-			Loading...
+			{text}
 			<PropagateLoader color="#008fca" cssOverride={override} />
 		</div>
 	);

@@ -10,6 +10,7 @@ import {
 	sortHorizontalValues
 } from '../utilities/shelfUtils';
 import { matchesFixtureType, getRegionsForSelectedFixture } from '../utilities/fixtureUtils';
+import { formatText, t } from "./translations";
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
@@ -91,7 +92,7 @@ const InstructApp = () => {
 				const response = await fetchOptionData();
 
 				if (!response.data) {
-					throw new Error("No data: Please select a Promotion.");
+					throw new Error(t("noDataPromotion"));
 				} else {
 					const jsonData = response.data;
 
@@ -284,7 +285,7 @@ const InstructApp = () => {
 				finalSkusIsObject: data ? typeof data.final_skus === "object" : false,
 				selectedFixtureTypeExists: !!selectedFixtureType
 			});
-			return <p>No SKU data available.</p>;
+			return <p>{t("noSkuData")}</p>;
 		}
 
 		// Create a map to store the best position for each unique location
@@ -428,7 +429,7 @@ const InstructApp = () => {
 				return (
 					<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
 						<div className="shelf-title common-container">
-							{shelfLabel === "P" ? null : <>BAY {bayNumber}/SHELF {shelfLabel}</>}
+							{shelfLabel === "P" ? null : formatText("bayShelf", [bayNumber, shelfLabel])}
 						</div>
 						<div className={`shelf shelf-${shelfLabel}`}>
 							{/* Render CS items as a row at the top */}
@@ -452,7 +453,7 @@ const InstructApp = () => {
 										) : (
 											<img
 												src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
-												alt={`SKU ${item.code}`}
+												alt={formatText("skuAlt", [item.code])}
 												width={item.width * 7 * scale}
 												height={item.height * 7 * scale}
 												{...(id === "moved" && { id: `${item.code}-movedTo` })}
@@ -504,7 +505,7 @@ const InstructApp = () => {
 											) : (
 												<img
 													src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
-													alt={`SKU ${item.code}`}
+													alt={formatText("skuAlt", [item.code])}
 													width={item.width * 7 * scale}
 													height={item.height * 7 * scale}
 													{...(id === "moved" && { id: `${item.code}-movedTo` })}
@@ -543,7 +544,7 @@ const InstructApp = () => {
 			return (
 				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
 					<div className="shelf-title common-container">
-						{shelfLabel === "P" ? null : <>BAY {bayNumber}/SHELF {shelfLabel}</>}
+						{shelfLabel === "P" ? null : formatText("bayShelf", [bayNumber, shelfLabel])}
 					</div>
 					<div className={`shelf shelf-${shelfLabel}`}>
 						{sortedGroupKeys.map((horizontal) => (
@@ -567,7 +568,7 @@ const InstructApp = () => {
 										) : (
 											<img
 												src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
-												alt={`SKU ${item.code}`}
+												alt={formatText("skuAlt", [item.code])}
 												width={item.width * 7 * scale}
 												height={item.height * 7 * scale}
 												{...(id === "moved" && { id: `${item.code}-movedTo` })}
@@ -614,7 +615,7 @@ const InstructApp = () => {
 							<div className="print-header">
 								<img
 									src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
-									alt="Sephora Logo"
+									alt={t("sephoraLogo")}
 									className="left-image"
 								/>
 								<p className="header-text">
@@ -626,32 +627,31 @@ const InstructApp = () => {
 									<br />
 									{branding}
 								</p>
-								<img src={brandImage} alt="Brand Logo" className="right-image" />
+								<img src={brandImage} alt={t("brandLogo")} className="right-image" />
 							</div>
-							<h3>Graphic Layout: Bay {bayNumber} {titleSuffix}</h3>
+							<h3>{formatText("graphicLayoutBay", [bayNumber])} {titleSuffix}</h3>
 							{Object.entries(bayData.shelves).map(([shelfLabel, positions]) =>
 								renderShelf(positions, shelfLabel, id, bayNumber)
 							)}
 							<div className="footer-instructions-wrapper">
 								<div className="footer-instructions">
 									<p>
-										<span className="new">GREEN</span> = NEW Graphics
+										<span className="new">{t("green")}</span> = {t("newGraphics")}
 									</p>{" "}
 									<p>
-										<span className="move">YELLOW</span>= MOVING Graphics
+										<span className="move">{t("yellow")}</span>= {t("movingGraphics")}
 									</p>
 									<p>
-										<span className="delete">RED</span>= REMOVED Graphics
+										<span className="delete">{t("red")}</span>= {t("removedGraphics")}
 									</p>
 								</div>
 								<p className="text">
-									This graphic layout shows all of the graphics on your gondola by
-									location AFTER the update is complete.
+									{t("layoutDescription")}
 								</p>
 								<hr />
 								<p className="clean">
 									<strong>
-										To clean: Use a dry cloth only - No alcohol based products
+										{t("cleanInstructions")}
 									</strong>
 								</p>
 							</div>
@@ -661,7 +661,7 @@ const InstructApp = () => {
 								<div className="print-header">
 									<img
 										src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
-										alt="Sephora Logo"
+										alt={t("sephoraLogo")}
 										className="left-image"
 									/>
 									<p className="header-text">
@@ -675,11 +675,11 @@ const InstructApp = () => {
 									</p>
 									<img
 										src={brandImage}
-										alt="Brand Logo"
+										alt={t("brandLogo")}
 										className="right-image"
 									/>
 								</div>
-								<h3>Backpanel: Bay {bayNumber} {titleSuffix}</h3>
+								<h3>{formatText("backpanelBay", [bayNumber])} {titleSuffix}</h3>
 								{renderShelf(bayData.shelfP, "P", id, bayNumber)}
 							</div>
 						)}
@@ -699,7 +699,7 @@ const InstructApp = () => {
 	// console.log("Raw Data:", data);
 
 	if (isLoading) {
-		return <Loader />;
+		return <Loader text={t("loading")} />;
 	}
 
 	if (error) {
@@ -707,13 +707,13 @@ const InstructApp = () => {
 	}
 
 	if (!data) {
-		return <p>Please select a Promotion</p>;
+		return <p>{t("pleaseSelectPromotion")}</p>;
 	}
 
 	return (
 		<div className="fixture-select">
 			<div className="noprint">
-				<strong>Select Fixture</strong>
+				<strong>{t("selectFixture")}</strong>
 				<ul className="buttons-row">
 					{[...uniqueFixtureTypes].reverse().map((type) => (
 						<li key={type}>
@@ -731,7 +731,7 @@ const InstructApp = () => {
 				</ul>
 				{selectedFixtureType && (
 					<>
-						<strong>Select Region</strong>
+						<strong>{t("selectRegion")}</strong>
 						<ul className="buttons-row">
 							{[...uniqueRegions].reverse().map((region) => (
 								<li key={region}>
@@ -754,23 +754,23 @@ const InstructApp = () => {
 						className="noprint ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
 						onClick={handlePrint}
 					>
-						Instruction sheet to PDF
+						{t("instructionSheetToPdf")}
 					</button>
 
 					<ul>
 						{Object.entries(totals.totalsByRegion).map(([region, count]) => (
 							<li key={region}>
-								{region}: {count} Stores
+								{region}: {count} {t("stores")}
 							</li>
 						))}
 					</ul>
-					<p>Total across all regions: {totals.totalAcrossRegions} Stores</p>
+					<p>{formatText("totalAcrossRegions", [totals.totalAcrossRegions])}</p>
 				</div>
 				<div className="noprint textInput">
-					<p>Enter the header of the PDF information</p>
+					<p>{t("headerInformation")}</p>
 					{hasAllUSCA && (
 						<div className="inputFields">
-							<label htmlFor="same">This fixture has same US CA regions</label>
+							<label htmlFor="same">{t("sameUsCaRegions")}</label>
 							<button
 								className="ui-button ui-widget ui-corner-all ui-button-text-only"
 								id="same"
@@ -778,13 +778,13 @@ const InstructApp = () => {
 									setRegion("US - CA");
 								}}
 							>
-								Combine?
+								{t("combine")}
 							</button>
 						</div>
 					)}
 					{hasAllALL && (
 						<div className="inputFields">
-							<label htmlFor="same">This fixture has same ALL regions</label>
+							<label htmlFor="same">{t("sameAllRegions")}</label>
 							<button
 								className="ui-button ui-widget ui-corner-all ui-button-text-only"
 								id="same"
@@ -792,58 +792,58 @@ const InstructApp = () => {
 									setRegion("US - CA - QC");
 								}}
 							>
-								Combine?
+								{t("combine")}
 							</button>
 						</div>
 					)}
 					<div className="inputFields">
-						<label htmlFor="fixtureInput">Fixture:</label>
+						<label htmlFor="fixtureInput">{t("fixture")}</label>
 						<input
 							type="text"
 							value={fixtureType}
 							onChange={(e) => setFixtureType(e.target.value)}
-							placeholder="Fixture Type"
+							placeholder={t("fixtureType")}
 							className="fixtureType"
 							id="fixtureInput"
 						/>
 					</div>
 					<div className="inputFields">
-						<label htmlFor="regionInput">Region:</label>
+						<label htmlFor="regionInput">{t("regionLabel")}</label>
 						<input
 							type="text"
 							value={region}
 							onChange={(e) => setRegion(e.target.value)}
-							placeholder="Region"
+							placeholder={t("region")}
 							id="regionInput"
 						/>
 					</div>
 					<div className="inputFields">
-						<label htmlFor="seasonInput">Updates:</label>
+						<label htmlFor="seasonInput">{t("updates")}</label>
 						<input
 							type="text"
 							value={updateSeason}
 							onChange={handleUpdateSeasonChange}
-							placeholder="Update Season"
+							placeholder={t("updateSeason")}
 							id="seasonInput"
 						/>
 					</div>
 					<div className="inputFields">
-						<label htmlFor="weekInput">Execution Dates:</label>
+						<label htmlFor="weekInput">{t("executionDatesLabel")}</label>
 						<input
 							type="text"
 							value={executionWeek}
 							onChange={(e) => setExecutionWeek(e.target.value)}
-							placeholder="Execution Dates"
+							placeholder={t("executionDates")}
 							id="weekInput"
 						/>
 					</div>
 					<div className="inputFields">
-						<label htmlFor="brandingInput">Type:</label>
+						<label htmlFor="brandingInput">{t("type")}</label>
 						<input
 							type="text"
 							value={branding}
 							onChange={(e) => setBranding(e.target.value)}
-							placeholder="Branding"
+							placeholder={t("branding")}
 							id="brandingInput"
 						/>
 					</div>
@@ -853,8 +853,8 @@ const InstructApp = () => {
 			<div className="noprint scale">
 				<div className="scale-wrapper">
 					<p>
-						Enlarge/reduce image sizes
-						<br /> to fit printer output
+						{t("enlargeReduceImageSizes")}
+						<br /> {t("toFitPrinterOutput")}
 						<br />
 						{scalePercentage}%
 					</p>
