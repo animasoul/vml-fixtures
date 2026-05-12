@@ -11,6 +11,7 @@ import {
 } from '../utilities/shelfUtils';
 import { matchesFixtureType, getRegionsForSelectedFixture } from '../utilities/fixtureUtils';
 import { formatText, t } from "./translations";
+import InstructionItem from "../components/InstructionItem";
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
@@ -389,11 +390,23 @@ const InstructApp = () => {
 
 		console.log("InstructApp - Finished processing data. Bays object:", bays, "Bay count:", Object.keys(bays).length);
 
-		// Function to render shelf data
+		// Function to render shelf data. Matches the admin RootApp /
+		// ShelfRenderer grouping logic:
+		//   - items at horizontal=8, vertical=2 are pulled into a synthetic
+		//     "8-2-top" group that sorts first (top of the shelf),
+		//   - items at horizontal=8 (other verticals) sort last (bottom),
+		//   - everything else sorts by horizontal numerically in between.
+		// Each item is rendered through InstructionItem so it carries the
+		// SKU label (.item-sku) using the same useFitText hook as AdminItem.
 		const renderShelf = (positions, shelfLabel, id = "", bayNumber) => {
-			// Group by horizontal value
+			const topShelfGroupKey = "8-2-top";
+			const isTopShelfPosition = (item) =>
+				item.horizontal == 8 && item.vertical == 2;
+
 			let groupedByHorizontal = positions.reduce((acc, item) => {
-				let horizontal = item.horizontal;
+				const horizontal = isTopShelfPosition(item)
+					? topShelfGroupKey
+					: item.horizontal;
 				if (!acc[horizontal]) {
 					acc[horizontal] = [];
 				}
@@ -401,137 +414,67 @@ const InstructApp = () => {
 				return acc;
 			}, {});
 
-			// Sort groups by horizontal and reverse sort items within by vertical
+			const getGroupSortValue = (horizontal) => {
+				if (horizontal === topShelfGroupKey) return 0;
+				if (horizontal == 8) return Number.MAX_SAFE_INTEGER;
+				return Number(horizontal);
+			};
+
 			let sortedGroupKeys = Object.keys(groupedByHorizontal).sort(
-				(a, b) => a - b,
+				(a, b) => getGroupSortValue(a) - getGroupSortValue(b),
 			);
+
 			sortedGroupKeys.forEach((horizontal) => {
-				// Only reverse sort by vertical if it's NOT a panel shelf
 				if (shelfLabel === "P") {
-					// For panel shelf, use normal (ascending) vertical order
 					groupedByHorizontal[horizontal].sort((a, b) => a.vertical - b.vertical);
 				} else {
-					// For regular shelves, use reverse (descending) vertical order
 					groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical);
 				}
 			});
-			// Adjust sorting for 'P' shelf if horizontal values are not numeric
+
 			if (shelfLabel === "P") {
 				sortedGroupKeys.sort(sortHorizontalValues);
 			}
 
+			const getItemGroupClassName = (horizontal) => {
+				if (horizontal === topShelfGroupKey) {
+					return "item-group group-position-8 group-position-8-2";
+				}
+				return horizontal == 8 ? "item-group group-position-8" : "item-group";
+			};
+
 			// Special handling for panel rendering with CS horizontal value
 			if (shelfLabel === "P" && groupedByHorizontal["CS"]) {
-				// Remove CS from the sortedGroupKeys to handle it separately
-				sortedGroupKeys = sortedGroupKeys.filter(key => key !== "CS");
+				sortedGroupKeys = sortedGroupKeys.filter((key) => key !== "CS");
 
-				// Step 4: Render with CS at the top
 				return (
 					<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
 						<div className="shelf-title common-container">
 							{shelfLabel === "P" ? null : formatText("bayShelf", [bayNumber, shelfLabel])}
 						</div>
 						<div className={`shelf shelf-${shelfLabel}`}>
-							{/* Render CS items as a row at the top */}
 							<div className="item-group cs-row">
 								{groupedByHorizontal["CS"].map((item, index) => (
-									<div
-										className={`item position-${item.horizontal}-${item.vertical}`}
+									<InstructionItem
 										key={`cs-${index}`}
-									>
-										{item.moved_item ? (
-											<div
-												className={`moved-item`}
-												style={{
-													width: `${item.width * 7 * scale}px`,
-													height: `${item.height * 7 * scale}px`,
-												}}
-												id={`${item.code}-movedFrom`}
-											>
-												{<ItemBayShelf item={item} />}
-											</div>
-										) : (
-											<img
-												src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
-												alt={formatText("skuAlt", [item.code])}
-												width={item.width * 7 * scale}
-												height={item.height * 7 * scale}
-												{...(id === "moved" && { id: `${item.code}-movedTo` })}
-												className={item.update}
-												data-bay={item.bay}
-												data-shelf={item.shelf}
-												data-horizontal={item.horizontal}
-												data-vertical={item.vertical}
-											/>
-										)}
-										{id === "moved" && item.moved_item && (
-											<>
-												<svg
-													id={`${item.code}-svg-container`}
-													style={{
-														position: "absolute",
-														top: "0",
-														left: "0",
-														width: "100%",
-														height: "100%",
-														zIndex: "1000",
-													}}
-												></svg>
-											</>
-										)}
-									</div>
+										item={item}
+										data={data}
+										scale={scale}
+										id={id}
+									/>
 								))}
 							</div>
 
-							{/* Render other items as columns */}
 							{sortedGroupKeys.map((horizontal) => (
-								<div className="item-group" key={horizontal}>
+								<div className={getItemGroupClassName(horizontal)} key={horizontal}>
 									{groupedByHorizontal[horizontal].map((item, index) => (
-										<div
-											className={`item position-${item.horizontal}-${item.vertical}`}
+										<InstructionItem
 											key={index}
-										>
-											{item.moved_item ? (
-												<div
-													className={`moved-item`}
-													style={{
-														width: `${item.width * 7 * scale}px`,
-														height: `${item.height * 7 * scale}px`,
-													}}
-													id={`${item.code}-movedFrom`}
-												>
-													{<ItemBayShelf item={item} />}
-												</div>
-											) : (
-												<img
-													src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
-													alt={formatText("skuAlt", [item.code])}
-													width={item.width * 7 * scale}
-													height={item.height * 7 * scale}
-													{...(id === "moved" && { id: `${item.code}-movedTo` })}
-													className={item.update}
-													data-bay={item.bay}
-													data-shelf={item.shelf}
-													data-horizontal={item.horizontal}
-													data-vertical={item.vertical}
-												/>
-											)}
-											{id === "moved" && item.moved_item && (
-												<>
-													<svg
-														id={`${item.code}-svg-container`}
-														style={{
-															position: "absolute",
-															top: "0",
-															left: "0",
-															width: "100%",
-															height: "100%",
-															zIndex: "1000",
-														}}
-													></svg>
-												</>
-											)}
-										</div>
+											item={item}
+											data={data}
+											scale={scale}
+											id={id}
+										/>
 									))}
 								</div>
 							))}
@@ -540,7 +483,6 @@ const InstructApp = () => {
 				);
 			}
 
-			// Step 4: Render (original code for non-CS case)
 			return (
 				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
 					<div className="shelf-title common-container">
@@ -548,53 +490,15 @@ const InstructApp = () => {
 					</div>
 					<div className={`shelf shelf-${shelfLabel}`}>
 						{sortedGroupKeys.map((horizontal) => (
-							<div className="item-group" key={horizontal}>
+							<div className={getItemGroupClassName(horizontal)} key={horizontal}>
 								{groupedByHorizontal[horizontal].map((item, index) => (
-									<div
-										className={`item position-${item.horizontal}-${item.vertical}`}
+									<InstructionItem
 										key={index}
-									>
-										{item.moved_item ? (
-											<div
-												className={`moved-item`}
-												style={{
-													width: `${item.width * 7 * scale}px`,
-													height: `${item.height * 7 * scale}px`,
-												}}
-												id={`${item.code}-movedFrom`}
-											>
-												{<ItemBayShelf item={item} />}
-											</div>
-										) : (
-											<img
-												src={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
-												alt={formatText("skuAlt", [item.code])}
-												width={item.width * 7 * scale}
-												height={item.height * 7 * scale}
-												{...(id === "moved" && { id: `${item.code}-movedTo` })}
-												className={item.update}
-												data-bay={item.bay}
-												data-shelf={item.shelf}
-												data-horizontal={item.horizontal}
-												data-vertical={item.vertical}
-											/>
-										)}
-										{id === "moved" && item.moved_item && (
-											<>
-												<svg
-													id={`${item.code}-svg-container`}
-													style={{
-														position: "absolute",
-														top: "0",
-														left: "0",
-														width: "100%",
-														height: "100%",
-														zIndex: "1000",
-													}}
-												></svg>
-											</>
-										)}
-									</div>
+										item={item}
+										data={data}
+										scale={scale}
+										id={id}
+									/>
 								))}
 							</div>
 						))}
@@ -603,90 +507,220 @@ const InstructApp = () => {
 			);
 		};
 
-		// Modify generateLayout to handle bays
-		const generateLayout = (bays, titleSuffix = "", id = "default") => (
-			<>
-				<h2 className="noprint">
-					{selectedFixtureType} - {selectedRegion}
-				</h2>
-				{Object.entries(bays).sort(([a], [b]) => a - b).map(([bayNumber, bayData]) => (
-					<div className="admin-fixture" id={id} key={bayNumber}>
-						<div className={`face-data-display ${titleSuffix ? "page-break" : ""}`}>
-							<div className="print-header">
-								<img
-									src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
-									alt={t("sephoraLogo")}
-									className="left-image"
-								/>
-								<p className="header-text">
-									{fixtureType} {region}
-									<br />
-									{updateSeason}
-									<br />
-									{executionWeek}
-									<br />
-									{branding}
-								</p>
-								<img src={brandImage} alt={t("brandLogo")} className="right-image" />
+		// Shared print header (logos + PDF info fields).
+		const renderPrintHeader = () => (
+			<div className="print-header">
+				<img
+					src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
+					alt={t("sephoraLogo")}
+					className="left-image"
+				/>
+				<p className="header-text">
+					{fixtureType} {region}
+					<br />
+					{updateSeason}
+					<br />
+					{executionWeek}
+					<br />
+					{branding}
+				</p>
+				<img src={brandImage} alt={t("brandLogo")} className="right-image" />
+			</div>
+		);
+
+		// Shared GREEN/YELLOW/RED legend + clean instructions footer.
+		const renderFooterInstructions = () => (
+			<div className="footer-instructions-wrapper">
+				<div className="footer-instructions">
+					<p>
+						<span className="new">{t("green")}</span> = {t("newGraphics")}
+					</p>{" "}
+					<p>
+						<span className="move">{t("yellow")}</span>= {t("movingGraphics")}
+					</p>
+					<p>
+						<span className="delete">{t("red")}</span>= {t("removedGraphics")}
+					</p>
+				</div>
+				<p className="text">{t("layoutDescription")}</p>
+				<hr />
+				<p className="clean">
+					<strong>{t("cleanInstructions")}</strong>
+				</p>
+			</div>
+		);
+
+		// Items wider than this raw API width are pulled out of normal shelf
+		// cells and rendered centered across both bay columns at the bottom
+		// of the shelf row (mirrors admin RootApp two-up behaviour). Items
+		// with the same horizontal value but a regular width stay in their
+		// normal grid position (e.g. horizontal 8 vertical 2 at the top).
+		const WIDE_ITEM_THRESHOLD = 50;
+		const itemWidthNum = (i) => parseFloat(i?.width);
+		const isWideItem = (i) => {
+			const w = itemWidthNum(i);
+			return Number.isFinite(w) && w > WIDE_ITEM_THRESHOLD;
+		};
+
+		// Wide-row item: reuses InstructionItem so SKU label + sizing logic
+		// stay identical to in-cell items, just at a larger scale.
+		const renderInstructionItem = (item, index, id, scaleMultiplier = 1) => (
+			<InstructionItem
+				key={`${item.code}-${index}`}
+				item={item}
+				data={data}
+				scale={scale * scaleMultiplier}
+				id={id}
+			/>
+		);
+
+		const renderInstructionShelfCell = (positions, shelfLabel, id, bayNumber) => {
+			if (!positions || positions.length === 0) {
+				return <div className="shelf-cell shelf-cell--empty" />;
+			}
+			return (
+				<div className="shelf-cell">
+					{renderShelf(positions, shelfLabel, id, bayNumber)}
+				</div>
+			);
+		};
+
+		// Two-up face grid (mirrors admin RootApp): bay header row + per-shelf
+		// rows containing each bay's regular items and a centered wide row.
+		const renderTwoUpFaces = (sortedBayEntries, id, titleSuffix) => {
+			const [[bay1Number, bay1Data], [bay2Number, bay2Data]] = sortedBayEntries;
+
+			// Union of shelf labels across both bays, numerically sorted (with
+			// string fallback) so shelf rows line up across the two columns.
+			const allShelfLabels = [...new Set([
+				...Object.keys(bay1Data.shelves),
+				...Object.keys(bay2Data.shelves),
+			])].sort((a, b) => {
+				const an = parseFloat(a);
+				const bn = parseFloat(b);
+				if (!isNaN(an) && !isNaN(bn)) return an - bn;
+				return String(a).localeCompare(String(b));
+			});
+
+			return (
+				<div className="bays-two-up">
+					<div className="bays-faces-aligned">
+						<div className="bay-headers">
+							<div className="bay-col-header">
+								<h3>
+									{formatText("graphicLayoutBay", [bay1Number])} {titleSuffix}
+								</h3>
 							</div>
-							<h3>{formatText("graphicLayoutBay", [bayNumber])} {titleSuffix}</h3>
-							{Object.entries(bayData.shelves).map(([shelfLabel, positions]) =>
-								renderShelf(positions, shelfLabel, id, bayNumber)
-							)}
-							<div className="footer-instructions-wrapper">
-								<div className="footer-instructions">
-									<p>
-										<span className="new">{t("green")}</span> = {t("newGraphics")}
-									</p>{" "}
-									<p>
-										<span className="move">{t("yellow")}</span>= {t("movingGraphics")}
-									</p>
-									<p>
-										<span className="delete">{t("red")}</span>= {t("removedGraphics")}
-									</p>
-								</div>
-								<p className="text">
-									{t("layoutDescription")}
-								</p>
-								<hr />
-								<p className="clean">
-									<strong>
-										{t("cleanInstructions")}
-									</strong>
-								</p>
+							<div className="bay-col-header">
+								<h3>
+									{formatText("graphicLayoutBay", [bay2Number])} {titleSuffix}
+								</h3>
 							</div>
 						</div>
-						{bayData.shelfP.length > 0 && (
-							<div className="panel-data-display">
-								<div className="print-header">
-									<img
-										src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
-										alt={t("sephoraLogo")}
-										className="left-image"
-									/>
-									<p className="header-text">
-										{fixtureType} {region}
-										<br />
-										{updateSeason}
-										<br />
-										{executionWeek}
-										<br />
-										{branding}
-									</p>
-									<img
-										src={brandImage}
-										alt={t("brandLogo")}
-										className="right-image"
-									/>
+						{allShelfLabels.map((shelfLabel) => {
+							const bay1Items = bay1Data.shelves[shelfLabel] || [];
+							const bay2Items = bay2Data.shelves[shelfLabel] || [];
+
+							const bay1Regular = bay1Items.filter((i) => !isWideItem(i));
+							const bay2Regular = bay2Items.filter((i) => !isWideItem(i));
+							const wideItems = [
+								...bay1Items.filter(isWideItem),
+								...bay2Items.filter(isWideItem),
+							];
+
+							// Surface any items with a non-parseable width for debugging.
+							const unparseable = [...bay1Items, ...bay2Items].filter(
+								(i) => i.width !== undefined && !Number.isFinite(parseFloat(i.width))
+							);
+							if (unparseable.length > 0) {
+								console.warn(
+									`InstructApp shelf ${shelfLabel}: items with non-numeric width`,
+									unparseable.map((i) => ({ code: i.code, width: i.width }))
+								);
+							}
+
+							return (
+								<div key={shelfLabel} className="shelf-row">
+									<div className="shelf-row__cells">
+										{renderInstructionShelfCell(bay1Regular, shelfLabel, id, bay1Number)}
+										{renderInstructionShelfCell(bay2Regular, shelfLabel, id, bay2Number)}
+									</div>
+									{wideItems.length > 0 && (
+										<div className="shelf-row__wide">
+											{wideItems.map((item, idx) =>
+												renderInstructionItem(item, idx, id, 2)
+											)}
+										</div>
+									)}
 								</div>
-								<h3>{formatText("backpanelBay", [bayNumber])} {titleSuffix}</h3>
-								{renderShelf(bayData.shelfP, "P", id, bayNumber)}
-							</div>
-						)}
+							);
+						})}
 					</div>
-				))}
-			</>
-		);
+				</div>
+			);
+		};
+
+		// Single-bay panel-data-display (backpanel) section.
+		const renderBayPanels = (bayNumber, bayData, id, titleSuffix) => {
+			if (!bayData.shelfP || bayData.shelfP.length === 0) return null;
+			return (
+				<div className="panel-data-display" key={`panels-${bayNumber}`}>
+					{renderPrintHeader()}
+					<h3>
+						{formatText("backpanelBay", [bayNumber])} {titleSuffix}
+					</h3>
+					{renderShelf(bayData.shelfP, "P", id, bayNumber)}
+				</div>
+			);
+		};
+
+		const generateLayout = (bays, titleSuffix = "", id = "default") => {
+			const sortedBayEntries = Object.entries(bays).sort(([a], [b]) => a - b);
+			const isTwoUp = sortedBayEntries.length === 2;
+
+			if (isTwoUp) {
+				return (
+					<>
+						<h2 className="noprint">
+							{selectedFixtureType} - {selectedRegion}
+						</h2>
+						<div className="admin-fixture admin-fixture--two-up" id={id}>
+							<div className={`face-data-display ${titleSuffix ? "page-break" : ""}`}>
+								{renderPrintHeader()}
+								{renderTwoUpFaces(sortedBayEntries, id, titleSuffix)}
+								{renderFooterInstructions()}
+							</div>
+							{sortedBayEntries.map(([bayNumber, bayData]) =>
+								renderBayPanels(bayNumber, bayData, id, titleSuffix)
+							)}
+						</div>
+					</>
+				);
+			}
+
+			return (
+				<>
+					<h2 className="noprint">
+						{selectedFixtureType} - {selectedRegion}
+					</h2>
+					{sortedBayEntries.map(([bayNumber, bayData]) => (
+						<div className="admin-fixture" id={id} key={bayNumber}>
+							<div className={`face-data-display ${titleSuffix ? "page-break" : ""}`}>
+								{renderPrintHeader()}
+								<h3>
+									{formatText("graphicLayoutBay", [bayNumber])} {titleSuffix}
+								</h3>
+								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) =>
+									renderShelf(positions, shelfLabel, id, bayNumber)
+								)}
+								{renderFooterInstructions()}
+							</div>
+							{renderBayPanels(bayNumber, bayData, id, titleSuffix)}
+						</div>
+					))}
+				</>
+			);
+		};
 
 		// Return the layouts
 		return (

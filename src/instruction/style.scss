@@ -74,6 +74,92 @@
 	.face-shelf:last-child {
 		border-bottom: none;
 	}
+
+	/* 2-bay layout: faces aligned shelf-by-shelf side-by-side,
+	   panel-data-display sections still page-break per bay below. */
+	.admin-fixture--two-up {
+		.bays-two-up {
+			display: flex;
+			flex-direction: column;
+			gap: 1em;
+			width: 100%;
+		}
+
+		.bays-faces-aligned {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5em;
+			width: 100%;
+		}
+
+		.bay-headers {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+
+		.bay-col-header {
+			min-width: 0;
+			h3 {
+				margin: 0 0 0.25em;
+			}
+		}
+
+		.shelf-row {
+			display: flex;
+			flex-direction: column;
+			border-bottom: 2px dashed #000;
+		}
+
+		.shelf-row:last-child {
+			border-bottom: none;
+		}
+
+		.shelf-row__cells {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			align-items: stretch;
+		}
+
+		/* wide items pulled out of either bay - centered, span full row */
+		.shelf-row__wide {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: flex-end;
+			gap: 0.5em;
+			padding: 0.25em 0.5em;
+		}
+
+		.shelf-cell {
+			display: flex;
+			min-width: 0; /* allow grid cell to shrink below content size */
+		}
+
+		.shelf-cell .face-shelf {
+			display: flex;
+			flex: 1 1 auto;
+			flex-direction: column;
+			border-bottom: none;
+			margin: 0;
+		}
+
+		.shelf-cell .shelf {
+			flex: 1 1 auto;
+		}
+
+		.shelf-cell--empty {
+			min-height: 0;
+		}
+
+		/* center the shelf title; apply same centering to wide items + sku */
+		.shelf-title.common-container,
+		.shelf-row__wide .item,
+		.shelf-row__wide .item .item-sku {
+			justify-content: center;
+			text-align: center;
+			font-size: clamp(0.5rem, 18cqw, 10px);
+		}
+	}
 	.shelf {
 		display: flex;
 		flex-wrap: wrap;
@@ -81,16 +167,44 @@
 		justify-content: center;
 		margin: 0;
 	}
+	/* horizontal=8 group fills the full shelf row and aligns to the bottom.
+	   horizontal=8 & vertical=2 (8-2-top) overrides alignment to top. */
 	.group-position-8 {
 		flex-basis: 100%;
+		justify-content: flex-end !important;
+	}
+	.group-position-8-2 {
+		justify-content: flex-start !important;
 	}
 	.item-group {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
 		margin: 0 0.2em;
 
 		.item {
+			container-type: inline-size;
 			margin: 0.5em auto;
 			background-size: cover;
 			text-align: center;
+
+			img {
+				display: block;
+				max-width: 100%;
+				height: auto;
+			}
+
+			.item-sku {
+				width: 100%;
+				box-sizing: border-box;
+				overflow: visible;
+				white-space: wrap;
+				overflow-wrap: break-word;
+				text-align: center;
+				font-size: clamp(0.5rem, 18cqw, 10px);
+				line-height: 1.1;
+				color: #000;
+			}
 
 			.smallp {
 				font-size: 0.8em;

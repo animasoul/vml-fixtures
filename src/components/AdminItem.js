@@ -18,7 +18,7 @@ const getTextWithFirstHyphenBreak = (text) => {
 };
 
 // Breaks at the first hyphen if needed, then shrinks the SKU label until it fits.
-const useFitText = (text, containerWidth) => {
+export const useFitText = (text, containerWidth) => {
     const ref = useRef(null);
     const [breakAtFirstHyphen, setBreakAtFirstHyphen] = useState(false);
 
