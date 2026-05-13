@@ -81,6 +81,7 @@ function vml_fixtures_get_instruction_text_strings() {
 		'uploadPdfFirstPage' => __('Upload PDF of the first page', 'vml-fixtures'),
 		'uploadPdf' => __('Upload PDF', 'vml-fixtures'),
 		'loading' => __('Loading...', 'vml-fixtures'),
+		'showSkuLabels' => __('Show SKU labels', 'vml-fixtures'),
 	);
 }
 

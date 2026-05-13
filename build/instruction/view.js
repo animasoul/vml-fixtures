@@ -150,8 +150,8 @@ const InstructionItem = ({
   }
   const imageUrl = `${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`;
   const minItemWidth = 40;
-  const baseItemWidth = item.width * 7 * scale;
-  const baseItemHeight = item.height * 7 * scale;
+  const baseItemWidth = item.width * 5 * scale;
+  const baseItemHeight = item.height * 5 * scale;
   const itemScale = baseItemWidth > 0 ? Math.max(1, minItemWidth / baseItemWidth) : 1;
   const itemWidth = Math.round(baseItemWidth * itemScale);
   const itemHeight = Math.round(baseItemHeight * itemScale);
@@ -316,6 +316,9 @@ const InstructApp = () => {
   };
   const scale = 1 + scaleChange;
   const scalePercentage = Math.round((scaleChange + 1) * 100);
+
+  // Toggle for the SKU label rendered under each item image.
+  const [showSku, setShowSku] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)(true);
 
   // States for individual input fields
   const [fixtureType, setFixtureType] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.useState)("");
@@ -884,7 +887,7 @@ const InstructApp = () => {
     return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_translations__WEBPACK_IMPORTED_MODULE_9__.t)("pleaseSelectPromotion"));
   }
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "fixture-select"
+    className: `fixture-select${showSku ? "" : " hide-item-sku"}`
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "noprint"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("strong", null, (0,_translations__WEBPACK_IMPORTED_MODULE_9__.t)("selectFixture")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", {
@@ -908,7 +911,16 @@ const InstructApp = () => {
     onClick: handlePrint
   }, (0,_translations__WEBPACK_IMPORTED_MODULE_9__.t)("instructionSheetToPdf")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", null, Object.entries(totals.totalsByRegion).map(([region, count]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", {
     key: region
-  }, region, ": ", count, " ", (0,_translations__WEBPACK_IMPORTED_MODULE_9__.t)("stores")))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_translations__WEBPACK_IMPORTED_MODULE_9__.formatText)("totalAcrossRegions", [totals.totalAcrossRegions]))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, region, ": ", count, " ", (0,_translations__WEBPACK_IMPORTED_MODULE_9__.t)("stores")))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_translations__WEBPACK_IMPORTED_MODULE_9__.formatText)("totalAcrossRegions", [totals.totalAcrossRegions])), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "noprint inputFields show-sku-toggle"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
+    type: "checkbox",
+    id: "showSkuToggle",
+    checked: showSku,
+    onChange: e => setShowSku(e.target.checked)
+  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", {
+    htmlFor: "showSkuToggle"
+  }, (0,_translations__WEBPACK_IMPORTED_MODULE_9__.t)("showSkuLabels")))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "noprint textInput"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_translations__WEBPACK_IMPORTED_MODULE_9__.t)("headerInformation")), hasAllUSCA && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "inputFields"
@@ -1229,7 +1241,8 @@ const defaultStrings = {
   toFitPrinterOutput: "to fit printer output",
   uploadPdfFirstPage: "Upload PDF of the first page",
   uploadPdf: "Upload PDF",
-  loading: "Loading..."
+  loading: "Loading...",
+  showSkuLabels: "Show SKU labels"
 };
 const localizedStrings = typeof window !== "undefined" && window.vmlFixturesInstructionText ? window.vmlFixturesInstructionText : {};
 const getSeededStrings = () => {

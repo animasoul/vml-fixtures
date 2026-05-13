@@ -65,6 +65,9 @@ const InstructApp = () => {
 	const scale = 1 + scaleChange;
 	const scalePercentage = Math.round((scaleChange + 1) * 100);
 
+	// Toggle for the SKU label rendered under each item image.
+	const [showSku, setShowSku] = useState(true);
+
 	// States for individual input fields
 	const [fixtureType, setFixtureType] = useState("");
 	const [region, setRegion] = useState("");
@@ -745,7 +748,7 @@ const InstructApp = () => {
 	}
 
 	return (
-		<div className="fixture-select">
+		<div className={`fixture-select${showSku ? "" : " hide-item-sku"}`}>
 			<div className="noprint">
 				<strong>{t("selectFixture")}</strong>
 				<ul className="buttons-row">
@@ -799,6 +802,15 @@ const InstructApp = () => {
 						))}
 					</ul>
 					<p>{formatText("totalAcrossRegions", [totals.totalAcrossRegions])}</p>
+					<div className="noprint inputFields show-sku-toggle">
+						<input
+							type="checkbox"
+							id="showSkuToggle"
+							checked={showSku}
+							onChange={(e) => setShowSku(e.target.checked)}
+						/>
+						<label htmlFor="showSkuToggle">{t("showSkuLabels")}</label>
+					</div>
 				</div>
 				<div className="noprint textInput">
 					<p>{t("headerInformation")}</p>

@@ -41,6 +41,7 @@ const defaultStrings = {
 	uploadPdfFirstPage: "Upload PDF of the first page",
 	uploadPdf: "Upload PDF",
 	loading: "Loading...",
+	showSkuLabels: "Show SKU labels",
 };
 
 const localizedStrings =

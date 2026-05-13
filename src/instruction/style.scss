@@ -13,12 +13,31 @@
 	.printButton {
 		float: right;
 	}
+	.show-sku-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 0.5em;
+		margin-top: 0.5em;
+
+		input[type="checkbox"] {
+			flex: 0 0 auto;
+		}
+		label {
+			flex: 0 0 auto;
+			text-align: right;
+			margin: 0;
+		}
+	}
+	.fixture-select.hide-item-sku .item-sku {
+		display: none;
+	}
 	h3 {
 		color: #999;
 		border-top: 3px solid #000;
 		border-bottom: 3px solid #000;
-		line-height: 1.75em;
-		font-size: 1.75em;
+		line-height: 1.5em;
+		font-size: 1.5em;
 		margin: 0;
 		padding: 0;
 	}
@@ -180,11 +199,11 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-around;
-		margin: 0 0.2em;
+		margin: 0 0.1em;
 
 		.item {
 			container-type: inline-size;
-			margin: 0.5em auto;
+			margin: 0.1em auto;
 			background-size: cover;
 			text-align: center;
 
@@ -257,7 +276,7 @@
 		align-items: center;
 		img.left-image,
 		img.right-image {
-			width: 32%;
+			width: 25%;
 		}
 		img.left-image {
 			margin-left: 3%;
@@ -348,13 +367,14 @@
 }
 
 @media print {
+	.trp-language-switcher,
 	.noprint,
 	.ekit-template-content-header,
 	.ekit-template-content-footer,
 	.ekit-template-content-sidebar,
 	.promotion_info,
 	header.page-header {
-		display: none;
+		display: none !important;
 	}
 
 	.onlyprint {

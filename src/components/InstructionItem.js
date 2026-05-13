@@ -19,8 +19,8 @@ const InstructionItem = ({ item, data, scale = 1, id = "" }) => {
 	const imageUrl = `${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`;
 
 	const minItemWidth = 40;
-	const baseItemWidth = item.width * 7 * scale;
-	const baseItemHeight = item.height * 7 * scale;
+	const baseItemWidth = item.width * 5 * scale;
+	const baseItemHeight = item.height * 5 * scale;
 	const itemScale = baseItemWidth > 0 ? Math.max(1, minItemWidth / baseItemWidth) : 1;
 	const itemWidth = Math.round(baseItemWidth * itemScale);
 	const itemHeight = Math.round(baseItemHeight * itemScale);
