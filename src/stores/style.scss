@@ -123,14 +123,40 @@ button.addToCartBtn {
 	}
 	.group-position-8 {
 		flex-basis: 100%;
+		justify-content: flex-end !important;
+	}
+	.group-position-8-2 {
+		justify-content: flex-start !important;
 	}
 	.item-group {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
 		margin: 0 0.2em;
 
 		.item {
+			container-type: inline-size;
 			margin: 0.5em auto;
 			background-size: cover;
 			text-align: center;
+
+			img {
+				display: block;
+				max-width: 100%;
+				height: auto;
+			}
+
+			.item-sku {
+				width: 100%;
+				box-sizing: border-box;
+				overflow: visible;
+				white-space: wrap;
+				overflow-wrap: break-word;
+				text-align: center;
+				font-size: clamp(0.5rem, 18cqw, 10px);
+				line-height: 1.1;
+				color: #000;
+			}
 
 			.smallp {
 				font-size: 0.8em;
@@ -144,10 +170,147 @@ button.addToCartBtn {
 			}
 		}
 	}
-	.panel-data-display .item-group {
+	.panel-data-display .item-group,
+	.side-panels-display .item-group,
+	.back-panels-display .item-group {
 		display: flex;
 		flex-direction: column;
 		padding: 0.2em;
+	}
+
+	/* 2-bay layout: faces aligned shelf-by-shelf side-by-side, panels row below */
+	.store-fixture--two-up {
+		display: block;
+
+		.bays-two-up {
+			display: flex;
+			flex-direction: column;
+			gap: 1em;
+			width: 100%;
+
+			h3 {
+				text-align: center;
+			}
+
+			/* Stack of bay headers + shelf rows; each row holds both bays' cells */
+			.bays-faces-aligned {
+				display: flex;
+				flex-direction: column;
+				gap: 0.5em;
+				width: 100%;
+
+				.bay-headers {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+				}
+
+				.bay-col-header {
+					min-width: 0;
+
+					h2,
+					h3 {
+						margin: 0 0 0.25em;
+					}
+				}
+
+				.shelf-row {
+					display: flex;
+					flex-direction: column;
+					border: 1px solid #ccc;
+				}
+
+				.shelf-row__cells {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					align-items: stretch;
+				}
+
+				/* wide items pulled out of either bay - centered, span full row */
+				.shelf-row__wide {
+					display: flex;
+					flex-wrap: wrap;
+					justify-content: center;
+					align-items: flex-end;
+					gap: 0.5em;
+					padding: 0.25em 0.5em;
+				}
+
+				.shelf-cell {
+					display: flex;
+					min-width: 0; /* allow grid cell to shrink below content size */
+				}
+
+				.shelf-cell .face-shelf {
+					display: flex;
+					flex: 1 1 auto;
+					flex-direction: column;
+					border: none;
+					margin: 0;
+				}
+
+				.shelf-cell .face-shelf .shelf-title {
+					flex: 0 0 auto;
+				}
+
+				.shelf-cell .shelf {
+					flex: 1 1 auto;
+					align-items: stretch;
+					align-content: stretch;
+				}
+
+				/* inner shelf borders are redundant once the row has its own border */
+				.shelf-row .face-shelf {
+					border: none;
+					margin-bottom: 0;
+				}
+
+				.shelf-cell--empty {
+					min-height: 0;
+				}
+
+				.shelf-title.common-container,
+				.shelf-row__wide .item,
+				.shelf-row__wide .item .item-sku {
+					justify-content: center;
+					text-align: center;
+					font-size: clamp(0.5rem, 18cqw, 10px);
+				}
+			}
+
+			.bays-side-panels-display,
+			.bays-back-panels-display {
+				display: flex;
+				flex-direction: column;
+				gap: 0.5em;
+
+				> h3 {
+					margin: 0;
+				}
+			}
+
+			.bays-panels-row {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 0.5em;
+				width: 100%;
+			}
+
+			.bay-panels-cell {
+				min-width: 0;
+				display: flex;
+				flex-direction: column;
+				gap: 0.5em;
+
+				> h4 {
+					margin: 0;
+					text-align: center;
+				}
+			}
+
+			.bay-panels-cell--empty {
+				min-height: 0;
+			}
+		}
 	}
 
 	.disabled-message {

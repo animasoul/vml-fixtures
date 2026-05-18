@@ -5,7 +5,16 @@ const { useState, useEffect, useRef, useMemo } = window.React || require('react'
 import { fetchOptionData } from "../services/getOptionService";
 import { gatherProductInfoAndCallAPI } from "../utilities/gatherAndCallAPI";
 import AddButton from "../components/AddButton";
+import Item from "../components/Item";
 import StoreShelf from "./StoreShelf";
+
+// Items wider than this render on their own full-width row inside a shelf so
+// they don't disrupt the side-by-side bay alignment.
+const WIDE_ITEM_THRESHOLD = 50;
+const isWideItem = (item) => {
+	const width = parseFloat(item?.width);
+	return Number.isFinite(width) && width > WIDE_ITEM_THRESHOLD;
+};
 
 const StoreApp = () => {
 	const [data, setData] = useState(null);
@@ -320,10 +329,260 @@ const StoreApp = () => {
 		return baysResult;
 	}, [data, selectedFixtureType, selectedRegion]);
 
+	// Render a single bay's three-column section (face / side panels / back panels)
+	// matching the original single/multi-bay layout.
+	const renderSingleBay = (bayNumber, bayData, isMultiBay) => (
+		<div key={bayNumber} className="bay-container" id={`bay-${bayNumber}`}>
+			{isMultiBay && <h2>Bay {bayNumber}</h2>}
+			<div className="store-fixture three-column-layout">
+				<div className="face-data-display" ref={faceDisplayRef}>
+					<h3>Face</h3>
+					{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
+						<StoreShelf
+							positions={positions}
+							shelfLabel={shelfLabel}
+							data={data}
+							key={shelfLabel}
+							bayNumber={bayNumber}
+						/>
+					))}
+					<div className="footer-btn">
+						<AddButton
+							onClickHandler={handleAddAllFixtureClick}
+							text="Add All Face items to cart"
+						/>
+					</div>
+				</div>
+				<div className="side-panels-display" ref={sidePanelsDisplayRef}>
+					<h3>Side Panels</h3>
+					{bayData.sidePanels.length > 0 && (
+						<>
+							<StoreShelf
+								key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
+								positions={bayData.sidePanels}
+								shelfLabel="P"
+								data={data}
+								bayNumber={bayNumber}
+								panelType="side"
+							/>
+							<div className="footer-btn">
+								<AddButton
+									onClickHandler={handleAddAllSidePanelFixtureClick}
+									text="Add All Side Panel items to cart"
+								/>
+							</div>
+						</>
+					)}
+				</div>
+				<div className="back-panels-display" ref={backPanelsDisplayRef}>
+					<h3>Back Panels</h3>
+					{bayData.backPanels.length > 0 && (
+						<>
+							<StoreShelf
+								key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
+								positions={bayData.backPanels}
+								shelfLabel="P"
+								data={data}
+								bayNumber={bayNumber}
+								panelType="back"
+							/>
+							<div className="footer-btn">
+								<AddButton
+									onClickHandler={handleAddAllBackPanelFixtureClick}
+									text="Add All Back Panel items to cart"
+								/>
+							</div>
+						</>
+					)}
+				</div>
+			</div>
+		</div>
+	);
+
+	// Render a "shelf-cell" wrapping a StoreShelf for a single bay's positions on
+	// a given shelf label. Empty cells keep the two-up grid aligned.
+	const renderTwoUpShelfCell = (bayNumber, shelfLabel, items) => {
+		if (!items || items.length === 0) {
+			return (
+				<div
+					key={`${bayNumber}-${shelfLabel}`}
+					className="shelf-cell shelf-cell--empty"
+				/>
+			);
+		}
+		return (
+			<div key={`${bayNumber}-${shelfLabel}`} className="shelf-cell">
+				<StoreShelf
+					positions={items}
+					shelfLabel={shelfLabel}
+					data={data}
+					bayNumber={bayNumber}
+				/>
+			</div>
+		);
+	};
+
+	// Render the two-bay side-by-side layout: faces aligned shelf-by-shelf across
+	// both bays (with wide items pushed to a full-width row), then per-bay
+	// side/back panel cells grouped under shared "Add All" buttons so the refs
+	// continue to pick up both bays' products.
+	const renderTwoUp = (sortedBayEntries) => {
+		const [[bay1Number, bay1Data], [bay2Number, bay2Data]] = sortedBayEntries;
+
+		const allShelfLabels = Array.from(
+			new Set([
+				...Object.keys(bay1Data.shelves),
+				...Object.keys(bay2Data.shelves),
+			]),
+		).sort((a, b) => {
+			const an = parseFloat(a);
+			const bn = parseFloat(b);
+			if (Number.isFinite(an) && Number.isFinite(bn)) return an - bn;
+			return String(a).localeCompare(String(b));
+		});
+
+		const showSidePanels =
+			bay1Data.sidePanels.length > 0 || bay2Data.sidePanels.length > 0;
+		const showBackPanels =
+			bay1Data.backPanels.length > 0 || bay2Data.backPanels.length > 0;
+
+		return (
+			<div className="store-fixture store-fixture--two-up">
+				<div className="bays-two-up">
+					<div className="bays-faces-aligned" ref={faceDisplayRef}>
+						<div className="bay-headers">
+							<div className="bay-col-header" id={`bay-${bay1Number}`}>
+								<h3>Bay {bay1Number} Face</h3>
+							</div>
+							<div className="bay-col-header" id={`bay-${bay2Number}`}>
+								<h3>Bay {bay2Number} Face</h3>
+							</div>
+						</div>
+						{allShelfLabels.map((shelfLabel) => {
+							const bay1Items = bay1Data.shelves[shelfLabel] || [];
+							const bay2Items = bay2Data.shelves[shelfLabel] || [];
+							const bay1Regular = bay1Items.filter((i) => !isWideItem(i));
+							const bay2Regular = bay2Items.filter((i) => !isWideItem(i));
+							const wideItems = [
+								...bay1Items.filter(isWideItem),
+								...bay2Items.filter(isWideItem),
+							];
+							return (
+								<div key={shelfLabel} className="shelf-row">
+									<div className="shelf-row__cells">
+										{renderTwoUpShelfCell(bay1Number, shelfLabel, bay1Regular)}
+										{renderTwoUpShelfCell(bay2Number, shelfLabel, bay2Regular)}
+									</div>
+									{wideItems.length > 0 && (
+										<div className="shelf-row__wide">
+											{wideItems.map((item) => (
+												<Item
+													item={item}
+													key={`${item.product_id}-${item.bay}-${item.shelf}-${item.horizontal}-${item.vertical}`}
+													context="store"
+													type="face"
+													imageUrl={`${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`}
+													scale={2}
+												/>
+											))}
+										</div>
+									)}
+								</div>
+							);
+						})}
+						<div className="footer-btn">
+							<AddButton
+								onClickHandler={handleAddAllFixtureClick}
+								text="Add All Face items to cart"
+							/>
+						</div>
+					</div>
+
+					{showSidePanels && (
+						<div
+							className="bays-side-panels-display"
+							ref={sidePanelsDisplayRef}
+						>
+							<h3>Side Panels</h3>
+							<div className="bays-panels-row">
+								{sortedBayEntries.map(([bayNumber, bayData]) =>
+									bayData.sidePanels.length > 0 ? (
+										<div key={bayNumber} className="bay-panels-cell">
+											<h4>Bay {bayNumber}</h4>
+											<StoreShelf
+												key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
+												positions={bayData.sidePanels}
+												shelfLabel="P"
+												data={data}
+												bayNumber={bayNumber}
+												panelType="side"
+											/>
+										</div>
+									) : (
+										<div
+											key={bayNumber}
+											className="bay-panels-cell bay-panels-cell--empty"
+										/>
+									),
+								)}
+							</div>
+							<div className="footer-btn">
+								<AddButton
+									onClickHandler={handleAddAllSidePanelFixtureClick}
+									text="Add All Side Panel items to cart"
+								/>
+							</div>
+						</div>
+					)}
+
+					{showBackPanels && (
+						<div
+							className="bays-back-panels-display"
+							ref={backPanelsDisplayRef}
+						>
+							<h3>Back Panels</h3>
+							<div className="bays-panels-row">
+								{sortedBayEntries.map(([bayNumber, bayData]) =>
+									bayData.backPanels.length > 0 ? (
+										<div key={bayNumber} className="bay-panels-cell">
+											<h4>Bay {bayNumber}</h4>
+											<StoreShelf
+												key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
+												positions={bayData.backPanels}
+												shelfLabel="P"
+												data={data}
+												bayNumber={bayNumber}
+												panelType="back"
+											/>
+										</div>
+									) : (
+										<div
+											key={bayNumber}
+											className="bay-panels-cell bay-panels-cell--empty"
+										/>
+									),
+								)}
+							</div>
+							<div className="footer-btn">
+								<AddButton
+									onClickHandler={handleAddAllBackPanelFixtureClick}
+									text="Add All Back Panel items to cart"
+								/>
+							</div>
+						</div>
+					)}
+				</div>
+			</div>
+		);
+	};
+
 	const processAndDisplayData = () => {
 		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
 			return <p>No SKU data available.</p>;
 		}
+
+		const sortedBayEntries = Object.entries(bays).sort(([a], [b]) => a - b);
+		const isTwoUp = sortedBayEntries.length === 2;
 
 		return (
 			<>
@@ -331,75 +590,11 @@ const StoreApp = () => {
 					{selectedFixtureType} - {selectedRegion}
 				</h2>
 
-				{Object.entries(bays).sort(([a], [b]) => a - b).map(([bayNumber, bayData]) => (
-					<div key={bayNumber} className="bay-container" id={`bay-${bayNumber}`}>
-						{Object.keys(bays).length > 1 && (
-							<h2>Bay {bayNumber}</h2>
+				{isTwoUp
+					? renderTwoUp(sortedBayEntries)
+					: sortedBayEntries.map(([bayNumber, bayData]) =>
+							renderSingleBay(bayNumber, bayData, sortedBayEntries.length > 1),
 						)}
-						<div className="store-fixture three-column-layout">
-							<div className="face-data-display" ref={faceDisplayRef}>
-								<h3>Face</h3>
-								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
-									<StoreShelf
-										positions={positions}
-										shelfLabel={shelfLabel}
-										data={data}
-										key={shelfLabel}
-										bayNumber={bayNumber}
-									/>
-								))}
-								<div className="footer-btn">
-									<AddButton
-										onClickHandler={handleAddAllFixtureClick}
-										text="Add All Face items to cart"
-									/>
-								</div>
-							</div>
-							<div className="side-panels-display" ref={sidePanelsDisplayRef}>
-								<h3>Side Panels</h3>
-								{bayData.sidePanels.length > 0 && (
-									<>
-										<StoreShelf
-											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
-											positions={bayData.sidePanels}
-											shelfLabel="P"
-											data={data}
-											bayNumber={bayNumber}
-											panelType="side"
-										/>
-										<div className="footer-btn">
-											<AddButton
-												onClickHandler={handleAddAllSidePanelFixtureClick}
-												text="Add All Side Panel items to cart"
-											/>
-										</div>
-									</>
-								)}
-							</div>
-							<div className="back-panels-display" ref={backPanelsDisplayRef}>
-								<h3>Back Panels</h3>
-								{bayData.backPanels.length > 0 && (
-									<>
-										<StoreShelf
-											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
-											positions={bayData.backPanels}
-											shelfLabel="P"
-											data={data}
-											bayNumber={bayNumber}
-											panelType="back"
-										/>
-										<div className="footer-btn">
-											<AddButton
-												onClickHandler={handleAddAllBackPanelFixtureClick}
-												text="Add All Back Panel items to cart"
-											/>
-										</div>
-									</>
-								)}
-							</div>
-						</div>
-					</div>
-				))}
 			</>
 		);
 	};

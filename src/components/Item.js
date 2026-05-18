@@ -3,11 +3,12 @@ import PropTypes from "prop-types";
 import { Tooltip } from "react-tooltip";
 import { safeGet } from "../utilities/utilities";
 import ItemModal from "./ItemModal";
+import { useFitText } from "./AdminItem";
 
 // Item Component
 // Represents an individual item with its details and behavior based on the context.
 
-function Item({ item, context, type, imageUrl, disableAddToCart = false }) {
+function Item({ item, context, type, imageUrl, disableAddToCart = false, scale = 1 }) {
 	const [showModal, setShowModal] = useState(false);
 	// Create a ref for the tooltip/modal. useRef() will generate a unique reference object.
 	const uniqRef = useRef();
@@ -38,10 +39,23 @@ function Item({ item, context, type, imageUrl, disableAddToCart = false }) {
 		Height: safeGet(item, "height"),
 		Horizontal: safeGet(item, "horizontal"),
 		Vertical: safeGet(item, "vertical"),
+		Bay: safeGet(item, "bay"),
+		Shelf: safeGet(item, "shelf"),
 	};
+
+	const minItemWidth = 40;
+	const baseItemWidth = (details.Width || 0) * 5 * scale;
+	const baseItemHeight = (details.Height || 0) * 5 * scale;
+	const itemScale =
+		baseItemWidth > 0 ? Math.max(1, minItemWidth / baseItemWidth) : 1;
+	const itemWidth = Math.round(baseItemWidth * itemScale);
+	const itemHeight = Math.round(baseItemHeight * itemScale);
+
+	const [skuRef, skuText] = useFitText(details.SKU || "", itemWidth);
 
 	const itemStyle = {
 		cursor: "pointer",
+		width: itemWidth ? `${itemWidth}px` : undefined,
 	};
 
 	return (
@@ -50,15 +64,27 @@ function Item({ item, context, type, imageUrl, disableAddToCart = false }) {
 			data-tooltip-id={uniqId}
 			data-product-id={details.Tharstern_id}
 			data-product-code={details.SKU}
+			data-sku={details.SKU}
+			data-width={details.Width}
+			data-height={details.Height}
+			data-horizontal={details.Horizontal}
+			data-vertical={details.Vertical}
+			data-bay={details.Bay}
+			data-shelf={details.Shelf}
 			onClick={handleItemClick}
 			style={itemStyle}
 		>
 			<img
 				src={imageUrl}
 				alt={`SKU ${details.SKU}`}
-				width={details.Width * 5}
-				height={details.Height * 5}
+				width={itemWidth}
+				height={itemHeight}
 			/>
+			{context === "store" && (
+				<div className="item-sku" ref={skuRef}>
+					{skuText}
+				</div>
+			)}
 			{type === "panel" && <p className="smallp">{details.Description}</p>}
 			{context === "admin" && (
 				<>
@@ -109,6 +135,7 @@ Item.propTypes = {
 	type: PropTypes.string, // Specify possible values if they're known
 	imageUrl: PropTypes.string,
 	disableAddToCart: PropTypes.bool,
+	scale: PropTypes.number,
 };
 
 export default Item;

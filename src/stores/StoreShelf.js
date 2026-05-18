@@ -27,9 +27,19 @@ function StoreShelf({ positions, shelfLabel, data, bayNumber = 1, panelType = nu
 		const order = ["CS", "LS", "M", "RS"];
 		return order.indexOf(a) - order.indexOf(b);
 	};
-	// Group by horizontal value
+
+	// Synthetic group key for horizontal=8 / vertical=2 items so they render
+	// at the top of the shelf, while plain horizontal=8 items stay at the bottom.
+	const topShelfGroupKey = "8-2-top";
+	const isTopShelfPosition = (item) =>
+		String(item.horizontal) === "8" && String(item.vertical) === "2";
+
+	// Group by horizontal value (with the synthetic 8/2 split when applicable)
 	let groupedByHorizontal = positions.reduce((acc, item) => {
-		let horizontal = item.horizontal;
+		const horizontal =
+			shelfLabel !== "P" && isTopShelfPosition(item)
+				? topShelfGroupKey
+				: item.horizontal;
 		if (!acc[horizontal]) {
 			acc[horizontal] = [];
 		}
@@ -37,8 +47,17 @@ function StoreShelf({ positions, shelfLabel, data, bayNumber = 1, panelType = nu
 		return acc;
 	}, {});
 
-	// Sort groups by horizontal and reverse sort items within by vertical
-	let sortedGroupKeys = Object.keys(groupedByHorizontal).sort((a, b) => a - b);
+	// Sort groups so the top 8/2 row leads and the plain 8 row trails.
+	const getGroupSortValue = (horizontal) => {
+		if (horizontal === topShelfGroupKey) return Number.NEGATIVE_INFINITY;
+		if (String(horizontal) === "8") return Number.POSITIVE_INFINITY;
+		const numeric = Number(horizontal);
+		return Number.isFinite(numeric) ? numeric : 0;
+	};
+
+	let sortedGroupKeys = Object.keys(groupedByHorizontal).sort(
+		(a, b) => getGroupSortValue(a) - getGroupSortValue(b),
+	);
 	sortedGroupKeys.forEach((horizontal) => {
 		// Only reverse sort by vertical if it's NOT a panel shelf
 		if (shelfLabel === "P") {
@@ -65,6 +84,16 @@ function StoreShelf({ positions, shelfLabel, data, bayNumber = 1, panelType = nu
 		}
 	}
 
+	const getItemGroupClassName = (horizontal) => {
+		if (horizontal === topShelfGroupKey) {
+			return "item-group group-position-8 group-position-8-2";
+		}
+		if (String(horizontal) === "8") {
+			return "item-group group-position-8";
+		}
+		return "item-group";
+	};
+
 	// Step 4: Render
 	return (
 		<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
@@ -84,7 +113,7 @@ function StoreShelf({ positions, shelfLabel, data, bayNumber = 1, panelType = nu
 				ref={shelfLabel === "P" ? null : shelfRef}
 			>
 				{sortedGroupKeys.map((horizontal) => (
-					<div className="item-group" key={horizontal}>
+					<div className={getItemGroupClassName(horizontal)} key={horizontal}>
 						{groupedByHorizontal[horizontal].map((item) => (
 							<Item
 								item={item}
