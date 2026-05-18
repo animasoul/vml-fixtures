@@ -162,8 +162,23 @@
 			margin: 0;
 		}
 
+		/* keep the shelf-title at its natural height inside the column-flex
+		   face-shelf so it doesn't eat into the .shelf area we need to grow. */
+		.shelf-cell .face-shelf .shelf-title {
+			flex: 0 0 auto;
+		}
+
+		/* .shelf overrides for two-up:
+		   - flex: 1 1 auto fills cell height,
+		   - align-items: stretch makes each item-group expand to its row's
+		     height so group-position-8 (flex-end) actually pushes items to
+		     the bottom and group-position-8-2 (flex-start) pins them to the
+		     top — matching the admin RootApp behaviour,
+		   - align-content: stretch distributes wrapped rows across the cell. */
 		.shelf-cell .shelf {
 			flex: 1 1 auto;
+			align-items: stretch;
+			align-content: stretch;
 		}
 
 		.shelf-cell--empty {
