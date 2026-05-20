@@ -38,11 +38,29 @@
 		.panel-data-display {
 			flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
 		}
+		/* 1-bay panels wrapper: takes the remaining 50% next to .face-data-display
+		   and arranges its side + back children side-by-side via .bay-panels-flex. */
+		.bay-panels-cell--single {
+			flex: 0 0 50%;
+			min-width: 0;
+		}
 		.side-panels-display {
 			flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
 		}
 		.back-panels-display {
 			flex: 0 0 25%; /* don't grow, don't shrink, start at 25% */
+		}
+		/* Flex container shared by 1-bay and 2-bay layouts to put side and back
+		   panels side-by-side within their .bay-panels-cell wrapper. */
+		.bay-panels-flex {
+			display: flex;
+			gap: 0.5em;
+			align-items: flex-start;
+			> .side-panels-display,
+			> .back-panels-display {
+				flex: 1 1 50%;
+				min-width: 0;
+			}
 		}
 	}
 	/* 2-bay layout: faces aligned shelf-by-shelf side-by-side, panels row below */
@@ -166,13 +184,18 @@
 
 		.bay-panels-cell {
 			min-width: 0;
-			display: flex;
-			gap: 0.5em;
+			display: block;
 
-			.side-panels-display,
-			.back-panels-display {
-				flex: 1 1 50%;
-				min-width: 0;
+			.bay-panels-flex {
+				display: flex;
+				gap: 0.5em;
+				align-items: flex-start;
+
+				> .side-panels-display,
+				> .back-panels-display {
+					flex: 1 1 50%;
+					min-width: 0;
+				}
 			}
 		}
 	}
@@ -288,10 +311,28 @@
 				min-width: 2em;
 			}
 		}
+
+		.print-target-controls {
+			display: flex;
+			gap: 0.5em;
+			flex-wrap: wrap;
+		}
+	}
+
+	.print-only,
+	.print-only-inline {
+		display: none;
 	}
 }
 
 @media print {
+	/* Explicit @page margins ensure consistent top/side/bottom space on every
+	   page (including the first). Without this, some browsers apply different
+	   default margins to the first page than to subsequent ones, which makes
+	   the repeated print header look flush to the top edge on page 1. */
+	@page {
+		margin: 1.2cm 0.5cm 1.4cm;
+	}
 	.noprint,
 	.ekit-template-content-header,
 	.ekit-template-content-footer,
@@ -309,18 +350,205 @@
 		max-width: 100% !important;
 	}
 	.wp-block-vml-fixtures-admin {
-		/* keep first heading from being clipped at top of page */
 		padding: 0.5cm;
-		> h2:first-child,
-		.fixture-select > h2:first-of-type {
-			margin-top: 0;
-			padding-top: 0.25cm;
-			margin-bottom: 0;
+		padding-top: 1.2cm;
+		padding-bottom: 1.4cm;
+
+		.print-only {
+			display: block;
 		}
-		.bay-container,
-		.bays-faces-row,
+		.print-only-inline {
+			display: inline;
+		}
+
+		/* Reset the 2-bay flex/grid wrappers to block on print so the inner
+		   sections can lay out as proper paginated tables for table-header-group
+		   repetition. */
+		.bays-two-up,
 		.bays-panels-row {
+			display: block !important;
+		}
+
+		/* The face sections become "tables" on print so the print header inside
+		   (display: table-header-group) repeats at the top of every printed page
+		   the section spans (true for 2-bay .bays-faces-aligned and 1-bay
+		   .face-data-display). The !important is required because the screen
+		   selectors (e.g. .bays-two-up .bays-faces-aligned) are more specific
+		   than these print overrides. The non-header children are explicitly
+		   marked as table-row-group so Chrome/Safari reliably treat the parent
+		   as a paginated table. Their inner flex/grid layouts continue to apply
+		   because display only affects the element it's on.
+
+		   .bay-panels-cell is intentionally NOT in this list: panels are short
+		   and we want side + back panels rendered side-by-side via the inner
+		   .bay-panels-flex container instead of stacking as table-row-groups. */
+		.face-data-display,
+		.bays-faces-aligned {
+			display: table !important;
+			width: 100%;
+		}
+
+		.face-data-display > *:not(.print-page-header):not(.print-page-footer),
+		.bays-faces-aligned > *:not(.print-page-header):not(.print-page-footer) {
+			display: table-row-group;
+		}
+
+		/* Panel sections keep their flex/block layout on print so side + back
+		   stay side-by-side on a single page. */
+		.bay-panels-cell {
+			display: block !important;
+			width: 100%;
 			page-break-inside: avoid;
+			break-inside: avoid;
+		}
+
+		.bay-panels-flex {
+			display: flex !important;
+			gap: 0.5em;
+			align-items: flex-start;
+
+			> .side-panels-display,
+			> .back-panels-display {
+				flex: 1 1 50% !important;
+				min-width: 0;
+				width: auto !important;
+				display: block !important;
+			}
+		}
+
+		.print-page-header {
+			display: table-header-group !important;
+			background: #fff;
+		}
+
+		.print-page-footer {
+			position: fixed;
+			right: 0;
+			bottom: 0.35cm;
+			left: 0;
+			display: block !important;
+			background: #fff;
+			z-index: 9999;
+		}
+
+		/* Inside .bay-panels-cell the parent is display: block (not table), so
+		   table-header-group would trigger anonymous-table generation and break
+		   the side-by-side panel layout. Render the header as a normal block at
+		   the top of the panels section. Side + back panels typically fit on a
+		   single page so per-page repetition is not required here. */
+		.bay-panels-cell > .print-page-header {
+			display: block !important;
+		}
+
+		.print-page-header-info {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			gap: 1cm;
+			padding: 0 0 0.15cm;
+		}
+
+		.print-page-logo {
+			max-width: 3cm;
+			max-height: 1.2cm;
+			width: auto;
+			height: auto;
+			object-fit: contain;
+		}
+
+		.print-page-promo {
+			font-size: 0.85rem;
+			font-weight: 600;
+			text-align: right;
+		}
+
+		.print-page-footer-inner {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 0.15cm 0 0;
+			margin: 0 0.5cm;
+			border-top: 1px solid #ccc;
+		}
+
+		.print-page-footer-logo {
+			max-width: 3cm;
+			max-height: 0.8cm;
+			width: auto;
+			height: auto;
+			object-fit: contain;
+		}
+
+		/* Flex (not grid) so a single bay-header (1-bay print) stretches to the
+		   full width and stays centered, while two bay-headers (2-bay print)
+		   split the row evenly. */
+		.print-page-bay-headers {
+			display: flex;
+			gap: 0.5cm;
+			padding: 0.15cm 0;
+			border-top: 1px solid #ccc;
+			border-bottom: 1px solid #ccc;
+			margin-bottom: 0.2cm;
+		}
+
+		.print-page-bay-header {
+			flex: 1 1 0;
+			text-align: center;
+			font-weight: bold;
+			font-size: 0.9rem;
+		}
+
+		/* Hide the on-screen bay-headers row on print; the print header above
+		   already includes its own bay-headers copy that repeats per page. */
+		.bays-faces-aligned > .bay-headers {
+			display: none;
+		}
+
+		.bay-container,
+		.shelf-row,
+		.face-shelf,
+		.side-panels-display,
+		.back-panels-display,
+		.bay-panels-cell,
+		.item-group {
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+	}
+
+	body.vml-print-faces {
+		.wp-block-vml-fixtures-admin {
+			.admin-fixture {
+				display: block;
+			}
+
+			.face-data-display {
+				width: 100% !important;
+				flex: 0 0 100% !important;
+			}
+
+			.bays-panels-row,
+			.bay-panels-cell {
+				display: none !important;
+			}
+		}
+	}
+
+	body.vml-print-panels {
+		.wp-block-vml-fixtures-admin {
+			.admin-fixture {
+				display: block;
+			}
+
+			.bays-faces-aligned,
+			.face-data-display {
+				display: none !important;
+			}
+
+			.bay-panels-cell {
+				width: 100% !important;
+				flex: 0 0 100% !important;
+			}
 		}
 	}
 }

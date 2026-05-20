@@ -9,6 +9,15 @@ import AdminItem from '../components/AdminItem';
 import { getUniqueValues, organizeBayData } from '../utilities/shelfUtils';
 import { matchesFixtureType, getRegionsForSelectedFixture } from '../utilities/fixtureUtils';
 
+const getLogoUrl = (logo) => {
+	if (!logo) return "";
+	if (typeof logo === "string") return logo;
+	if (typeof logo === "object") {
+		return logo.url || logo.sizes?.medium || logo.sizes?.thumbnail || "";
+	}
+	return "";
+};
+
 const RootApp = () => {
 	const [data, setData] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -16,6 +25,7 @@ const RootApp = () => {
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
 	const [userRoles, setUserRoles] = useState([]);
+	const [brandLogo, setBrandLogo] = useState("");
 	// State for modal
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedImageUrl, setSelectedImageUrl] = useState(null);
@@ -26,7 +36,19 @@ const RootApp = () => {
 	const scalePercentage = Math.round(scale * 100);
 	const increaseSize = () => setScaleChange((prev) => prev + 0.1);
 	const decreaseSize = () => setScaleChange((prev) => prev - 0.1);
-	const handlePrint = () => window.print();
+	const handlePrint = (target) => {
+		const printClass = `vml-print-${target}`;
+		document.body.classList.add(printClass);
+
+		const cleanupPrintClass = () => {
+			document.body.classList.remove(printClass);
+			window.removeEventListener("afterprint", cleanupPrintClass);
+		};
+
+		window.addEventListener("afterprint", cleanupPrintClass);
+		window.print();
+		setTimeout(cleanupPrintClass, 1000);
+	};
 
 	const isAdmin = window.vmlFixturesData?.isAdmin || false;
 	const isEditor = window.vmlFixturesData?.isEditor || false;
@@ -49,6 +71,7 @@ const RootApp = () => {
 				} else {
 					const jsonData = response.data;
 					setData(jsonData);
+					setBrandLogo(getLogoUrl(response.logo));
 
 					// Set user roles from the API response
 					if (response.userRoles) {
@@ -117,6 +140,41 @@ const RootApp = () => {
 		const hasBackPanels = (shelfP = []) =>
 			shelfP.some((i) => i.horizontal === "M");
 
+		// Print-only header rendered at the top of every major printable section.
+		// Marked `display: table-header-group` in print CSS so browsers repeat it on
+		// each printed page when the parent section spans multiple pages.
+		const renderPrintHeader = (bayHeaderContent = null) => (
+			<div className="print-only print-page-header">
+				<div className="print-page-header-info">
+					{brandLogo && (
+						<img
+							src={brandLogo}
+							alt="Brand logo"
+							className="print-page-logo"
+						/>
+					)}
+					<div className="print-page-promo">
+						{[selectedFixtureType, selectedRegion, data.PromoCode, data.PromoName].filter(Boolean).join(" - ")}
+					</div>
+				</div>
+				{bayHeaderContent && (
+					<div className="print-page-bay-headers">{bayHeaderContent}</div>
+				)}
+			</div>
+		);
+
+		const renderPrintFooter = () => (
+			<div className="print-only print-page-footer">
+				<div className="print-page-footer-inner">
+					<img
+						src="https://online.vmlogistics.com/wp-content/uploads/2023/05/GS-logo-black_lg.png"
+						alt="Graphic Systems"
+						className="print-page-footer-logo"
+					/>
+				</div>
+			</div>
+		);
+
 		const renderBay = ([bayNumber, bayData]) => (
 			<div
 				key={bayNumber}
@@ -145,7 +203,10 @@ const RootApp = () => {
 				)}
 				<div className="admin-fixture">
 					<div className="face-data-display">
-						<h3>Bay {bayNumber} Face</h3>
+						{renderPrintHeader(
+							<div className="print-page-bay-header">Bay {bayNumber} Face</div>
+						)}
+						<h3 className="noprint">Bay {bayNumber} Face</h3>
 						{Object.entries(bayData.shelves).map(([shelfLabel, positions]) => (
 							<ShelfRenderer
 								key={shelfLabel}
@@ -159,36 +220,45 @@ const RootApp = () => {
 							/>
 						))}
 					</div>
-					{hasSidePanels(bayData.shelfP) && (
-						<div className="side-panels-display">
-							<h3>Side Panels</h3>
-							<ShelfRenderer
-								key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
-								positions={bayData.shelfP}
-								shelfLabel="P"
-								bayNumber={bayNumber}
-								data={data}
-								onImageClick={openModal}
-								showTooltip={true}
-								panelType="side"
-								scale={scale}
-							/>
-						</div>
-					)}
-					{hasBackPanels(bayData.shelfP) && (
-						<div className="back-panels-display">
-							<h3>Back Panels</h3>
-							<ShelfRenderer
-								key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
-								positions={bayData.shelfP}
-								shelfLabel="P"
-								bayNumber={bayNumber}
-								data={data}
-								onImageClick={openModal}
-								showTooltip={true}
-								panelType="back"
-								scale={scale}
-							/>
+					{(hasSidePanels(bayData.shelfP) || hasBackPanels(bayData.shelfP)) && (
+						<div className="bay-panels-cell bay-panels-cell--single">
+							{renderPrintHeader(
+								<div className="print-page-bay-header">Bay {bayNumber} Panels</div>
+							)}
+							<div className="bay-panels-flex">
+								{hasSidePanels(bayData.shelfP) && (
+									<div className="side-panels-display">
+										<h3 className="noprint">Side Panels</h3>
+										<ShelfRenderer
+											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
+											positions={bayData.shelfP}
+											shelfLabel="P"
+											bayNumber={bayNumber}
+											data={data}
+											onImageClick={openModal}
+											showTooltip={true}
+											panelType="side"
+											scale={scale * 0.75}
+										/>
+									</div>
+								)}
+								{hasBackPanels(bayData.shelfP) && (
+									<div className="back-panels-display">
+										<h3 className="noprint">Back Panels</h3>
+										<ShelfRenderer
+											key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
+											positions={bayData.shelfP}
+											shelfLabel="P"
+											bayNumber={bayNumber}
+											data={data}
+											onImageClick={openModal}
+											showTooltip={true}
+											panelType="back"
+											scale={scale * 0.75}
+										/>
+									</div>
+								)}
+							</div>
 						</div>
 					)}
 				</div>
@@ -278,15 +348,23 @@ const RootApp = () => {
 				</div>
 			);
 
+			const twoUpBayHeaderContent = (
+				<>
+					<div className="print-page-bay-header">Bay {bay1Number} Face</div>
+					<div className="print-page-bay-header">Bay {bay2Number} Face</div>
+				</>
+			);
+
 			return (
 				<div className="bays-two-up">
 					<div className="bays-faces-aligned">
+						{renderPrintHeader(twoUpBayHeaderContent)}
 						<div className="bay-headers">
 							<div className="bay-col-header" id={`bay-${bay1Number}`}>
-								<h3>Bay {bay1Number} Face</h3>
+								<h3 className="noprint">Bay {bay1Number} Face</h3>
 							</div>
 							<div className="bay-col-header" id={`bay-${bay2Number}`}>
-								<h3>Bay {bay2Number} Face</h3>
+								<h3 className="noprint">Bay {bay2Number} Face</h3>
 							</div>
 						</div>
 						{allShelfLabels.map((shelfLabel) => {
@@ -349,38 +427,43 @@ const RootApp = () => {
 							if (!showSide && !showBack) return null;
 							return (
 								<div key={bayNumber} className="bay-panels-cell">
-									{showSide && (
-										<div className="side-panels-display">
-											<h3>Bay {bayNumber} Side Panels</h3>
-											<ShelfRenderer
-												key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
-												positions={bayData.shelfP}
-												shelfLabel="P"
-												bayNumber={bayNumber}
-												data={data}
-												onImageClick={openModal}
-												showTooltip={true}
-												panelType="side"
-												scale={scale}
-											/>
-										</div>
+									{renderPrintHeader(
+										<div className="print-page-bay-header">Bay {bayNumber} Panels</div>
 									)}
-									{showBack && (
-										<div className="back-panels-display">
-											<h3>Bay {bayNumber} Back Panels</h3>
-											<ShelfRenderer
-												key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
-												positions={bayData.shelfP}
-												shelfLabel="P"
-												bayNumber={bayNumber}
-												data={data}
-												onImageClick={openModal}
-												showTooltip={true}
-												panelType="back"
-												scale={scale}
-											/>
-										</div>
-									)}
+									<div className="bay-panels-flex">
+										{showSide && (
+											<div className="side-panels-display">
+												<h3 className="noprint">Bay {bayNumber} Side Panels</h3>
+												<ShelfRenderer
+													key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-side`}
+													positions={bayData.shelfP}
+													shelfLabel="P"
+													bayNumber={bayNumber}
+													data={data}
+													onImageClick={openModal}
+													showTooltip={true}
+													panelType="side"
+													scale={scale}
+												/>
+											</div>
+										)}
+										{showBack && (
+											<div className="back-panels-display">
+												<h3 className="noprint">Bay {bayNumber} Back Panels</h3>
+												<ShelfRenderer
+													key={`${selectedFixtureType}-${selectedRegion}-${bayNumber}-back`}
+													positions={bayData.shelfP}
+													shelfLabel="P"
+													bayNumber={bayNumber}
+													data={data}
+													onImageClick={openModal}
+													showTooltip={true}
+													panelType="back"
+													scale={scale}
+												/>
+											</div>
+										)}
+									</div>
 								</div>
 							);
 						})}
@@ -393,12 +476,20 @@ const RootApp = () => {
 			<>
 				<strong>Print</strong>
 				<div className="noprint print-toolbar">
-					<button
-						className="ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
-						onClick={handlePrint}
-					>
-						Print bays
-					</button>
+					<div className="print-target-controls">
+						<button
+							className="ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
+							onClick={() => handlePrint("faces")}
+						>
+							Print faces
+						</button>
+						<button
+							className="ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label"
+							onClick={() => handlePrint("panels")}
+						>
+							Print side/back panels
+						</button>
+					</div>
 					<div className="scale-controls">
 						<span>Enlarge/reduce image sizes to fit printer output: {scalePercentage}%</span>
 						<button
@@ -417,8 +508,11 @@ const RootApp = () => {
 						</button>
 					</div>
 				</div>
-				<h2>{selectedFixtureType} - {selectedRegion}</h2>
+				<h2 className="noprint promo-print-heading">
+					{selectedFixtureType} - {selectedRegion}
+				</h2>
 				{isTwoUp ? renderTwoUp() : sortedBayEntries.map(renderBay)}
+				{renderPrintFooter()}
 				<Modal
 					isOpen={isModalOpen}
 					onRequestClose={closeModal}
