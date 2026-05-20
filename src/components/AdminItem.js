@@ -73,9 +73,9 @@ const AdminItem = ({ item, data, onImageClick, showTooltip, scale = 1 }) => {
         console.warn('No ImageURL found for SKU:', item.code);
     }
 
-    const minItemWidth = 40;
-    const baseItemWidth = item.width * 7 * scale;
-    const baseItemHeight = item.height * 7 * scale;
+    const minItemWidth = 10;
+    const baseItemWidth = item.width * 8 * scale;
+    const baseItemHeight = item.height * 8 * scale;
     const itemScale = Math.max(1, minItemWidth / baseItemWidth);
     const itemWidth = Math.round(baseItemWidth * itemScale);
     const itemHeight = Math.round(baseItemHeight * itemScale);
@@ -97,6 +97,12 @@ const AdminItem = ({ item, data, onImageClick, showTooltip, scale = 1 }) => {
                         width={itemWidth}
                         height={itemHeight}
                         data-tooltip-id={item.code}
+                        data-width={item.width}
+                        data-height={item.height}
+                        data-horizontal={item.horizontal}
+                        data-vertical={item.vertical}
+                        data-bay={item.bay}
+                        data-shelf={item.shelf}
                         onError={(e) => {
                             console.warn(`Image failed to load for SKU ${item.code}`);
                             e.target.style.backgroundColor = '#ddd';

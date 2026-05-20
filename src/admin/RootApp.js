@@ -209,16 +209,38 @@ const RootApp = () => {
 				return String(a).localeCompare(String(b));
 			});
 
-			// Items wider than this threshold (raw API width) get pulled out and
-			// rendered centered across both bay columns at the bottom of the row.
-			const WIDE_ITEM_THRESHOLD = 50;
+			// In the 2-bay face view, any shelf+vertical row whose combined
+			// returned data width is over this threshold spans both bay columns.
+			const FULL_WIDTH_ROW_THRESHOLD = 40;
 			const itemWidthNum = (i) => parseFloat(i?.width);
-			const isWideItem = (i) => {
-				const w = itemWidthNum(i);
-				return Number.isFinite(w) && w > WIDE_ITEM_THRESHOLD;
-			};
+			const isHorizontalEight = (i) => String(i?.horizontal) === "8";
+			const getItemsWidth = (items) => items.reduce((total, item) => {
+				const w = itemWidthNum(item);
+				return total + (Number.isFinite(w) ? w : 0);
+			}, 0);
 
-			const renderShelfCell = (bayNumber, positions, shelfLabel) => {
+			const getSortedVerticals = (items) => [...new Set(
+				items.map((item) => String(item.vertical))
+			)].sort((a, b) => {
+				const an = parseFloat(a);
+				const bn = parseFloat(b);
+				if (Number.isFinite(an) && Number.isFinite(bn)) return bn - an;
+				return String(b).localeCompare(String(a));
+			});
+
+			const getItemsForVertical = (items, vertical) =>
+				items.filter((item) => String(item.vertical) === String(vertical));
+
+			const shouldRenderFullWidthVertical = (items) =>
+				items.some(isHorizontalEight) || getItemsWidth(items) > FULL_WIDTH_ROW_THRESHOLD;
+
+			const sortItemsByBayAndHorizontal = (items) => [...items].sort((a, b) => {
+				const bayDiff = (parseFloat(a?.bay) || 0) - (parseFloat(b?.bay) || 0);
+				if (bayDiff !== 0) return bayDiff;
+				return (parseFloat(a?.horizontal) || 0) - (parseFloat(b?.horizontal) || 0);
+			});
+
+			const renderShelfCell = (bayNumber, positions, shelfLabel, hideTitle = false) => {
 				if (!positions || positions.length === 0) {
 					return <div className="shelf-cell shelf-cell--empty" />;
 				}
@@ -232,10 +254,29 @@ const RootApp = () => {
 							onImageClick={openModal}
 							showTooltip={true}
 							scale={scale}
+							hideTitle={hideTitle}
 						/>
 					</div>
 				);
 			};
+
+			const renderFullWidthVerticalRow = (items, shelfLabel, vertical) => (
+				<div
+					key={`${shelfLabel}-${vertical}-full`}
+					className="shelf-row__wide shelf-row__wide--vertical"
+				>
+					{sortItemsByBayAndHorizontal(items).map((item, idx) => (
+						<AdminItem
+							key={`${item.code}-${item.bay}-${item.shelf}-${item.vertical}-${idx}`}
+							item={item}
+							data={data}
+							onImageClick={openModal}
+							showTooltip={true}
+							scale={scale * 1.5}
+						/>
+					))}
+				</div>
+			);
 
 			return (
 				<div className="bays-two-up">
@@ -251,13 +292,7 @@ const RootApp = () => {
 						{allShelfLabels.map((shelfLabel) => {
 							const bay1Items = bay1Data.shelves[shelfLabel] || [];
 							const bay2Items = bay2Data.shelves[shelfLabel] || [];
-
-							const bay1Regular = bay1Items.filter((i) => !isWideItem(i));
-							const bay2Regular = bay2Items.filter((i) => !isWideItem(i));
-							const wideItems = [
-								...bay1Items.filter(isWideItem),
-								...bay2Items.filter(isWideItem),
-							];
+							const allVerticals = getSortedVerticals([...bay1Items, ...bay2Items]);
 
 							// Debug: surface any items with a non-parseable width
 							const unparseable = [...bay1Items, ...bay2Items].filter(
@@ -272,24 +307,37 @@ const RootApp = () => {
 
 							return (
 								<div key={shelfLabel} className="shelf-row">
-									<div className="shelf-row__cells">
-										{renderShelfCell(bay1Number, bay1Regular, shelfLabel)}
-										{renderShelfCell(bay2Number, bay2Regular, shelfLabel)}
-									</div>
-									{wideItems.length > 0 && (
-										<div className="shelf-row__wide">
-											{wideItems.map((item, idx) => (
-												<AdminItem
-													key={`${item.code}-${idx}`}
-													item={item}
-													data={data}
-													onImageClick={openModal}
-													showTooltip={true}
-													scale={scale * 2}
-												/>
-											))}
+									<div className="shelf-row__cells shelf-row__labels">
+										<div className="shelf-cell shelf-cell--label">
+											<div className="shelf-title common-container">
+												BAY {bay1Number}/SHELF {shelfLabel}
+											</div>
 										</div>
-									)}
+										<div className="shelf-cell shelf-cell--label">
+											<div className="shelf-title common-container">
+												BAY {bay2Number}/SHELF {shelfLabel}
+											</div>
+										</div>
+									</div>
+									{allVerticals.map((vertical) => {
+										const bay1VerticalItems = getItemsForVertical(bay1Items, vertical);
+										const bay2VerticalItems = getItemsForVertical(bay2Items, vertical);
+										const verticalItems = [...bay1VerticalItems, ...bay2VerticalItems];
+
+										if (shouldRenderFullWidthVertical(verticalItems)) {
+											return renderFullWidthVerticalRow(verticalItems, shelfLabel, vertical);
+										}
+
+										return (
+											<div
+												key={`${shelfLabel}-${vertical}-cells`}
+												className="shelf-row__cells shelf-row__vertical-cells"
+											>
+												{renderShelfCell(bay1Number, bay1VerticalItems, shelfLabel, true)}
+												{renderShelfCell(bay2Number, bay2VerticalItems, shelfLabel, true)}
+											</div>
+										);
+									})}
 								</div>
 							);
 						})}
