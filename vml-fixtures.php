@@ -183,11 +183,20 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
 		}
 	}
 	$storeCode = $_SESSION['Store'] ?? null;
-	$customer = $_SESSION['Customer']; // i.e. LUXSGH
+	$customer = $_SESSION['Customer'] ?? ''; // i.e. LUXSGH
 
 	// Now find that user account to get the brand image
-	$user = get_user_by('login', $customer);
-	$image = get_field('brand_logo', 'user_' . $user->ID);
+	$user = $customer ? get_user_by('login', $customer) : false;
+	$image = $user ? get_field('brand_logo', 'user_' . $user->ID) : '';
+
+	// Footer logo should represent the logged-in VML/admin account rather than
+	// the selected brand customer. Fall back to the existing GS upload if the
+	// current account does not have an ACF brand_logo set.
+	$current_user = wp_get_current_user();
+	$footer_logo = !empty($current_user->ID) ? get_field('brand_logo', 'user_' . $current_user->ID) : '';
+	if (!$footer_logo) {
+		$footer_logo = content_url('uploads/2023/05/GS-logo-black_lg.png');
+	}
 	
 	// Get user roles with fallbacks
 	$user_roles = [];
@@ -202,7 +211,6 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
 	
 	// Fallback to current user if session didn't work
 	if (empty($user_roles)) {
-		$current_user = wp_get_current_user();
 		if (!empty($current_user->ID)) {
 			$user_roles = $current_user->roles;
 		}
@@ -224,6 +232,7 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
 			'store' => $storeCode, 
 			'brand' => $customer, 
 			'logo' => $image,
+			'footerLogo' => $footer_logo,
 			'userRoles' => $user_roles
 		], 200);
 	} else {

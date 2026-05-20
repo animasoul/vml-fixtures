@@ -26,6 +26,7 @@ const RootApp = () => {
 	const [selectedRegion, setSelectedRegion] = useState(null);
 	const [userRoles, setUserRoles] = useState([]);
 	const [brandLogo, setBrandLogo] = useState("");
+	const [footerLogo, setFooterLogo] = useState("");
 	// State for modal
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedImageUrl, setSelectedImageUrl] = useState(null);
@@ -72,6 +73,7 @@ const RootApp = () => {
 					const jsonData = response.data;
 					setData(jsonData);
 					setBrandLogo(getLogoUrl(response.logo));
+					setFooterLogo(getLogoUrl(response.footerLogo));
 
 					// Set user roles from the API response
 					if (response.userRoles) {
@@ -166,11 +168,13 @@ const RootApp = () => {
 		const renderPrintFooter = () => (
 			<div className="print-only print-page-footer">
 				<div className="print-page-footer-inner">
-					<img
-						src="https://online.vmlogistics.com/wp-content/uploads/2023/05/GS-logo-black_lg.png"
-						alt="Graphic Systems"
-						className="print-page-footer-logo"
-					/>
+					{footerLogo && (
+						<img
+							src={footerLogo}
+							alt="Graphic Systems"
+							className="print-page-footer-logo"
+						/>
+					)}
 				</div>
 			</div>
 		);
