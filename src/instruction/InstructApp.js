@@ -518,7 +518,7 @@ const InstructApp = () => {
 					alt={t("sephoraLogo")}
 					className="left-image"
 				/>
-				<p className="header-text">
+				<p className="header-text" data-no-translation>
 					{fixtureType} {region}
 					<br />
 					{updateSeason}
@@ -751,10 +751,11 @@ const InstructApp = () => {
 		<div className={`fixture-select${showSku ? "" : " hide-item-sku"}`}>
 			<div className="noprint">
 				<strong>{t("selectFixture")}</strong>
-				<ul className="buttons-row">
+				<ul className="buttons-row" data-no-translation>
 					{[...uniqueFixtureTypes].reverse().map((type) => (
 						<li key={type}>
 							<button
+								data-no-translation
 								onClick={() => setSelectedFixtureType(type)}
 								className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label${selectedFixtureType === type
 									? " ui-checkboxradio-checked ui-state-active"
@@ -769,10 +770,11 @@ const InstructApp = () => {
 				{selectedFixtureType && (
 					<>
 						<strong>{t("selectRegion")}</strong>
-						<ul className="buttons-row">
+						<ul className="buttons-row" data-no-translation>
 							{[...uniqueRegions].reverse().map((region) => (
 								<li key={region}>
 									<button
+										data-no-translation
 										onClick={() => setSelectedRegion(region)}
 										className={`ui-checkboxradio-label ui-corner-all ui-button ui-widget ui-checkboxradio-radio-label ${selectedRegion === region
 											? " ui-checkboxradio-checked ui-state-active"

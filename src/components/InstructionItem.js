@@ -59,7 +59,7 @@ const InstructionItem = ({ item, data, scale = 1, id = "" }) => {
 					data-width={item.width}
 				/>
 			)}
-			<div className="item-sku" ref={skuRef}>
+			<div className="item-sku" ref={skuRef} data-no-translation>
 				{skuText}
 			</div>
 			{isMovedView && item.moved_item && (
