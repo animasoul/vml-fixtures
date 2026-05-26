@@ -1,5 +1,5 @@
 // Desc: Root component for admin app
-import React, { useEffect, useMemo, useState } from "@wordpress/element";
+import { Fragment, useEffect, useMemo, useState } from "@wordpress/element";
 import Loader from "../components/Loader";
 import { fetchOptionData } from "../services/getOptionService";
 import UploadPdf from "./UploadPdf";
@@ -393,45 +393,200 @@ const InstructApp = () => {
 
 		console.log("InstructApp - Finished processing data. Bays object:", bays, "Bay count:", Object.keys(bays).length);
 
+		// Build per-shelf BEFORE/AFTER categorisation used for the printed
+		// "Shelf X - BEFORE" / "Shelf X - AFTER" pages.
+		//   - DISCARD          : positions with update === "delete"
+		//   - MOVING OFF SHELF : positions with update === "move" AND
+		//                        moved_item truthy (the old-location placeholder)
+		//   - NEW COMPONENTS   : positions with update === "new"
+		//   - MOVING TO SHELF  : positions with update === "move" AND
+		//                        moved_item falsy (the new-location image)
+		// Panel positions (shelf === "P") are excluded — the pages are per
+		// shelf only, panel changes can be added later if needed.
+		const beforeAfterByBayShelf = {};
+		const addUniquePreviewItem = (items, item) => {
+			const key = [
+				item.code,
+				item.bay,
+				item.shelf,
+				item.horizontal,
+				item.vertical,
+			].join("|");
+
+			if (!items.some((existingItem) => [
+				existingItem.code,
+				existingItem.bay,
+				existingItem.shelf,
+				existingItem.horizontal,
+				existingItem.vertical,
+			].join("|") === key)) {
+				items.push(item);
+			}
+		};
+
+		Object.values(data.final_skus).forEach((sku) => {
+			if (!sku.positions || !Array.isArray(sku.positions)) return;
+
+			sku.positions.forEach((position) => {
+				const fixtureMatches = matchesFixtureType(
+					position.fixture_type,
+					selectedFixtureType
+				);
+
+				let regionMatches = false;
+				if (!selectedRegion) {
+					regionMatches = true;
+				} else if (Array.isArray(position.region)) {
+					regionMatches = position.region.includes(selectedRegion);
+				} else if (selectedRegion.includes("-")) {
+					const selectedRegions = selectedRegion
+						.split("-")
+						.map((r) => r.trim());
+					regionMatches = selectedRegions.includes(position.region);
+				} else {
+					regionMatches = position.region === selectedRegion;
+				}
+
+				if (!fixtureMatches || !regionMatches) return;
+
+				const bay = position.bay || 1;
+				const shelf = position.shelf;
+				if (shelf === "P") return;
+
+				const key = `${bay}|${shelf}`;
+				if (!beforeAfterByBayShelf[key]) {
+					beforeAfterByBayShelf[key] = {
+						bay,
+						shelf,
+						beforeItems: [],
+						afterItems: [],
+						discard: [],
+						movingOff: [],
+						newComponents: [],
+						movingTo: [],
+					};
+				}
+
+				const itemData = { ...position, ...sku };
+				const target = beforeAfterByBayShelf[key];
+				const isMoveFromPosition = position.update === "move" && position.moved_item;
+				const isMoveToPosition = position.update === "move" && !position.moved_item;
+
+				if (position.update !== "new" && !isMoveToPosition) {
+					addUniquePreviewItem(target.beforeItems, {
+						...itemData,
+						update:
+							position.update === "delete" || isMoveFromPosition
+								? position.update
+								: "keep",
+						moved_item: false,
+					});
+				}
+
+				if (position.update !== "delete" && !isMoveFromPosition) {
+					addUniquePreviewItem(target.afterItems, {
+						...itemData,
+						update:
+							position.update === "new" || isMoveToPosition
+								? position.update
+								: "keep",
+						moved_item: false,
+					});
+				}
+
+				if (position.update === "delete") {
+					target.discard.push(itemData);
+				} else if (position.update === "new") {
+					target.newComponents.push(itemData);
+				} else if (position.update === "move") {
+					if (position.moved_item) {
+						target.movingOff.push(itemData);
+					} else {
+						target.movingTo.push(itemData);
+					}
+				}
+			});
+		});
+
+		const multipleBays = Object.keys(bays).length > 1;
+
 		// Function to render shelf data. Matches the admin RootApp /
 		// ShelfRenderer grouping logic:
-		//   - items at horizontal=8, vertical=2 are pulled into a synthetic
-		//     "8-2-top" group that sorts first (top of the shelf),
-		//   - items at horizontal=8 (other verticals) sort last (bottom),
-		//   - everything else sorts by horizontal numerically in between.
-		// Each item is rendered through InstructionItem so it carries the
-		// SKU label (.item-sku) using the same useFitText hook as AdminItem.
-		const renderShelf = (positions, shelfLabel, id = "", bayNumber) => {
-			const topShelfGroupKey = "8-2-top";
-			const isTopShelfPosition = (item) =>
-				item.horizontal == 8 && item.vertical == 2;
+		//   - panel shelves (shelfLabel === "P") keep horizontal grouping,
+		//   - regular shelves are grouped by VERTICAL row so vertical 8 renders
+		//     first and vertical 1 renders last (top-down ordering),
+		//   - horizontal=8 items stay together inside their vertical row but
+		//     sort to the end of that row so they form a full-width strip,
+		//   - items inside a row are placed left-to-right by horizontal.
+		// Each item is rendered through InstructionItem so it carries the SKU
+		// label (.item-sku) using the same useFitText hook as AdminItem.
+		const renderShelf = (positions, shelfLabel, id = "", bayNumber, hideTitle = false) => {
+			const isHorizontalEight = (item) => String(item.horizontal) === "8";
+
+			const getGroupKey = (item) => {
+				if (shelfLabel === "P") {
+					return item.horizontal;
+				}
+				const vertical = String(item.vertical);
+				return isHorizontalEight(item) ? `8-${vertical}` : `v-${vertical}`;
+			};
 
 			let groupedByHorizontal = positions.reduce((acc, item) => {
-				const horizontal = isTopShelfPosition(item)
-					? topShelfGroupKey
-					: item.horizontal;
-				if (!acc[horizontal]) {
-					acc[horizontal] = [];
+				const groupKey = getGroupKey(item);
+				if (!acc[groupKey]) {
+					acc[groupKey] = [];
 				}
-				acc[horizontal].push(item);
+				acc[groupKey].push(item);
 				return acc;
 			}, {});
 
-			const getGroupSortValue = (horizontal) => {
-				if (horizontal === topShelfGroupKey) return 0;
-				if (horizontal == 8) return Number.MAX_SAFE_INTEGER;
-				return Number(horizontal);
+			const getNumericValue = (value) => {
+				const numeric = Number(value);
+				return Number.isFinite(numeric) ? numeric : 0;
 			};
 
-			let sortedGroupKeys = Object.keys(groupedByHorizontal).sort(
-				(a, b) => getGroupSortValue(a) - getGroupSortValue(b),
-			);
-
-			sortedGroupKeys.forEach((horizontal) => {
+			const getGroupSortValue = (groupKey) => {
 				if (shelfLabel === "P") {
-					groupedByHorizontal[horizontal].sort((a, b) => a.vertical - b.vertical);
+					return getNumericValue(groupKey);
+				}
+				const items = groupedByHorizontal[groupKey] || [];
+				const vertical = getNumericValue(items[0]?.vertical);
+				const hasHorizontalEight = items.some(isHorizontalEight);
+				return {
+					vertical,
+					hasHorizontalEight,
+					horizontal: getNumericValue(items[0]?.horizontal),
+				};
+			};
+
+			const sortRegularShelfGroups = (a, b) => {
+				const groupA = getGroupSortValue(a);
+				const groupB = getGroupSortValue(b);
+
+				if (groupA.vertical !== groupB.vertical) {
+					return groupB.vertical - groupA.vertical;
+				}
+
+				if (groupA.hasHorizontalEight !== groupB.hasHorizontalEight) {
+					return groupA.hasHorizontalEight ? 1 : -1;
+				}
+
+				return groupA.horizontal - groupB.horizontal;
+			};
+
+			let sortedGroupKeys = Object.keys(groupedByHorizontal).sort((a, b) => {
+				if (shelfLabel === "P") {
+					return getGroupSortValue(a) - getGroupSortValue(b);
+				}
+				return sortRegularShelfGroups(a, b);
+			});
+
+			sortedGroupKeys.forEach((groupKey) => {
+				if (shelfLabel === "P") {
+					groupedByHorizontal[groupKey].sort((a, b) => a.vertical - b.vertical);
 				} else {
-					groupedByHorizontal[horizontal].sort((a, b) => b.vertical - a.vertical);
+					// Within a vertical row, place items left-to-right by horizontal.
+					groupedByHorizontal[groupKey].sort((a, b) => a.horizontal - b.horizontal);
 				}
 			});
 
@@ -439,11 +594,23 @@ const InstructApp = () => {
 				sortedGroupKeys.sort(sortHorizontalValues);
 			}
 
-			const getItemGroupClassName = (horizontal) => {
-				if (horizontal === topShelfGroupKey) {
-					return "item-group group-position-8 group-position-8-2";
+			const getItemGroupClassName = (groupKey) => {
+				if (shelfLabel === "P") {
+					return groupKey == 8 ? "item-group group-position-8" : "item-group";
 				}
-				return horizontal == 8 ? "item-group group-position-8" : "item-group";
+				const isEightRow = (groupedByHorizontal[groupKey] || []).some(isHorizontalEight);
+				return isEightRow
+					? "item-group item-group-vertical-row group-position-8"
+					: "item-group item-group-vertical-row";
+			};
+
+			const renderShelfTitle = () => {
+				if (hideTitle) return null;
+				return (
+					<div className="shelf-title common-container">
+						{shelfLabel === "P" ? null : formatText("bayShelf", [bayNumber, shelfLabel])}
+					</div>
+				);
 			};
 
 			// Special handling for panel rendering with CS horizontal value
@@ -452,9 +619,7 @@ const InstructApp = () => {
 
 				return (
 					<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
-						<div className="shelf-title common-container">
-							{shelfLabel === "P" ? null : formatText("bayShelf", [bayNumber, shelfLabel])}
-						</div>
+						{renderShelfTitle()}
 						<div className={`shelf shelf-${shelfLabel}`}>
 							<div className="item-group cs-row">
 								{groupedByHorizontal["CS"].map((item, index) => (
@@ -468,9 +633,9 @@ const InstructApp = () => {
 								))}
 							</div>
 
-							{sortedGroupKeys.map((horizontal) => (
-								<div className={getItemGroupClassName(horizontal)} key={horizontal}>
-									{groupedByHorizontal[horizontal].map((item, index) => (
+							{sortedGroupKeys.map((groupKey) => (
+								<div className={getItemGroupClassName(groupKey)} key={groupKey}>
+									{groupedByHorizontal[groupKey].map((item, index) => (
 										<InstructionItem
 											key={index}
 											item={item}
@@ -488,13 +653,11 @@ const InstructApp = () => {
 
 			return (
 				<div className={`face-shelf face-shelf-${shelfLabel}`} key={shelfLabel}>
-					<div className="shelf-title common-container">
-						{shelfLabel === "P" ? null : formatText("bayShelf", [bayNumber, shelfLabel])}
-					</div>
+					{renderShelfTitle()}
 					<div className={`shelf shelf-${shelfLabel}`}>
-						{sortedGroupKeys.map((horizontal) => (
-							<div className={getItemGroupClassName(horizontal)} key={horizontal}>
-								{groupedByHorizontal[horizontal].map((item, index) => (
+						{sortedGroupKeys.map((groupKey) => (
+							<div className={getItemGroupClassName(groupKey)} key={groupKey}>
+								{groupedByHorizontal[groupKey].map((item, index) => (
 									<InstructionItem
 										key={index}
 										item={item}
@@ -553,43 +716,165 @@ const InstructApp = () => {
 			</div>
 		);
 
-		// Items wider than this raw API width are pulled out of normal shelf
-		// cells and rendered centered across both bay columns at the bottom
-		// of the shelf row (mirrors admin RootApp two-up behaviour). Items
-		// with the same horizontal value but a regular width stay in their
-		// normal grid position (e.g. horizontal 8 vertical 2 at the top).
-		const WIDE_ITEM_THRESHOLD = 50;
-		const itemWidthNum = (i) => parseFloat(i?.width);
-		const isWideItem = (i) => {
-			const w = itemWidthNum(i);
-			return Number.isFinite(w) && w > WIDE_ITEM_THRESHOLD;
+		// Render a single item card on a Shelf BEFORE / AFTER page. Card
+		// shows the item image (with the same coloured update border used
+		// elsewhere), product label, and a QTY line.
+		const renderBeforeAfterCard = (item, idx) => {
+			const imageUrl = `${item.ImageURL || data.ImageURL}${data.Customer}-${item.code}.jpg`;
+			const itemLabel = item.product_type || item.description || item.name || item.code || "";
+			const qty = item.quantity || 1;
+
+			return (
+				<div
+					className={`shelf-update-card${item.update ? ` is-${item.update}` : ""}`}
+					key={`${item.code}-${item.bay}-${item.shelf}-${item.horizontal}-${item.vertical}-${idx}`}
+					data-sku={item.code}
+					data-bay={item.bay}
+					data-shelf={item.shelf}
+					data-horizontal={item.horizontal}
+					data-vertical={item.vertical}
+					data-update={item.update}
+				>
+					<div className="shelf-update-card__image-wrapper">
+						<img
+							src={imageUrl}
+							alt={formatText("skuAlt", [item.code])}
+							className={`shelf-update-card__image ${item.update || ""}`}
+						/>
+					</div>
+					<div className="shelf-update-card__details">
+						{/* <div className="shelf-update-card__name" data-no-translation>
+							{itemLabel}
+						</div> */}
+						<div className="shelf-update-card__sku" data-no-translation>
+							{item.code}
+						</div>
+					</div>
+				</div>
+			);
 		};
 
-		// Wide-row item: reuses InstructionItem so SKU label + sizing logic
-		// stay identical to in-cell items, just at a larger scale.
-		const renderInstructionItem = (item, index, id, scaleMultiplier = 1) => (
-			<InstructionItem
-				key={`${item.code}-${index}`}
-				item={item}
-				data={data}
-				scale={scale * scaleMultiplier}
-				id={id}
-			/>
+		const renderBeforeAfterColumn = (title, items, modifier) => (
+			<div className={`shelf-update__column shelf-update__column--${modifier}`}>
+				<h3 className="shelf-update__column-title">{title}</h3>
+				<div className="shelf-update__items">
+					{items.length > 0 ? (
+						items.map((item, idx) => renderBeforeAfterCard(item, idx))
+					) : (
+						<p className="shelf-update__na" data-no-translation>
+							{t("naLabel")}
+						</p>
+					)}
+				</div>
+			</div>
 		);
 
-		const renderInstructionShelfCell = (positions, shelfLabel, id, bayNumber) => {
+		const renderShelfUpdatePreview = (entry, type) => {
+			const isBefore = type === "before";
+			const previewItems = isBefore ? entry.beforeItems : entry.afterItems;
+
+			if (previewItems.length === 0) return null;
+
+			return (
+				<div className={`shelf-update__preview shelf-update__preview--${type}`}>
+					{!isBefore && (
+						<h3 className="shelf-update__preview-title">
+							{formatText("completedShelf", [entry.shelf])}
+						</h3>
+					)}
+					{renderShelf(previewItems, entry.shelf, `shelf-update-${type}`, entry.bay, true)}
+				</div>
+			);
+		};
+
+		const renderShelfBeforeAfterPage = (entry, type) => {
+			const isBefore = type === "before";
+			const titleKey = multipleBays
+				? isBefore ? "bayShelfBefore" : "bayShelfAfter"
+				: isBefore ? "shelfBefore" : "shelfAfter";
+			const titleArgs = multipleBays
+				? [entry.bay, entry.shelf]
+				: [entry.shelf];
+			const pageTitle = formatText(titleKey, titleArgs);
+
+			const leftCol = isBefore
+				? { title: t("movingOffShelf"), items: entry.movingOff, modifier: "moving-off" }
+				: { title: t("newComponents"), items: entry.newComponents, modifier: "new-components" };
+			const rightCol = isBefore
+				? { title: t("discardLabel"), items: entry.discard, modifier: "discard" }
+				: { title: t("movingToShelf"), items: entry.movingTo, modifier: "moving-to" };
+
+			return (
+				<div
+					className={`shelf-update shelf-update--${type}`}
+					key={`shelf-update-${type}-${entry.bay}-${entry.shelf}`}
+					data-bay={entry.bay}
+					data-shelf={entry.shelf}
+					data-type={type}
+				>
+					{renderPrintHeader()}
+					<h2 className="shelf-update__title">{pageTitle}</h2>
+					{isBefore && renderShelfUpdatePreview(entry, type)}
+					<div className="shelf-update__columns">
+						{renderBeforeAfterColumn(leftCol.title, leftCol.items, leftCol.modifier)}
+						{renderBeforeAfterColumn(rightCol.title, rightCol.items, rightCol.modifier)}
+					</div>
+					{!isBefore && renderShelfUpdatePreview(entry, type)}
+				</div>
+			);
+		};
+
+		const renderShelfBeforeAfterPages = () => {
+			const sortedEntries = Object.values(beforeAfterByBayShelf).sort((a, b) => {
+				const bayDiff = (parseFloat(a.bay) || 0) - (parseFloat(b.bay) || 0);
+				if (bayDiff !== 0) return bayDiff;
+				const an = parseFloat(a.shelf);
+				const bn = parseFloat(b.shelf);
+				if (Number.isFinite(an) && Number.isFinite(bn)) return an - bn;
+				return String(a.shelf).localeCompare(String(b.shelf));
+			});
+
+			const visibleEntries = sortedEntries.filter(
+				(entry) =>
+					entry.discard.length > 0 ||
+					entry.movingOff.length > 0 ||
+					entry.newComponents.length > 0 ||
+					entry.movingTo.length > 0
+			);
+
+			if (visibleEntries.length === 0) return null;
+
+			return (
+				<div className="shelf-update-pages">
+					{visibleEntries.map((entry) => (
+						<Fragment key={`shelf-update-${entry.bay}-${entry.shelf}`}>
+							{renderShelfBeforeAfterPage(entry, "before")}
+							{renderShelfBeforeAfterPage(entry, "after")}
+						</Fragment>
+					))}
+				</div>
+			);
+		};
+
+		const renderInstructionShelfCell = (positions, shelfLabel, id, bayNumber, hideTitle = false) => {
 			if (!positions || positions.length === 0) {
 				return <div className="shelf-cell shelf-cell--empty" />;
 			}
 			return (
 				<div className="shelf-cell">
-					{renderShelf(positions, shelfLabel, id, bayNumber)}
+					{renderShelf(positions, shelfLabel, id, bayNumber, hideTitle)}
 				</div>
 			);
 		};
 
-		// Two-up face grid (mirrors admin RootApp): bay header row + per-shelf
-		// rows containing each bay's regular items and a centered wide row.
+		// Two-up face grid (mirrors admin RootApp two-up logic):
+		//   - Bay header row at top + per-shelf rows below.
+		//   - For each shelf row, items are grouped by vertical (8 → 1) so the
+		//     rows line up across both bays.
+		//   - If a vertical row contains any horizontal=8 item OR has a combined
+		//     width over FULL_WIDTH_ROW_THRESHOLD, that vertical renders as a
+		//     centered full-width strip spanning both bay columns.
+		//   - Otherwise the vertical splits into two bay cells side-by-side.
 		const renderTwoUpFaces = (sortedBayEntries, id, titleSuffix) => {
 			const [[bay1Number, bay1Data], [bay2Number, bay2Data]] = sortedBayEntries;
 
@@ -604,6 +889,54 @@ const InstructApp = () => {
 				if (!isNaN(an) && !isNaN(bn)) return an - bn;
 				return String(a).localeCompare(String(b));
 			});
+
+			// Any shelf+vertical row whose combined returned data width is over
+			// this threshold spans both bay columns as a single wide row.
+			const FULL_WIDTH_ROW_THRESHOLD = 40;
+			const itemWidthNum = (i) => parseFloat(i?.width);
+			const isHorizontalEight = (i) => String(i?.horizontal) === "8";
+			const getItemsWidth = (items) => items.reduce((total, item) => {
+				const w = itemWidthNum(item);
+				return total + (Number.isFinite(w) ? w : 0);
+			}, 0);
+
+			const getSortedVerticals = (items) => [...new Set(
+				items.map((item) => String(item.vertical))
+			)].sort((a, b) => {
+				const an = parseFloat(a);
+				const bn = parseFloat(b);
+				if (Number.isFinite(an) && Number.isFinite(bn)) return bn - an;
+				return String(b).localeCompare(String(a));
+			});
+
+			const getItemsForVertical = (items, vertical) =>
+				items.filter((item) => String(item.vertical) === String(vertical));
+
+			const shouldRenderFullWidthVertical = (items) =>
+				items.some(isHorizontalEight) || getItemsWidth(items) > FULL_WIDTH_ROW_THRESHOLD;
+
+			const sortItemsByBayAndHorizontal = (items) => [...items].sort((a, b) => {
+				const bayDiff = (parseFloat(a?.bay) || 0) - (parseFloat(b?.bay) || 0);
+				if (bayDiff !== 0) return bayDiff;
+				return (parseFloat(a?.horizontal) || 0) - (parseFloat(b?.horizontal) || 0);
+			});
+
+			const renderFullWidthVerticalRow = (items, shelfLabel, vertical) => (
+				<div
+					key={`${shelfLabel}-${vertical}-full`}
+					className="shelf-row__wide shelf-row__wide--vertical"
+				>
+					{sortItemsByBayAndHorizontal(items).map((item, idx) => (
+						<InstructionItem
+							key={`${item.code}-${item.bay}-${item.shelf}-${item.vertical}-${idx}`}
+							item={item}
+							data={data}
+							scale={scale * 1.5}
+							id={id}
+						/>
+					))}
+				</div>
+			);
 
 			return (
 				<div className="bays-two-up">
@@ -623,13 +956,7 @@ const InstructApp = () => {
 						{allShelfLabels.map((shelfLabel) => {
 							const bay1Items = bay1Data.shelves[shelfLabel] || [];
 							const bay2Items = bay2Data.shelves[shelfLabel] || [];
-
-							const bay1Regular = bay1Items.filter((i) => !isWideItem(i));
-							const bay2Regular = bay2Items.filter((i) => !isWideItem(i));
-							const wideItems = [
-								...bay1Items.filter(isWideItem),
-								...bay2Items.filter(isWideItem),
-							];
+							const allVerticals = getSortedVerticals([...bay1Items, ...bay2Items]);
 
 							// Surface any items with a non-parseable width for debugging.
 							const unparseable = [...bay1Items, ...bay2Items].filter(
@@ -644,17 +971,37 @@ const InstructApp = () => {
 
 							return (
 								<div key={shelfLabel} className="shelf-row">
-									<div className="shelf-row__cells">
-										{renderInstructionShelfCell(bay1Regular, shelfLabel, id, bay1Number)}
-										{renderInstructionShelfCell(bay2Regular, shelfLabel, id, bay2Number)}
-									</div>
-									{wideItems.length > 0 && (
-										<div className="shelf-row__wide">
-											{wideItems.map((item, idx) =>
-												renderInstructionItem(item, idx, id, 2)
-											)}
+									<div className="shelf-row__cells shelf-row__labels">
+										<div className="shelf-cell shelf-cell--label">
+											<div className="shelf-title common-container">
+												{formatText("bayShelf", [bay1Number, shelfLabel])}
+											</div>
 										</div>
-									)}
+										<div className="shelf-cell shelf-cell--label">
+											<div className="shelf-title common-container">
+												{formatText("bayShelf", [bay2Number, shelfLabel])}
+											</div>
+										</div>
+									</div>
+									{allVerticals.map((vertical) => {
+										const bay1VerticalItems = getItemsForVertical(bay1Items, vertical);
+										const bay2VerticalItems = getItemsForVertical(bay2Items, vertical);
+										const verticalItems = [...bay1VerticalItems, ...bay2VerticalItems];
+
+										if (shouldRenderFullWidthVertical(verticalItems)) {
+											return renderFullWidthVerticalRow(verticalItems, shelfLabel, vertical);
+										}
+
+										return (
+											<div
+												key={`${shelfLabel}-${vertical}-cells`}
+												className="shelf-row__cells shelf-row__vertical-cells"
+											>
+												{renderInstructionShelfCell(bay1VerticalItems, shelfLabel, id, bay1Number, true)}
+												{renderInstructionShelfCell(bay2VerticalItems, shelfLabel, id, bay2Number, true)}
+											</div>
+										);
+									})}
 								</div>
 							);
 						})}
@@ -725,10 +1072,11 @@ const InstructApp = () => {
 			);
 		};
 
-		// Return the layouts
+		// Return the layouts followed by per-shelf BEFORE/AFTER pages.
 		return (
 			<>
 				{generateLayout(bays)}
+				{renderShelfBeforeAfterPages()}
 			</>
 		);
 	};

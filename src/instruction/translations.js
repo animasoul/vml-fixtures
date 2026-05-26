@@ -5,7 +5,7 @@ const defaultStrings = {
 	sephoraLogo: "Sephora Logo",
 	brandLogo: "Brand Logo",
 	skuAlt: "SKU %s",
-	bayShelf: "BAY %s/SHELF %s",
+	bayShelf: "BAY%s\nSHELF%s",
 	graphicLayoutBay: "Graphic Layout: Bay %s",
 	backpanelBay: "Backpanel: Bay %s",
 	green: "GREEN",
@@ -42,6 +42,17 @@ const defaultStrings = {
 	uploadPdf: "Upload PDF",
 	loading: "Loading...",
 	showSkuLabels: "Show SKU labels",
+	shelfBefore: "SHELF %s - BEFORE",
+	shelfAfter: "SHELF %s - AFTER",
+	bayShelfBefore: "BAY %s / SHELF %s - BEFORE",
+	bayShelfAfter: "BAY %s / SHELF %s - AFTER",
+	movingOffShelf: "MOVING OFF SHELF",
+	discardLabel: "DISCARD",
+	newComponents: "NEW COMPONENTS",
+	movingToShelf: "MOVING TO SHELF",
+	completedShelf: "COMPLETED SHELF %s",
+	qtyLabel: "QTY: %s",
+	naLabel: "N/A",
 };
 
 const localizedStrings =

@@ -46,7 +46,7 @@ function vml_fixtures_get_instruction_text_strings() {
 		'sephoraLogo' => __('Sephora Logo', 'vml-fixtures'),
 		'brandLogo' => __('Brand Logo', 'vml-fixtures'),
 		'skuAlt' => __('SKU %s', 'vml-fixtures'),
-		'bayShelf' => __('BAY %s/SHELF %s', 'vml-fixtures'),
+		'bayShelf' => __("BAY%s\nSHELF%s", 'vml-fixtures'),
 		'graphicLayoutBay' => __('Graphic Layout: Bay %s', 'vml-fixtures'),
 		'backpanelBay' => __('Backpanel: Bay %s', 'vml-fixtures'),
 		'green' => __('GREEN', 'vml-fixtures'),

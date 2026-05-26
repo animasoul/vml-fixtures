@@ -63,9 +63,10 @@
 	.shelf-title {
 		margin: 0.2em 0;
 		flex-wrap: wrap;
+		white-space: pre-line;
 	}
 	.move {
-		border: 5px solid yellow;
+		border: 5px solid #e0d929;
 	}
 	.moved-item {
 		border: 5px dashed gray;
@@ -87,7 +88,7 @@
 
 		.shelf-title {
 			flex: 0.3;
-			font-size: 0.8em;
+			font-size: 0.6em;
 		}
 	}
 	.face-shelf:last-child {
@@ -136,6 +137,23 @@
 		.shelf-row__cells {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
+			align-items: stretch;
+		}
+
+		/* Header label row that appears once at the top of each shelf-row,
+		   showing "BAY X/SHELF Y" labels above the per-vertical cells. */
+		.shelf-row__labels {
+			.shelf-cell--label {
+				padding: 0.15em 0;
+			}
+			.shelf-title.common-container {
+				margin: 0;
+				font-size: 0.85em;
+			}
+		}
+
+		/* Each vertical row inside a shelf-row: two bay cells side-by-side. */
+		.shelf-row__vertical-cells {
 			align-items: stretch;
 		}
 
@@ -201,24 +219,27 @@
 		justify-content: center;
 		margin: 0;
 	}
-	/* horizontal=8 group fills the full shelf row and aligns to the bottom.
-	   horizontal=8 & vertical=2 (8-2-top) overrides alignment to top. */
-	.group-position-8 {
-		flex-basis: 100%;
-		justify-content: flex-end !important;
-	}
-	.group-position-8-2 {
-		justify-content: flex-start !important;
-	}
+
 	.item-group {
 		display: flex;
 		flex-direction: column;
-		justify-content: space-around;
+		align-items: center;
+		justify-content: center;
 		margin: 0 0.1em;
+
+		/* horizontal=8 / wide vertical rows: arrange items horizontally
+		   filling the row, centered, items aligned to the bottom. */
+		&.item-group-vertical-row {
+			flex-basis: 100%;
+			flex-direction: row;
+			align-items: flex-end;
+			justify-content: center;
+			gap: 0.4em;
+		}
 
 		.item {
 			container-type: inline-size;
-			margin: 0.1em auto;
+			margin: 0.1em 0;
 			background-size: cover;
 			text-align: center;
 
@@ -373,15 +394,202 @@
 		flex-grow: inherit;
 	}
 	.face-shelf {
-		margin: 0 5%;
+		margin: 0 1%;
 	}
 	h3 {
 		color: #999 !important;
-		padding: 0 5%;
+		text-align: center;
+	}
+}
+
+/* Per-shelf BEFORE / AFTER pages (one pair of pages per shelf).
+   Each .shelf-update is a full standalone page on print and shows two
+   columns of item cards (image + label + QTY). The cards inherit the
+   same coloured update border used across the rest of the instruction
+   sheet so new / moving / discarded items stay visually consistent. */
+.shelf-update-pages {
+	.shelf-update {
+		margin: 0;
+		padding: 0;
+
+		&__title {
+			margin: 0.5em 0;
+			font-size: 1em;
+			text-align: center;
+			font-weight: 700;
+			letter-spacing: 0.04em;
+		}
+
+		&__columns {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 0;
+			padding: 0;
+			align-items: start;
+		}
+
+		&__preview {
+			margin: 0 auto 1em;
+			padding: 0;
+
+			.shelf-update__preview-title {
+				margin: 0 0 0.75em;
+				padding: 0.35em 0.6em;
+				font-size: 1em;
+				text-align: center;
+				font-weight: 700;
+				text-transform: uppercase;
+				border: 0;
+				color: #fff !important;
+				background: #000 !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+
+			.face-shelf {
+				display: block;
+				margin: 0;
+				border: 1px solid #d4d4d4;
+			}
+
+			.shelf {
+				min-height: 90px;
+				padding: 0.4em;
+				background: #fff;
+			}
+
+			.item {
+				margin: 0.2em;
+			}
+
+			.item img {
+				max-height: 105px;
+				width: auto;
+			}
+		}
+
+		&__preview--after {
+			margin-top: 1em;
+			margin-bottom: 0;
+		}
+
+		&__column {
+			padding: 0;
+			background: #fff;
+		}
+
+		&__column-title {
+			margin: 0 0 0.75em;
+			padding: 0.35em 0.6em;
+			font-size: 1em;
+			text-align: center;
+			font-weight: 700;
+			text-transform: uppercase;
+			border: 0;
+			color: #fff !important;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+
+		&__column--moving-off .shelf-update__column-title,
+		&__column--moving-to .shelf-update__column-title {
+			background: #e0d929 !important;
+		}
+
+		&__column--discard .shelf-update__column-title {
+			background: #d1232a !important;
+		}
+
+		&__column--new-components .shelf-update__column-title {
+			background: #43b24b !important;
+		}
+
+		&__items {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: 0.5em;
+			align-items: center;
+			padding: 0 0.5em;
+		}
+
+		&__na {
+			text-align: center;
+			font-style: italic;
+			color: #888;
+			font-size: 1.05em;
+			margin: 0.5em 0;
+		}
+	}
+
+	.shelf-update-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		width: 100%;
+		max-width: 260px;
+
+		&__image-wrapper {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			margin-bottom: 0;
+		}
+
+		&__image {
+			max-width: 100%;
+			height: auto;
+			max-height: 100px;
+			display: block;
+
+			&.new {
+				border: 4px solid #43b24b;
+			}
+
+			&.move {
+				border: 4px solid #f1c232;
+			}
+
+			&.delete {
+				border: 4px solid #d1232a;
+			}
+		}
+
+		&__details {
+			margin-top: 0.1em;
+		}
+
+		&__name {
+			font-weight: 700;
+			font-size: 1em;
+			margin-bottom: 0.1em;
+		}
+
+		&__sku {
+			font-size: 0.85em;
+			color: #777;
+			margin-bottom: 0.1em;
+		}
+
+		&__qty {
+			font-size: 0.95em;
+			color: #555;
+		}
 	}
 }
 
 @media print {
+	/* Explicit @page margins on all sides ensure consistent spacing on
+	   every printed page (including the first). The large bottom margin
+	   reserves physical space for the fixed .footer-instructions-wrapper
+	   (legend + description + clean instructions block) so
+	   shelf content is paginated above the footer area and never overlays
+	   it. Mirrors the pattern used in admin/RootApp's print stylesheet. */
+	@page {
+		margin: 1.2cm 0.5cm 5.2cm;
+	}
+
 	.trp-language-switcher,
 	.noprint,
 	.ekit-template-content-header,
@@ -402,14 +610,167 @@
 		max-width: 100% !important;
 	}
 	.wp-block-vml-fixtures-instruct {
+		/* Match RootApp's wrapper padding so content is offset from the
+		   page edge consistently on every page (works around browsers
+		   that don't apply @page margin uniformly to the first page).
+		   The bottom padding mirrors the footer reservation and gives
+		   fragmented print content an extra in-document offset from the
+		   fixed footer area. */
+		padding: 0.5cm;
+		padding-top: 1.2cm;
+		padding-bottom: 5.2cm;
+
 		.react-pdf__Document {
 			margin-top: 3em;
 			width: 100% !important;
 		}
 
+		/* On screen the footer sits as an absolutely-positioned block
+		   inside the section (.face-data-display / .panel-data-display),
+		   anchored by padding-bottom: 150px on the parent. On print we
+		   keep a matching bottom offset on the fragmented content as an
+		   additional guard for browsers that still let tall shelves run
+		   into fixed-position page furniture. */
+		.face-data-display,
+		.panel-data-display {
+			padding-bottom: 5.2cm;
+			-webkit-box-decoration-break: clone;
+			box-decoration-break: clone;
+		}
+
 		.footer-instructions-wrapper {
-			margin-top: -150px;
 			position: fixed;
+			right: 0;
+			bottom: 0.35cm;
+			left: 0;
+			width: auto;
+			min-height: 4.2cm;
+			max-height: 4.7cm;
+			margin: 0;
+			padding: 0.15cm 0.5cm 0;
+			box-sizing: border-box;
+			overflow: hidden;
+			background: #fff;
+			z-index: 9999;
+		}
+
+		.footer-instructions {
+			margin: 0.1cm 10% 0;
+		}
+
+		.footer-instructions-wrapper p {
+			margin-top: 0.08cm;
+			margin-bottom: 0.08cm;
+		}
+
+		.footer-instructions-wrapper hr {
+			margin: 0.08cm 0;
+		}
+
+		/* Keep shelves and their item rows together on a single printed
+		   page. Browsers will paginate at the next safe break point —
+		   between shelves, between verticals, or between item groups —
+		   instead of splitting a shelf across the page break (and the
+		   reserved bottom @page margin keeps the break safely above the
+		   fixed footer block). */
+		.face-shelf,
+		.shelf,
+		.shelf-row__cells,
+		.shelf-row__labels,
+		.shelf-row__vertical-cells,
+		.shelf-row__wide,
+		.shelf-row__wide--vertical,
+		.item-group,
+		.item {
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		/* Each shelf BEFORE / AFTER section is its own printed page,
+		   and each section, column, and card stays unbroken across
+		   page boundaries. */
+		.shelf-update-pages {
+			.shelf-update {
+				page-break-before: always;
+				padding-bottom: 5.2cm;
+				-webkit-box-decoration-break: clone;
+				box-decoration-break: clone;
+				break-inside: avoid;
+				page-break-inside: avoid;
+			}
+
+			.shelf-update__columns {
+				break-inside: avoid;
+				page-break-inside: avoid;
+			}
+
+			.shelf-update__preview {
+				break-inside: avoid;
+				page-break-inside: avoid;
+
+				.face-shelf {
+					margin: 0 !important;
+				}
+			}
+
+			.shelf-update__column,
+			.shelf-update-card {
+				break-inside: avoid;
+				page-break-inside: avoid;
+			}
+
+			.shelf-update-card {
+				display: flex !important;
+				flex: 0 1 120px;
+				flex-direction: column !important;
+				align-items: center !important;
+				text-align: center !important;
+				width: auto;
+				max-width: 140px;
+			}
+
+			.shelf-update-card__image-wrapper,
+			.shelf-update-card__details {
+				display: block;
+				width: 100%;
+			}
+
+			.shelf-update-card__image-wrapper {
+				display: flex !important;
+				justify-content: center !important;
+			}
+
+			/* Override the generic instruction-print h3 styling so the
+			   centred column titles aren't pushed inwards / greyed out. */
+			.shelf-update__column-title {
+				color: #fff !important;
+				padding: 0.35em 0.6em !important;
+				border: 0 !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+
+			.shelf-update__preview-title {
+				color: #fff !important;
+				background: #000 !important;
+				padding: 0.35em 0.6em !important;
+				border: 0 !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+
+			.shelf-update__column--moving-off .shelf-update__column-title,
+			.shelf-update__column--moving-to .shelf-update__column-title {
+				background: #e0d929 !important;
+			}
+
+			.shelf-update__column--discard .shelf-update__column-title {
+				background: #d1232a !important;
+			}
+
+			.shelf-update__column--new-components .shelf-update__column-title {
+				background: #43b24b !important;
+			}
 		}
 	}
 }
