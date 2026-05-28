@@ -1,12 +1,28 @@
-import React from "react";
+import { memo } from "@wordpress/element";
 import { useFitText } from "./AdminItem";
 import { formatText } from "../instruction/translations";
+
+const SkuLabel = ({ code, itemWidth }) => {
+	const [skuRef, skuText] = useFitText(code, itemWidth);
+
+	return (
+		<div className="item-sku" ref={skuRef} data-no-translation>
+			{skuText}
+		</div>
+	);
+};
 
 // Instruction-side counterpart to AdminItem: same dimensional + SKU-label
 // logic, but without the modal anchor / tooltip. Preserves the InstructApp
 // data-attributes, update-class border, moved-item slot and "moved" SVG
 // overlay so existing instruction features keep working.
-const InstructionItem = ({ item, data, scale = 1, id = "" }) => {
+const InstructionItem = ({
+	item,
+	data,
+	scale = 1,
+	id = "",
+	showSku = true,
+}) => {
 	if (!item?.code || !data?.Customer) {
 		console.error("Missing required data for InstructionItem:", {
 			hasItem: !!item,
@@ -24,8 +40,6 @@ const InstructionItem = ({ item, data, scale = 1, id = "" }) => {
 	const itemScale = baseItemWidth > 0 ? Math.max(1, minItemWidth / baseItemWidth) : 1;
 	const itemWidth = Math.round(baseItemWidth * itemScale);
 	const itemHeight = Math.round(baseItemHeight * itemScale);
-
-	const [skuRef, skuText] = useFitText(item.code, itemWidth);
 
 	const isMovedView = id === "moved";
 
@@ -59,9 +73,7 @@ const InstructionItem = ({ item, data, scale = 1, id = "" }) => {
 					data-width={item.width}
 				/>
 			)}
-			<div className="item-sku" ref={skuRef} data-no-translation>
-				{skuText}
-			</div>
+			{showSku && <SkuLabel code={item.code} itemWidth={itemWidth} />}
 			{isMovedView && item.moved_item && (
 				<svg
 					id={`${item.code}-svg-container`}
@@ -79,4 +91,4 @@ const InstructionItem = ({ item, data, scale = 1, id = "" }) => {
 	);
 };
 
-export default InstructionItem;
+export default memo(InstructionItem);

@@ -1,15 +1,19 @@
-// Desc: Root component for admin app
+// Desc: Root component for instruction sheet app
 import { Fragment, useEffect, useMemo, useState } from "@wordpress/element";
 import Loader from "../components/Loader";
 import { fetchOptionData } from "../services/getOptionService";
 import UploadPdf from "./UploadPdf";
 import "./style-index.css";
-import { drawLineBetweenMovedItems } from "./svgHelpers";
 import {
-	organizeAllBayTypes,
+	getUniqueValues,
 	sortHorizontalValues
 } from '../utilities/shelfUtils';
-import { matchesFixtureType, getRegionsForSelectedFixture } from '../utilities/fixtureUtils';
+import { getRegionsForSelectedFixture, matchesFixtureType } from '../utilities/fixtureUtils';
+import {
+	buildInstructionViewModel,
+	hasBackPanels,
+	hasSidePanels,
+} from "./instructionViewModel";
 import { formatText, t } from "./translations";
 import InstructionItem from "../components/InstructionItem";
 
@@ -239,17 +243,6 @@ const InstructApp = () => {
 		}
 	}, [data, selectedFixtureType]); // Recalculate when data or selectedFixtureType changes
 
-	// Function to get unique values for fixture_type or region
-	const getUniqueValues = (jsonData, key) => {
-		const values = new Set();
-		if (jsonData?.final_skus) {
-			Object.values(jsonData.final_skus).forEach((sku) => {
-				sku.positions.forEach((pos) => values.add(pos[key]));
-			});
-		}
-		return Array.from(values).sort();
-	};
-
 	const uniqueFixtureTypes = useMemo(
 		() => getUniqueValues(data, "fixture_type"),
 		[data],
@@ -259,31 +252,16 @@ const InstructApp = () => {
 		[data, selectedFixtureType]
 	);
 
-	const itemCodes = [];
-	useEffect(() => {
-		// Draw lines between moved items
-		itemCodes.forEach(drawLineBetweenMovedItems);
+	const instructionViewModel = useMemo(() => {
+		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
+			return null;
+		}
 
-		// Setup resize event listener if necessary
-		const handleResize = () => {
-			itemCodes.forEach(drawLineBetweenMovedItems);
-		};
-		window.addEventListener("resize", handleResize);
-
-		// Setup interval to redraw lines every second
-		const intervalId = setInterval(() => {
-			itemCodes.forEach(drawLineBetweenMovedItems);
-		}, 1000);
-
-		// Cleanup
-		return () => {
-			window.removeEventListener("resize", handleResize);
-			clearInterval(intervalId);
-		};
-	}, [itemCodes, selectedFixtureType, selectedRegion, scaleChange]);
+		return buildInstructionViewModel(data, selectedFixtureType, selectedRegion);
+	}, [data, selectedFixtureType, selectedRegion]);
 
 	const processAndDisplayData = () => {
-		if (!data || typeof data.final_skus !== "object" || !selectedFixtureType) {
+		if (!instructionViewModel) {
 			console.log("InstructApp - Early return condition met:", {
 				dataExists: !!data,
 				finalSkusIsObject: data ? typeof data.final_skus === "object" : false,
@@ -292,223 +270,9 @@ const InstructApp = () => {
 			return <p>{t("noSkuData")}</p>;
 		}
 
-		// Create a map to store the best position for each unique location
-		const bestPositionsMap = new Map();
-
-		// First pass: Find the best position for each unique location
-		Object.values(data.final_skus).forEach((sku) => {
-			if (!sku.positions || !Array.isArray(sku.positions)) {
-				return;
-			}
-
-			sku.positions.forEach((position) => {
-				// Skip deleted positions
-				if (position.update === "delete") {
-					return;
-				}
-
-				// Check if this position matches the fixture type using exact matching
-				const fixtureMatches = matchesFixtureType(position.fixture_type, selectedFixtureType);
-
-				// Check if this position matches the region
-				let regionMatches = false;
-				if (!selectedRegion) {
-					regionMatches = true;
-				} else if (Array.isArray(position.region)) {
-					regionMatches = position.region.includes(selectedRegion);
-				} else if (selectedRegion.includes('-')) {
-					const selectedRegions = selectedRegion.split('-').map(r => r.trim());
-					regionMatches = selectedRegions.includes(position.region);
-				} else {
-					regionMatches = position.region === selectedRegion;
-				}
-
-				// If this position matches both fixture type and region
-				if (fixtureMatches && regionMatches) {
-					// Create a unique key for this location
-					const bay = position.bay || 1;
-					const shelf = position.shelf;
-					const horizontal = position.horizontal;
-					const vertical = position.vertical;
-					const locationKey = `${bay}-${shelf}-${horizontal}-${vertical}`;
-
-					// Check if we already have a position for this location
-					if (bestPositionsMap.has(locationKey)) {
-						const existingPosition = bestPositionsMap.get(locationKey);
-
-						// If the existing position is for a different SKU, log a warning
-						if (existingPosition.sku.code !== sku.code) {
-							console.warn(`InstructApp - Multiple SKUs at same location:`, {
-								location: locationKey,
-								existingSku: existingPosition.sku.code,
-								newSku: sku.code
-							});
-							// Keep the existing position in this case
-							return;
-						}
-
-						// If this is the same SKU but different fixture type, choose the best one
-						const exactMatchCurrent = position.fixture_type === selectedFixtureType;
-						const exactMatchExisting = existingPosition.position.fixture_type === selectedFixtureType;
-
-						// Prefer exact fixture type matches
-						if (exactMatchCurrent && !exactMatchExisting) {
-							// Replace with the current position
-							bestPositionsMap.set(locationKey, { position, sku });
-							console.log(`InstructApp - Replaced with exact fixture type match: ${position.fixture_type}`);
-						}
-						// Otherwise keep the existing one
-					} else {
-						// This is the first position for this location
-						bestPositionsMap.set(locationKey, { position, sku });
-					}
-				}
-			});
-		});
-
-		// Now build the bays object using only the best positions
-		let bays = {};
-
-		bestPositionsMap.forEach(({ position, sku }, locationKey) => {
-			const bay = position.bay || 1;
-
-			// Initialize bay if it doesn't exist
-			if (!bays[bay]) {
-				bays[bay] = {
-					shelves: {},
-					shelfP: []
-				};
-			}
-
-			// Add to appropriate shelf
-			if (position.shelf === "P") {
-				bays[bay].shelfP.push({ ...position, ...sku });
-			} else {
-				if (!bays[bay].shelves[position.shelf]) {
-					bays[bay].shelves[position.shelf] = [];
-				}
-				bays[bay].shelves[position.shelf].push({ ...position, ...sku });
-			}
-		});
+		const { bays, beforeAfterByBayShelf, multipleBays } = instructionViewModel;
 
 		console.log("InstructApp - Finished processing data. Bays object:", bays, "Bay count:", Object.keys(bays).length);
-
-		// Build per-shelf BEFORE/AFTER categorisation used for the printed
-		// "Shelf X - BEFORE" / "Shelf X - AFTER" pages.
-		//   - DISCARD          : positions with update === "delete"
-		//   - MOVING OFF SHELF : positions with update === "move" AND
-		//                        moved_item truthy (the old-location placeholder)
-		//   - NEW COMPONENTS   : positions with update === "new"
-		//   - MOVING TO SHELF  : positions with update === "move" AND
-		//                        moved_item falsy (the new-location image)
-		// Panel positions (shelf === "P") are excluded — the pages are per
-		// shelf only, panel changes can be added later if needed.
-		const beforeAfterByBayShelf = {};
-		const addUniquePreviewItem = (items, item) => {
-			const key = [
-				item.code,
-				item.bay,
-				item.shelf,
-				item.horizontal,
-				item.vertical,
-			].join("|");
-
-			if (!items.some((existingItem) => [
-				existingItem.code,
-				existingItem.bay,
-				existingItem.shelf,
-				existingItem.horizontal,
-				existingItem.vertical,
-			].join("|") === key)) {
-				items.push(item);
-			}
-		};
-
-		Object.values(data.final_skus).forEach((sku) => {
-			if (!sku.positions || !Array.isArray(sku.positions)) return;
-
-			sku.positions.forEach((position) => {
-				const fixtureMatches = matchesFixtureType(
-					position.fixture_type,
-					selectedFixtureType
-				);
-
-				let regionMatches = false;
-				if (!selectedRegion) {
-					regionMatches = true;
-				} else if (Array.isArray(position.region)) {
-					regionMatches = position.region.includes(selectedRegion);
-				} else if (selectedRegion.includes("-")) {
-					const selectedRegions = selectedRegion
-						.split("-")
-						.map((r) => r.trim());
-					regionMatches = selectedRegions.includes(position.region);
-				} else {
-					regionMatches = position.region === selectedRegion;
-				}
-
-				if (!fixtureMatches || !regionMatches) return;
-
-				const bay = position.bay || 1;
-				const shelf = position.shelf;
-				if (shelf === "P") return;
-
-				const key = `${bay}|${shelf}`;
-				if (!beforeAfterByBayShelf[key]) {
-					beforeAfterByBayShelf[key] = {
-						bay,
-						shelf,
-						beforeItems: [],
-						afterItems: [],
-						discard: [],
-						movingOff: [],
-						newComponents: [],
-						movingTo: [],
-					};
-				}
-
-				const itemData = { ...position, ...sku };
-				const target = beforeAfterByBayShelf[key];
-				const isMoveFromPosition = position.update === "move" && position.moved_item;
-				const isMoveToPosition = position.update === "move" && !position.moved_item;
-
-				if (position.update !== "new" && !isMoveToPosition) {
-					addUniquePreviewItem(target.beforeItems, {
-						...itemData,
-						update:
-							position.update === "delete" || isMoveFromPosition
-								? position.update
-								: "keep",
-						moved_item: false,
-					});
-				}
-
-				if (position.update !== "delete" && !isMoveFromPosition) {
-					addUniquePreviewItem(target.afterItems, {
-						...itemData,
-						update:
-							position.update === "new" || isMoveToPosition
-								? position.update
-								: "keep",
-						moved_item: false,
-					});
-				}
-
-				if (position.update === "delete") {
-					target.discard.push(itemData);
-				} else if (position.update === "new") {
-					target.newComponents.push(itemData);
-				} else if (position.update === "move") {
-					if (position.moved_item) {
-						target.movingOff.push(itemData);
-					} else {
-						target.movingTo.push(itemData);
-					}
-				}
-			});
-		});
-
-		const multipleBays = Object.keys(bays).length > 1;
 
 		// Function to render shelf data. Matches the admin RootApp /
 		// ShelfRenderer grouping logic:
@@ -520,7 +284,7 @@ const InstructApp = () => {
 		//   - items inside a row are placed left-to-right by horizontal.
 		// Each item is rendered through InstructionItem so it carries the SKU
 		// label (.item-sku) using the same useFitText hook as AdminItem.
-		const renderShelf = (positions, shelfLabel, id = "", bayNumber, hideTitle = false) => {
+		const renderShelf = (positions, shelfLabel, id = "", bayNumber, hideTitle = false, panelType = null) => {
 			const isHorizontalEight = (item) => String(item.horizontal) === "8";
 
 			const getGroupKey = (item) => {
@@ -592,6 +356,14 @@ const InstructApp = () => {
 
 			if (shelfLabel === "P") {
 				sortedGroupKeys.sort(sortHorizontalValues);
+
+				if (panelType === "side") {
+					sortedGroupKeys = sortedGroupKeys.filter((key) =>
+						["LS", "CS", "RS"].includes(key)
+					);
+				} else if (panelType === "back") {
+					sortedGroupKeys = sortedGroupKeys.filter((key) => key === "M");
+				}
 			}
 
 			const getItemGroupClassName = (groupKey) => {
@@ -629,6 +401,7 @@ const InstructApp = () => {
 										data={data}
 										scale={scale}
 										id={id}
+										showSku={showSku}
 									/>
 								))}
 							</div>
@@ -642,6 +415,7 @@ const InstructApp = () => {
 											data={data}
 											scale={scale}
 											id={id}
+											showSku={showSku}
 										/>
 									))}
 								</div>
@@ -664,6 +438,7 @@ const InstructApp = () => {
 										data={data}
 										scale={scale}
 										id={id}
+										showSku={showSku}
 									/>
 								))}
 							</div>
@@ -743,9 +518,9 @@ const InstructApp = () => {
 						/>
 					</div>
 					<div className="shelf-update-card__details">
-						{/* <div className="shelf-update-card__name" data-no-translation>
+						<div className="shelf-update-card__name" data-no-translation>
 							{itemLabel}
-						</div> */}
+						</div>
 						<div className="shelf-update-card__sku" data-no-translation>
 							{item.code}
 						</div>
@@ -933,6 +708,7 @@ const InstructApp = () => {
 							data={data}
 							scale={scale * 1.5}
 							id={id}
+							showSku={showSku}
 						/>
 					))}
 				</div>
@@ -1010,16 +786,36 @@ const InstructApp = () => {
 			);
 		};
 
-		// Single-bay panel-data-display (backpanel) section.
+		// Panel section: keep side and back panels inside the same printable
+		// block so print preview can place them side-by-side on one page.
 		const renderBayPanels = (bayNumber, bayData, id, titleSuffix) => {
-			if (!bayData.shelfP || bayData.shelfP.length === 0) return null;
+			const showSide = hasSidePanels(bayData.shelfP);
+			const showBack = hasBackPanels(bayData.shelfP);
+			if (!showSide && !showBack) return null;
+
 			return (
-				<div className="panel-data-display" key={`panels-${bayNumber}`}>
+				<div
+					className="panel-data-display bay-panels-cell"
+					key={`panels-${bayNumber}`}
+				>
 					{renderPrintHeader()}
-					<h3>
+					{/* <h3>
 						{formatText("backpanelBay", [bayNumber])} {titleSuffix}
-					</h3>
-					{renderShelf(bayData.shelfP, "P", id, bayNumber)}
+					</h3> */}
+					<div className="bay-panels-flex">
+						{showSide && (
+							<div className="side-panels-display">
+								<h3>{formatText("bayLabel", [bayNumber])} {titleSuffix} - Side Panel</h3>
+								{renderShelf(bayData.shelfP, "P", id, bayNumber, false, "side")}
+							</div>
+						)}
+						{showBack && (
+							<div className="back-panels-display">
+								<h3>{formatText("bayLabel", [bayNumber])} {titleSuffix} - Back Panel</h3>
+								{renderShelf(bayData.shelfP, "P", id, bayNumber, false, "back")}
+							</div>
+						)}
+					</div>
 				</div>
 			);
 		};
@@ -1040,9 +836,11 @@ const InstructApp = () => {
 								{renderTwoUpFaces(sortedBayEntries, id, titleSuffix)}
 								{renderFooterInstructions()}
 							</div>
-							{sortedBayEntries.map(([bayNumber, bayData]) =>
-								renderBayPanels(bayNumber, bayData, id, titleSuffix)
-							)}
+							<div className="bays-panels-row">
+								{sortedBayEntries.map(([bayNumber, bayData]) =>
+									renderBayPanels(bayNumber, bayData, id, titleSuffix)
+								)}
+							</div>
 						</div>
 					</>
 				);

@@ -145,6 +145,10 @@
 		.shelf-row__labels {
 			.shelf-cell--label {
 				padding: 0.15em 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
 			}
 			.shelf-title.common-container {
 				margin: 0;
@@ -211,6 +215,13 @@
 			text-align: center;
 			font-size: clamp(0.5rem, 18cqw, 10px);
 		}
+
+		.bays-panels-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 0.5em;
+			width: 100%;
+		}
 	}
 	.shelf {
 		display: flex;
@@ -272,6 +283,18 @@
 		display: flex;
 		flex-direction: column;
 		padding: 0.2em;
+	}
+
+	.bay-panels-flex {
+		display: flex;
+		gap: 0.5em;
+		align-items: flex-start;
+
+		> .side-panels-display,
+		> .back-panels-display {
+			flex: 1 1 50%;
+			min-width: 0;
+		}
 	}
 
 	/* Special styling for CS row in panel rendering */
@@ -638,6 +661,56 @@
 			box-decoration-break: clone;
 		}
 
+		/* The 2-bay face section is often taller than one printed page.
+		   The screen rule sets page-break-inside: avoid on .face-data-display,
+		   which can make Chrome move the entire first section to page 2 and
+		   leave page 1 blank. Allow the outer section to fragment, while the
+		   shelf rows themselves still keep break-inside: avoid below. */
+		.face-data-display {
+			break-inside: auto;
+			page-break-inside: auto;
+		}
+
+		.bay-panels-cell {
+			display: block !important;
+			width: 100%;
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.bays-panels-row {
+			display: grid !important;
+			grid-template-columns: 1fr 1fr;
+			gap: 0.5em;
+			width: 100%;
+			page-break-before: always;
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.bays-panels-row .panel-data-display {
+			page-break-before: auto;
+			padding-top: 0;
+		}
+
+		.bay-panels-flex {
+			display: flex !important;
+			gap: 0.5em;
+			align-items: flex-start;
+			break-inside: avoid;
+			page-break-inside: avoid;
+
+			> .side-panels-display,
+			> .back-panels-display {
+				flex: 1 1 50% !important;
+				min-width: 0;
+				width: auto !important;
+				display: block !important;
+				break-inside: avoid;
+				page-break-inside: avoid;
+			}
+		}
+
 		.footer-instructions-wrapper {
 			position: fixed;
 			right: 0;
@@ -681,7 +754,12 @@
 		.shelf-row__wide,
 		.shelf-row__wide--vertical,
 		.item-group,
-		.item {
+		.item,
+		.bays-panels-row,
+		.bay-panels-cell,
+		.bay-panels-flex,
+		.side-panels-display,
+		.back-panels-display {
 			break-inside: avoid;
 			page-break-inside: avoid;
 		}

@@ -56,4 +56,30 @@ export function createLocationKey(position) {
     const horizontal = position.horizontal;
     const vertical = position.vertical;
     return `${bay}-${shelf}-${horizontal}-${vertical}`;
+}
+
+/**
+ * Checks whether a position's region matches the selected region.
+ * Mirrors the instruction sheet matching rules, including combined
+ * regions such as "US - CA".
+ *
+ * @param {Object} position - The position object
+ * @param {string|null|undefined} selectedRegion - The selected region
+ * @returns {boolean}
+ */
+export function matchesRegion(position, selectedRegion) {
+    if (!selectedRegion) {
+        return true;
+    }
+
+    if (Array.isArray(position.region)) {
+        return position.region.includes(selectedRegion);
+    }
+
+    if (selectedRegion.includes('-')) {
+        const selectedRegions = selectedRegion.split('-').map((r) => r.trim());
+        return selectedRegions.includes(position.region);
+    }
+
+    return position.region === selectedRegion;
 } 
