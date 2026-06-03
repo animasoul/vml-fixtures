@@ -27,7 +27,7 @@ const getLogoUrl = (logo) => {
 };
 
 const finalInstructionImageUrl =
-	"/wp-content/plugins/vml-fixtures/assets/images/Instruction-sheet-pdf-image.jpg";
+	"/wp-content/plugins/vml-fixtures/build/images/Instruction-sheet-pdf-image.jpg";
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
