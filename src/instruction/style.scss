@@ -5,6 +5,11 @@
  * Replace them with your own styles or remove the file completely.
  */
 
+/* Portaled print-only footer lives on <body>; hide it on screen. */
+.vml-print-page-footer {
+	display: none;
+}
+
 .wp-block-vml-fixtures-instruct {
 	.admin-fixture {
 		background-color: #fff;
@@ -33,13 +38,16 @@
 		display: none;
 	}
 	h3 {
-		color: #999;
-		border-top: 3px solid #000;
-		border-bottom: 3px solid #000;
-		line-height: 1.5em;
-		font-size: 1.5em;
-		margin: 0;
+		margin: 0 0 0.18cm;
 		padding: 0;
+		border: 0;
+		color: #000 !important;
+		font-size: 1em;
+		font-weight: 700;
+		line-height: 1.2;
+		text-align: center;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
 	}
 	.buttons-row {
 		display: flex;
@@ -221,6 +229,11 @@
 			grid-template-columns: 1fr 1fr;
 			gap: 0.5em;
 			width: 100%;
+			padding-top: 20px;
+		}
+
+		.bays-panels-row > .print-header {
+			grid-column: 1 / -1;
 		}
 	}
 	.shelf {
@@ -311,18 +324,69 @@
 		margin: 10px;
 	}
 
-	.footer-instructions {
+	.graphic-layout-heading {
+		margin: 0 0 0.18cm;
+		padding: 0;
+		border: 0;
+		color: #000 !important;
+		font-size: 1em;
+		font-weight: 700;
+		line-height: 1.2;
+		text-align: center;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.graphic-key-code {
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
-		margin: 1em 10% 0 10%;
+		gap: 0.1cm;
+		margin: 0 0 0.3cm;
+		font-size: 0.72em;
+		font-weight: 400;
+		line-height: 1;
 	}
-	p.text {
-		text-align: center;
-		margin: 0 15%;
+
+	.graphic-key-code__label {
+		font-weight: 700;
+		white-space: nowrap;
 	}
-	p.clean {
-		text-align: center;
+
+	.graphic-key-code__item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.12cm;
+		white-space: nowrap;
+	}
+
+	.graphic-key-code__swatch {
+		display: inline-block;
+		width: 0.22cm;
+		height: 0.22cm;
+		border: 2px solid transparent;
+		box-sizing: border-box;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	.graphic-key-code__swatch--new {
+		border-color: #43b24b;
+	}
+
+	.graphic-key-code__swatch--move {
+		border-color: #e0d929;
+	}
+
+	.graphic-key-code__swatch--discard {
+		border-color: #d1232a;
+	}
+
+	.graphic-key-code--shelf-update {
+		justify-content: left;
+		margin: 0;
+		padding: 0.22cm 0.25cm;
+		font-size: 10px;
 	}
 
 	textarea {
@@ -330,28 +394,74 @@
 		margin: 1em auto 0 auto;
 	}
 	.print-header {
-		display: flex;
-		justify-content: space-between;
+		display: grid;
+		grid-template-columns: 1fr 1.5fr 1fr;
+		column-gap: 0.5cm;
 		align-items: center;
-		img.left-image,
-		img.right-image {
-			width: 25%;
-		}
-		img.left-image {
-			margin-left: 3%;
-		}
-		img.right-image {
-			margin-right: 3%;
+		padding: 0 0 0.2cm;
+		margin: 0 0 0.35cm;
+		border-bottom: 1px solid #000;
+
+		&__logo {
+			display: flex;
+			align-items: center;
+			min-width: 0;
 		}
 
-		p.header-text {
-			font-weight: bold;
-			text-align: center;
-			width: 28%;
-			margin: 0 auto 5px auto;
-			font-size: 1em;
-			line-height: 1.3em;
+		&__logo--left {
+			justify-content: flex-start;
 		}
+
+		&__logo--right {
+			flex-direction: column;
+			align-items: flex-end;
+			justify-content: center;
+			gap: 0.08cm;
+		}
+
+		img.left-image {
+			width: 70%;
+			max-width: 4.8cm;
+			height: auto;
+		}
+
+		img.right-image {
+			width: auto;
+			max-width: 4.2cm;
+			max-height: 1.4cm;
+			object-fit: contain;
+		}
+
+		.header-text {
+			display: grid;
+			row-gap: 0.03cm;
+			margin: 0;
+			font-size: 0.78em;
+			line-height: 1.2;
+			justify-items: center;
+		}
+
+		&__row {
+			display: grid;
+			grid-template-columns: max-content 1fr;
+			column-gap: 0.15cm;
+			align-items: baseline;
+		}
+
+		&__label {
+			font-weight: 700;
+			text-align: right;
+			white-space: nowrap;
+		}
+
+		&__value {
+			font-weight: 400;
+			text-align: left;
+		}
+	}
+	.print-only,
+	.print-only-inline {
+		display: none;
 	}
 
 	.textInput {
@@ -379,16 +489,13 @@
 	.onlyprint {
 		display: none;
 	}
+	.instruction-print-blank-page {
+		display: none;
+	}
 	.face-data-display,
 	.panel-data-display {
 		position: relative;
 		padding-bottom: 150px;
-	}
-	.footer-instructions-wrapper {
-		position: absolute;
-		bottom: 0;
-		width: 100%;
-		height: 150px;
 	}
 	hr {
 		border: 2px solid #000;
@@ -420,7 +527,7 @@
 		margin: 0 1%;
 	}
 	h3 {
-		color: #999 !important;
+		color: #999;
 		text-align: center;
 	}
 }
@@ -433,27 +540,56 @@
 .shelf-update-pages {
 	.shelf-update {
 		margin: 0;
-		padding: 0;
+		padding: 20px 0 0 0;
+
+		&__title-row {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 0;
+			align-items: stretch;
+			margin: -0.85em 0 0.5em;
+		}
 
 		&__title {
-			margin: 0.5em 0;
-			font-size: 1em;
-			text-align: center;
+			margin: 0;
+			padding: 0.22cm 0.35cm;
+			background: #000 !important;
+			color: #fff !important;
+			font-size: 1.35em;
+			text-align: left;
 			font-weight: 700;
+			line-height: 1.1;
+			text-transform: uppercase;
 			letter-spacing: 0.04em;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+
+		&__title-status {
+			color: #00c0f3 !important;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+
+		&__body {
+			display: grid;
+			grid-template-rows: 1fr 1fr;
+			gap: 0.35cm;
+			min-height: 16cm;
 		}
 
 		&__columns {
 			display: grid;
 			grid-template-columns: 1fr 1fr;
-			gap: 0;
+			gap: 0.35cm;
 			padding: 0;
-			align-items: start;
+			align-items: stretch;
 		}
 
 		&__preview {
-			margin: 0 auto 1em;
+			margin: 0;
 			padding: 0;
+			min-height: 0;
 
 			.shelf-update__preview-title {
 				margin: 0 0 0.75em;
@@ -472,7 +608,6 @@
 			.face-shelf {
 				display: block;
 				margin: 0;
-				border: 1px solid #d4d4d4;
 			}
 
 			.shelf {
@@ -492,18 +627,20 @@
 		}
 
 		&__preview--after {
-			margin-top: 1em;
+			margin-top: 0;
 			margin-bottom: 0;
 		}
 
 		&__column {
 			padding: 0;
 			background: #fff;
+			border: 1px solid #bdbdbd;
+			min-height: 7cm;
 		}
 
 		&__column-title {
-			margin: 0 0 0.75em;
-			padding: 0.35em 0.6em;
+			margin: 0;
+			padding: 0.28cm 0.3cm;
 			font-size: 1em;
 			text-align: center;
 			font-weight: 700;
@@ -531,9 +668,10 @@
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
-			gap: 0.5em;
-			align-items: center;
-			padding: 0 0.5em;
+			gap: 0.35cm;
+			align-items: flex-start;
+			justify-content: center;
+			padding: 0.35cm;
 		}
 
 		&__na {
@@ -584,13 +722,13 @@
 		}
 
 		&__name {
-			font-weight: 700;
-			font-size: 1em;
+			font-weight: 500;
+			font-size: 11px;
 			margin-bottom: 0.1em;
 		}
 
 		&__sku {
-			font-size: 0.85em;
+			font-size: 10px;
 			color: #777;
 			margin-bottom: 0.1em;
 		}
@@ -602,15 +740,73 @@
 	}
 }
 
+.execution-instructions-page {
+	margin: 0;
+	padding: 20px 0 0 0;
+	min-height: 18cm;
+
+	&__heading-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 0;
+		align-items: start;
+		margin: 0.25em 0 0.5em;
+	}
+
+	&__title {
+		margin: 0;
+		padding: 0.22cm 0;
+		color: #000 !important;
+		background: transparent !important;
+		font-size: 1.35em;
+		font-weight: 700;
+		line-height: 1.1;
+		text-align: left;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.graphic-key-code--execution-instructions {
+		justify-content: left;
+		margin: 0;
+		padding: 0.22cm 0.25cm;
+		font-size: 9px;
+		align-items: center;
+	}
+}
+
+.final-instruction-image-page {
+	margin: 0;
+	padding: 20px 0 0 0;
+	min-height: 23cm;
+
+	&__image-frame {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 22.4cm;
+		overflow: hidden;
+	}
+
+	&__image {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+}
+
 @media print {
-	/* Explicit @page margins on all sides ensure consistent spacing on
-	   every printed page (including the first). The large bottom margin
-	   reserves physical space for the fixed .footer-instructions-wrapper
-	   (legend + description + clean instructions block) so
-	   shelf content is paginated above the footer area and never overlays
-	   it. Mirrors the pattern used in admin/RootApp's print stylesheet. */
+	/* Match the admin print margins so fixed page furniture sits inside
+	   Chrome's printable page area instead of the reserved page margin. */
 	@page {
-		margin: 1.2cm 0.5cm 5.2cm;
+		margin: 1.2cm 0.5cm 1.4cm;
+
+		@bottom-right {
+			content: counter(page);
+			font-size: 0.72em;
+			font-weight: 400;
+		}
 	}
 
 	.trp-language-switcher,
@@ -623,8 +819,57 @@
 		display: none !important;
 	}
 
+	.vml-print-page-footer {
+		position: fixed;
+		right: 0;
+		bottom: 0.35cm;
+		left: 0;
+		display: block !important;
+		background: #fff;
+		z-index: 9999;
+		pointer-events: none;
+	}
+
+	.vml-print-page-footer-inner {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 1cm;
+		margin: 0 0.5cm;
+		padding: 0.15cm 0 0;
+		border-top: 1px solid #000;
+		min-height: 0.8cm;
+		font-size: 0.72em;
+		line-height: 1;
+	}
+
+	.vml-print-page-footer-logo {
+		max-width: 3cm;
+		max-height: 0.8cm;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+	}
+
 	.onlyprint {
 		display: block !important;
+	}
+	.print-only {
+		display: block;
+	}
+	.print-only-inline {
+		display: inline;
+	}
+	.instruction-print-blank-page {
+		display: block !important;
+		position: relative;
+		height: 18cm;
+		padding-bottom: 1.2cm;
+		box-sizing: border-box;
+		background: #fff !important;
+		break-after: page;
+		page-break-after: always;
+		padding-top: 0;
 	}
 	body {
 		background-color: white !important;
@@ -633,30 +878,18 @@
 		max-width: 100% !important;
 	}
 	.wp-block-vml-fixtures-instruct {
-		/* Match RootApp's wrapper padding so content is offset from the
-		   page edge consistently on every page (works around browsers
-		   that don't apply @page margin uniformly to the first page).
-		   The bottom padding mirrors the footer reservation and gives
-		   fragmented print content an extra in-document offset from the
-		   fixed footer area. */
 		padding: 0.5cm;
 		padding-top: 1.2cm;
-		padding-bottom: 5.2cm;
+		padding-bottom: 1.4cm;
 
 		.react-pdf__Document {
 			margin-top: 3em;
 			width: 100% !important;
 		}
 
-		/* On screen the footer sits as an absolutely-positioned block
-		   inside the section (.face-data-display / .panel-data-display),
-		   anchored by padding-bottom: 150px on the parent. On print we
-		   keep a matching bottom offset on the fragmented content as an
-		   additional guard for browsers that still let tall shelves run
-		   into fixed-position page furniture. */
 		.face-data-display,
 		.panel-data-display {
-			padding-bottom: 5.2cm;
+			padding-bottom: 1.4cm;
 			-webkit-box-decoration-break: clone;
 			box-decoration-break: clone;
 		}
@@ -688,6 +921,10 @@
 			page-break-inside: avoid;
 		}
 
+		.bays-panels-row > .print-header {
+			grid-column: 1 / -1;
+		}
+
 		.bays-panels-row .panel-data-display {
 			page-break-before: auto;
 			padding-top: 0;
@@ -709,35 +946,6 @@
 				break-inside: avoid;
 				page-break-inside: avoid;
 			}
-		}
-
-		.footer-instructions-wrapper {
-			position: fixed;
-			right: 0;
-			bottom: 0.35cm;
-			left: 0;
-			width: auto;
-			min-height: 4.2cm;
-			max-height: 4.7cm;
-			margin: 0;
-			padding: 0.15cm 0.5cm 0;
-			box-sizing: border-box;
-			overflow: hidden;
-			background: #fff;
-			z-index: 9999;
-		}
-
-		.footer-instructions {
-			margin: 0.1cm 10% 0;
-		}
-
-		.footer-instructions-wrapper p {
-			margin-top: 0.08cm;
-			margin-bottom: 0.08cm;
-		}
-
-		.footer-instructions-wrapper hr {
-			margin: 0.08cm 0;
 		}
 
 		/* Keep shelves and their item rows together on a single printed
@@ -770,19 +978,54 @@
 		.shelf-update-pages {
 			.shelf-update {
 				page-break-before: always;
-				padding-bottom: 5.2cm;
+				padding-bottom: 1.4cm;
 				-webkit-box-decoration-break: clone;
 				box-decoration-break: clone;
 				break-inside: avoid;
 				page-break-inside: avoid;
 			}
 
+			.shelf-update__title-row {
+				break-inside: avoid;
+				page-break-inside: avoid;
+			}
+
+			.shelf-update__title {
+				background: #000 !important;
+				color: #fff !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+
+			.shelf-update__title-text {
+				color: #fff !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+
+			.shelf-update__title-status {
+				color: #1f6fb8 !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+
+			.shelf-update__body {
+				grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+			}
+
+			.graphic-key-code--shelf-update {
+				flex-wrap: wrap;
+				row-gap: 0.12cm;
+			}
+
 			.shelf-update__columns {
+				min-height: 0;
 				break-inside: avoid;
 				page-break-inside: avoid;
 			}
 
 			.shelf-update__preview {
+				min-height: 0;
 				break-inside: avoid;
 				page-break-inside: avoid;
 
@@ -795,6 +1038,10 @@
 			.shelf-update-card {
 				break-inside: avoid;
 				page-break-inside: avoid;
+			}
+
+			.shelf-update__column {
+				min-height: 7cm;
 			}
 
 			.shelf-update-card {
@@ -849,6 +1096,48 @@
 			.shelf-update__column--new-components .shelf-update__column-title {
 				background: #43b24b !important;
 			}
+		}
+
+		.execution-instructions-page {
+			page-break-before: always;
+			min-height: 18cm;
+			padding-bottom: 1.4cm;
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.execution-instructions-page__heading-row {
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.execution-instructions-page__title {
+			color: #000 !important;
+			background: transparent !important;
+		}
+
+		.graphic-key-code--execution-instructions {
+			flex-wrap: wrap;
+			row-gap: 0.12cm;
+		}
+
+		.final-instruction-image-page {
+			page-break-before: always;
+			min-height: 23cm;
+			padding-bottom: 1.4cm;
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.final-instruction-image-page__image-frame {
+			height: 22.4cm;
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.final-instruction-image-page__image {
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
 		}
 	}
 }

@@ -54,6 +54,7 @@ function vml_fixtures_get_instruction_text_strings() {
 		'green' => __('GREEN', 'vml-fixtures'),
 		'yellow' => __('YELLOW', 'vml-fixtures'),
 		'red' => __('RED', 'vml-fixtures'),
+		'keyCodeLabel' => __('Key Code:', 'vml-fixtures'),
 		'newGraphics' => __('NEW Graphics', 'vml-fixtures'),
 		'movingGraphics' => __('MOVING Graphics', 'vml-fixtures'),
 		'removedGraphics' => __('REMOVED Graphics', 'vml-fixtures'),
@@ -83,6 +84,8 @@ function vml_fixtures_get_instruction_text_strings() {
 		'uploadPdfFirstPage' => __('Upload PDF of the first page', 'vml-fixtures'),
 		'uploadPdf' => __('Upload PDF', 'vml-fixtures'),
 		'loading' => __('Loading...', 'vml-fixtures'),
+		'executionInstructions' => __('EXECUTION INSTRUCTIONS:', 'vml-fixtures'),
+		'instructionSheetFinalGraphic' => __('Instruction Sheet Final Graphic', 'vml-fixtures'),
 		'showSkuLabels' => __('Show SKU labels', 'vml-fixtures'),
 	);
 }

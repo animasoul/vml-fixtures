@@ -1,5 +1,5 @@
 // Desc: Root component for instruction sheet app
-import { Fragment, useEffect, useMemo, useState } from "@wordpress/element";
+import { Fragment, createPortal, useEffect, useMemo, useState } from "@wordpress/element";
 import Loader from "../components/Loader";
 import { fetchOptionData } from "../services/getOptionService";
 import UploadPdf from "./UploadPdf";
@@ -17,6 +17,18 @@ import {
 import { formatText, t } from "./translations";
 import InstructionItem from "../components/InstructionItem";
 
+const getLogoUrl = (logo) => {
+	if (!logo) return "";
+	if (typeof logo === "string") return logo;
+	if (typeof logo === "object") {
+		return logo.url || logo.sizes?.medium || logo.sizes?.thumbnail || "";
+	}
+	return "";
+};
+
+const finalInstructionImageUrl =
+	"/wp-content/plugins/vml-fixtures/assets/images/Instruction-sheet-pdf-image.jpg";
+
 const InstructApp = () => {
 	const [data, setData] = useState(null);
 	const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +36,7 @@ const InstructApp = () => {
 	const [selectedFixtureType, setSelectedFixtureType] = useState(null);
 	const [selectedRegion, setSelectedRegion] = useState(null);
 	const [brandImage, setBrandImage] = useState(null);
+	const [footerLogo, setFooterLogo] = useState("");
 
 	const [hasAllALL, setHasAllALL] = useState(false);
 	const [hasAllUSCA, setHasAllUSCA] = useState(false);
@@ -94,6 +107,31 @@ const InstructApp = () => {
 		window.print();
 	};
 
+	// Render the footer as a direct child of <body> via a portal. On the
+	// frontend the app is wrapped by theme/Elementor elements that establish a
+	// containing block (transform/contain), which would otherwise capture this
+	// position:fixed footer and prevent it from anchoring to each printed page.
+	const renderPrintFooter = () => {
+		if (typeof document === "undefined") {
+			return null;
+		}
+
+		return createPortal(
+			<div className="vml-print-page-footer">
+				<div className="vml-print-page-footer-inner">
+					{footerLogo && (
+						<img
+							src={footerLogo}
+							alt="Graphic Systems"
+							className="vml-print-page-footer-logo"
+						/>
+					)}
+				</div>
+			</div>,
+			document.body
+		);
+	};
+
 	useEffect(() => {
 		async function fetchData() {
 			try {
@@ -104,9 +142,8 @@ const InstructApp = () => {
 				} else {
 					const jsonData = response.data;
 
-					if (response.logo) {
-						setBrandImage(response.logo);
-					}
+					setBrandImage(getLogoUrl(response.logo));
+					setFooterLogo(getLogoUrl(response.footerLogo));
 
 					console.log("InstructApp - Fetched data:", {
 						hasData: !!jsonData,
@@ -270,7 +307,7 @@ const InstructApp = () => {
 			return <p>{t("noSkuData")}</p>;
 		}
 
-		const { bays, beforeAfterByBayShelf, multipleBays } = instructionViewModel;
+		const { bays, beforeAfterPrintSequence, multipleBays } = instructionViewModel;
 
 		console.log("InstructApp - Finished processing data. Bays object:", bays, "Bay count:", Object.keys(bays).length);
 
@@ -448,46 +485,54 @@ const InstructApp = () => {
 			);
 		};
 
+		const headerFixtureValue = [fixtureType, region].filter(Boolean).join("; ");
+		const renderHeaderRow = (label, value) =>
+			value ? (
+				<div className="print-header__row">
+					<span className="print-header__label">{label}</span>
+					<span className="print-header__value" data-no-translation>{value}</span>
+				</div>
+			) : null;
+
 		// Shared print header (logos + PDF info fields).
 		const renderPrintHeader = () => (
 			<div className="print-header">
-				<img
-					src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
-					alt={t("sephoraLogo")}
-					className="left-image"
-				/>
-				<p className="header-text" data-no-translation>
-					{fixtureType} {region}
-					<br />
-					{updateSeason}
-					<br />
-					{executionWeek}
-					<br />
-					{branding}
-				</p>
-				<img src={brandImage} alt={t("brandLogo")} className="right-image" />
+				<div className="print-header__logo print-header__logo--left">
+					<img
+						src="https://online.vmlogistics.com/wp-content/uploads/2024/02/Sephora_Logo.png"
+						alt={t("sephoraLogo")}
+						className="left-image"
+					/>
+				</div>
+				<div className="header-text">
+					{renderHeaderRow(t("fixture"), headerFixtureValue)}
+					{renderHeaderRow(t("updates"), updateSeason)}
+					{renderHeaderRow(t("executionDatesLabel"), executionWeek)}
+					{renderHeaderRow(t("type"), branding)}
+				</div>
+				<div className="print-header__logo print-header__logo--right">
+					{brandImage && (
+						<img src={brandImage} alt={t("brandLogo")} className="right-image" />
+					)}
+				</div>
 			</div>
 		);
 
-		// Shared GREEN/YELLOW/RED legend + clean instructions footer.
-		const renderFooterInstructions = () => (
-			<div className="footer-instructions-wrapper">
-				<div className="footer-instructions">
-					<p>
-						<span className="new">{t("green")}</span> = {t("newGraphics")}
-					</p>{" "}
-					<p>
-						<span className="move">{t("yellow")}</span>= {t("movingGraphics")}
-					</p>
-					<p>
-						<span className="delete">{t("red")}</span>= {t("removedGraphics")}
-					</p>
-				</div>
-				<p className="text">{t("layoutDescription")}</p>
-				<hr />
-				<p className="clean">
-					<strong>{t("cleanInstructions")}</strong>
-				</p>
+		const renderGraphicKeyCode = (modifier = "") => (
+			<div className={`graphic-key-code${modifier ? ` graphic-key-code--${modifier}` : ""}`}>
+				<span className="graphic-key-code__label">{t("keyCodeLabel")}</span>
+				<span className="graphic-key-code__item">
+					<span className="graphic-key-code__swatch graphic-key-code__swatch--new" />
+					<span>{t("newGraphics")}</span>
+				</span>
+				<span className="graphic-key-code__item">
+					<span className="graphic-key-code__swatch graphic-key-code__swatch--move" />
+					<span>{t("movingGraphics")}</span>
+				</span>
+				<span className="graphic-key-code__item">
+					<span className="graphic-key-code__swatch graphic-key-code__swatch--discard" />
+					<span>{t("discardLabel")}</span>
+				</span>
 			</div>
 		);
 
@@ -544,6 +589,55 @@ const InstructApp = () => {
 			</div>
 		);
 
+		const renderShelfUpdateTitleBar = (pageTitle, type) => {
+			const statusLabel = type === "before" ? "BEFORE" : "AFTER";
+			const titleBase = pageTitle.replace(/\s[-–]\s(?:BEFORE|AFTER)$/i, "");
+
+			return (
+				<div className="shelf-update__title-row">
+					<h2 className="shelf-update__title">
+						<span className="shelf-update__title-text">{titleBase} - </span>
+						<span className="shelf-update__title-status">{statusLabel}</span>
+					</h2>
+					{renderGraphicKeyCode("shelf-update")}
+				</div>
+			);
+		};
+
+		const getBeforeAfterPageTitle = (entry, type) => {
+			const isBefore = type === "before";
+
+			if (entry.panelType === "side") {
+				const titleKey = multipleBays
+					? isBefore ? "baySidePanelsBefore" : "baySidePanelsAfter"
+					: isBefore ? "sidePanelsBefore" : "sidePanelsAfter";
+				return multipleBays ? formatText(titleKey, [entry.bay]) : t(titleKey);
+			}
+
+			if (entry.panelType === "back") {
+				const titleKey = multipleBays
+					? isBefore ? "bayBackPanelsBefore" : "bayBackPanelsAfter"
+					: isBefore ? "backPanelsBefore" : "backPanelsAfter";
+				return multipleBays ? formatText(titleKey, [entry.bay]) : t(titleKey);
+			}
+
+			const titleKey = multipleBays
+				? isBefore ? "bayShelfBefore" : "bayShelfAfter"
+				: isBefore ? "shelfBefore" : "shelfAfter";
+			const titleArgs = multipleBays ? [entry.bay, entry.shelf] : [entry.shelf];
+			return formatText(titleKey, titleArgs);
+		};
+
+		const getCompletedPreviewTitle = (entry) => {
+			if (entry.panelType === "side") {
+				return t("completedSidePanels");
+			}
+			if (entry.panelType === "back") {
+				return t("completedBackPanels");
+			}
+			return formatText("completedShelf", [entry.shelf]);
+		};
+
 		const renderShelfUpdatePreview = (entry, type) => {
 			const isBefore = type === "before";
 			const previewItems = isBefore ? entry.beforeItems : entry.afterItems;
@@ -554,82 +648,98 @@ const InstructApp = () => {
 				<div className={`shelf-update__preview shelf-update__preview--${type}`}>
 					{!isBefore && (
 						<h3 className="shelf-update__preview-title">
-							{formatText("completedShelf", [entry.shelf])}
+							{getCompletedPreviewTitle(entry)}
 						</h3>
 					)}
-					{renderShelf(previewItems, entry.shelf, `shelf-update-${type}`, entry.bay, true)}
+					{renderShelf(
+						previewItems,
+						entry.shelf,
+						`shelf-update-${type}-${entry.panelType || entry.shelf}`,
+						entry.bay,
+						true,
+						entry.panelType || null
+					)}
 				</div>
 			);
 		};
 
 		const renderShelfBeforeAfterPage = (entry, type) => {
 			const isBefore = type === "before";
-			const titleKey = multipleBays
-				? isBefore ? "bayShelfBefore" : "bayShelfAfter"
-				: isBefore ? "shelfBefore" : "shelfAfter";
-			const titleArgs = multipleBays
-				? [entry.bay, entry.shelf]
-				: [entry.shelf];
-			const pageTitle = formatText(titleKey, titleArgs);
+			const pageTitle = getBeforeAfterPageTitle(entry, type);
+			const entryKey = entry.panelType || entry.shelf;
 
 			const leftCol = isBefore
-				? { title: t("movingOffShelf"), items: entry.movingOff, modifier: "moving-off" }
+				? { title: t("discardLabel"), items: entry.discard, modifier: "discard" }
 				: { title: t("newComponents"), items: entry.newComponents, modifier: "new-components" };
 			const rightCol = isBefore
-				? { title: t("discardLabel"), items: entry.discard, modifier: "discard" }
+				? { title: t("movingOffShelf"), items: entry.movingOff, modifier: "moving-off" }
 				: { title: t("movingToShelf"), items: entry.movingTo, modifier: "moving-to" };
 
 			return (
 				<div
 					className={`shelf-update shelf-update--${type}`}
-					key={`shelf-update-${type}-${entry.bay}-${entry.shelf}`}
+					key={`shelf-update-${type}-${entry.bay}-${entryKey}`}
 					data-bay={entry.bay}
 					data-shelf={entry.shelf}
+					data-panel-type={entry.panelType || undefined}
 					data-type={type}
 				>
 					{renderPrintHeader()}
-					<h2 className="shelf-update__title">{pageTitle}</h2>
-					{isBefore && renderShelfUpdatePreview(entry, type)}
-					<div className="shelf-update__columns">
-						{renderBeforeAfterColumn(leftCol.title, leftCol.items, leftCol.modifier)}
-						{renderBeforeAfterColumn(rightCol.title, rightCol.items, rightCol.modifier)}
+					{renderShelfUpdateTitleBar(pageTitle, type)}
+					<div className="shelf-update__body">
+						{isBefore && renderShelfUpdatePreview(entry, type)}
+						<div className="shelf-update__columns">
+							{renderBeforeAfterColumn(leftCol.title, leftCol.items, leftCol.modifier)}
+							{renderBeforeAfterColumn(rightCol.title, rightCol.items, rightCol.modifier)}
+						</div>
+						{!isBefore && renderShelfUpdatePreview(entry, type)}
 					</div>
-					{!isBefore && renderShelfUpdatePreview(entry, type)}
 				</div>
 			);
 		};
 
 		const renderShelfBeforeAfterPages = () => {
-			const sortedEntries = Object.values(beforeAfterByBayShelf).sort((a, b) => {
-				const bayDiff = (parseFloat(a.bay) || 0) - (parseFloat(b.bay) || 0);
-				if (bayDiff !== 0) return bayDiff;
-				const an = parseFloat(a.shelf);
-				const bn = parseFloat(b.shelf);
-				if (Number.isFinite(an) && Number.isFinite(bn)) return an - bn;
-				return String(a.shelf).localeCompare(String(b.shelf));
-			});
-
-			const visibleEntries = sortedEntries.filter(
-				(entry) =>
-					entry.discard.length > 0 ||
-					entry.movingOff.length > 0 ||
-					entry.newComponents.length > 0 ||
-					entry.movingTo.length > 0
-			);
-
-			if (visibleEntries.length === 0) return null;
+			if (beforeAfterPrintSequence.length === 0) return null;
 
 			return (
 				<div className="shelf-update-pages">
-					{visibleEntries.map((entry) => (
-						<Fragment key={`shelf-update-${entry.bay}-${entry.shelf}`}>
-							{renderShelfBeforeAfterPage(entry, "before")}
-							{renderShelfBeforeAfterPage(entry, "after")}
-						</Fragment>
-					))}
+					{beforeAfterPrintSequence.map((entry) => {
+						const entryKey = entry.panelType || entry.shelf;
+						return (
+							<Fragment key={`shelf-update-${entry.bay}-${entryKey}`}>
+								{renderShelfBeforeAfterPage(entry, "before")}
+								{renderShelfBeforeAfterPage(entry, "after")}
+							</Fragment>
+						);
+					})}
 				</div>
 			);
 		};
+
+		const renderExecutionInstructionsPage = () => (
+			<div className="execution-instructions-page">
+				{renderPrintHeader()}
+				<div className="execution-instructions-page__heading-row">
+					<h2 className="execution-instructions-page__title">
+						{t("executionInstructions")}
+					</h2>
+					{renderGraphicKeyCode("execution-instructions")}
+				</div>
+			</div>
+		);
+
+		const renderFinalInstructionImagePage = () => (
+			<div className="final-instruction-image-page">
+				{renderPrintHeader()}
+				<div className="final-instruction-image-page__image-frame">
+					<img
+						src={finalInstructionImageUrl}
+						alt={t("instructionSheetFinalGraphic")}
+						className="final-instruction-image-page__image"
+					/>
+				</div>
+			</div>
+		);
 
 		const renderInstructionShelfCell = (positions, shelfLabel, id, bayNumber, hideTitle = false) => {
 			if (!positions || positions.length === 0) {
@@ -719,16 +829,17 @@ const InstructApp = () => {
 					<div className="bays-faces-aligned">
 						<div className="bay-headers">
 							<div className="bay-col-header">
-								<h3>
+								<h3 className="graphic-layout-heading">
 									{formatText("graphicLayoutBay", [bay1Number])} {titleSuffix}
 								</h3>
 							</div>
 							<div className="bay-col-header">
-								<h3>
+								<h3 className="graphic-layout-heading">
 									{formatText("graphicLayoutBay", [bay2Number])} {titleSuffix}
 								</h3>
 							</div>
 						</div>
+						{renderGraphicKeyCode()}
 						{allShelfLabels.map((shelfLabel) => {
 							const bay1Items = bay1Data.shelves[shelfLabel] || [];
 							const bay2Items = bay2Data.shelves[shelfLabel] || [];
@@ -788,7 +899,7 @@ const InstructApp = () => {
 
 		// Panel section: keep side and back panels inside the same printable
 		// block so print preview can place them side-by-side on one page.
-		const renderBayPanels = (bayNumber, bayData, id, titleSuffix) => {
+		const renderBayPanels = (bayNumber, bayData, id, titleSuffix, includeHeader = true) => {
 			const showSide = hasSidePanels(bayData.shelfP);
 			const showBack = hasBackPanels(bayData.shelfP);
 			if (!showSide && !showBack) return null;
@@ -798,7 +909,7 @@ const InstructApp = () => {
 					className="panel-data-display bay-panels-cell"
 					key={`panels-${bayNumber}`}
 				>
-					{renderPrintHeader()}
+					{includeHeader && renderPrintHeader()}
 					{/* <h3>
 						{formatText("backpanelBay", [bayNumber])} {titleSuffix}
 					</h3> */}
@@ -834,11 +945,11 @@ const InstructApp = () => {
 							<div className={`face-data-display ${titleSuffix ? "page-break" : ""}`}>
 								{renderPrintHeader()}
 								{renderTwoUpFaces(sortedBayEntries, id, titleSuffix)}
-								{renderFooterInstructions()}
 							</div>
 							<div className="bays-panels-row">
+								{renderPrintHeader()}
 								{sortedBayEntries.map(([bayNumber, bayData]) =>
-									renderBayPanels(bayNumber, bayData, id, titleSuffix)
+									renderBayPanels(bayNumber, bayData, id, titleSuffix, false)
 								)}
 							</div>
 						</div>
@@ -855,13 +966,13 @@ const InstructApp = () => {
 						<div className="admin-fixture" id={id} key={bayNumber}>
 							<div className={`face-data-display ${titleSuffix ? "page-break" : ""}`}>
 								{renderPrintHeader()}
-								<h3>
+								<h3 className="graphic-layout-heading">
 									{formatText("graphicLayoutBay", [bayNumber])} {titleSuffix}
 								</h3>
+								{renderGraphicKeyCode()}
 								{Object.entries(bayData.shelves).map(([shelfLabel, positions]) =>
 									renderShelf(positions, shelfLabel, id, bayNumber)
 								)}
-								{renderFooterInstructions()}
 							</div>
 							{renderBayPanels(bayNumber, bayData, id, titleSuffix)}
 						</div>
@@ -870,11 +981,17 @@ const InstructApp = () => {
 			);
 		};
 
-		// Return the layouts followed by per-shelf BEFORE/AFTER pages.
+		// Return the static first print page, then the layouts followed by
+		// per-shelf BEFORE/AFTER pages.
 		return (
 			<>
+				<div className="instruction-print-blank-page">
+					{renderPrintHeader()}
+				</div>
 				{generateLayout(bays)}
 				{renderShelfBeforeAfterPages()}
+				{renderExecutionInstructionsPage()}
+				{renderFinalInstructionImagePage()}
 			</>
 		);
 	};
@@ -1067,6 +1184,7 @@ const InstructApp = () => {
 				</div>
 			</div>
 			{processAndDisplayData()}
+			{renderPrintFooter()}
 		</div>
 	);
 };
