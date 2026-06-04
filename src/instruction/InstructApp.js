@@ -709,6 +709,7 @@ const InstructApp = () => {
 							<Fragment key={`shelf-update-${entry.bay}-${entryKey}`}>
 								{renderShelfBeforeAfterPage(entry, "before")}
 								{renderShelfBeforeAfterPage(entry, "after")}
+								{renderExecutionInstructionsPage()}
 							</Fragment>
 						);
 					})}
@@ -724,6 +725,32 @@ const InstructApp = () => {
 						{t("executionInstructions")}
 					</h2>
 					{renderGraphicKeyCode("execution-instructions")}
+				</div>
+				<div className="execution-instructions-page__content">
+					{[
+						{ labelKey: "executionInstructionStep1Label", bodyKey: "executionInstructionStep1Body" },
+						{ labelKey: "executionInstructionStep2Label", bodyKey: "executionInstructionStep2Body" },
+						{ bodyKey: "executionInstructionStep2Note" },
+						{ labelKey: "executionInstructionStep3Label", bodyKey: "executionInstructionStep3Body" },
+						{ labelKey: "executionInstructionStep4Label", bodyKey: "executionInstructionStep4Body" },
+						{ labelKey: "executionInstructionStep5Label", bodyKey: "executionInstructionStep5Body" },
+						{ labelKey: "executionInstructionStep6Label", bodyKey: "executionInstructionStep6Body" },
+						{ labelKey: "executionInstructionStep7Label", bodyKey: "executionInstructionStep7Body" },
+						{ labelKey: "executionInstructionStep8Label", bodyKey: "executionInstructionStep8Body" },
+						{ bodyKey: "executionInstructionOverview", isOverview: true },
+					].map(({ labelKey, bodyKey, isOverview }) => (
+						<p
+							key={`${labelKey || ""}${bodyKey}`}
+							className={`execution-instructions-page__line${isOverview ? " execution-instructions-page__line--overview" : ""}`}
+						>
+							{labelKey && (
+								<>
+									<strong>{t(labelKey)}</strong>{" "}
+								</>
+							)}
+							{t(bodyKey)}
+						</p>
+					))}
 				</div>
 			</div>
 		);
@@ -990,7 +1017,6 @@ const InstructApp = () => {
 				</div>
 				{generateLayout(bays)}
 				{renderShelfBeforeAfterPages()}
-				{renderExecutionInstructionsPage()}
 				{renderFinalInstructionImagePage()}
 			</>
 		);
