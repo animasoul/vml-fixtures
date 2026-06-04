@@ -28,6 +28,12 @@ const getLogoUrl = (logo) => {
 
 const finalInstructionImageUrl =
 	"/wp-content/plugins/vml-fixtures/build/images/Instruction-sheet-pdf-image.jpg";
+const kohlsFinalInstructionImageUrl =
+	"/wp-content/plugins/vml-fixtures/assets/images/Instruction-sheet-pdf-image-khols.jpg";
+const kohlsHeaderLogoUrl =
+	"https://online.vmlogistics.com/wp-content/uploads/2023/03/TWR28.png";
+const allianceMarketingLogoUrl =
+	"/wp-content/plugins/vml-fixtures/assets/images/alliance-marketing-logo.jpg";
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
@@ -495,7 +501,7 @@ const InstructApp = () => {
 			) : null;
 
 		// Shared print header (logos + PDF info fields).
-		const renderPrintHeader = () => (
+		const renderPrintHeader = ({ rightLogo = brandImage, rightLogoAlt = t("brandLogo") } = {}) => (
 			<div className="print-header">
 				<div className="print-header__logo print-header__logo--left">
 					<img
@@ -511,8 +517,8 @@ const InstructApp = () => {
 					{renderHeaderRow(t("type"), branding)}
 				</div>
 				<div className="print-header__logo print-header__logo--right">
-					{brandImage && (
-						<img src={brandImage} alt={t("brandLogo")} className="right-image" />
+					{rightLogo && (
+						<img src={rightLogo} alt={rightLogoAlt} className="right-image" />
 					)}
 				</div>
 			</div>
@@ -768,6 +774,32 @@ const InstructApp = () => {
 			</div>
 		);
 
+		const renderKohlsFinalInstructionImagePage = () => (
+			<div className="final-instruction-image-page final-instruction-image-page--kohls">
+				{renderPrintHeader({
+					rightLogo: kohlsHeaderLogoUrl,
+					rightLogoAlt: "Kohl's",
+				})}
+				<div className="final-instruction-image-page__image-frame">
+					<img
+						src={kohlsFinalInstructionImageUrl}
+						alt="Kohl's instruction sheet reference"
+						className="final-instruction-image-page__image"
+					/>
+				</div>
+				<div className="final-instruction-image-page__custom-footer final-instruction-image-page__custom-footer--kohls">
+					<img
+						src={allianceMarketingLogoUrl}
+						alt="Alliance Marketing"
+						className="final-instruction-image-page__custom-footer-logo"
+					/>
+					<span className="final-instruction-image-page__custom-footer-text">
+						{t("cleanInstructions")}
+					</span>
+				</div>
+			</div>
+		);
+
 		const renderInstructionShelfCell = (positions, shelfLabel, id, bayNumber, hideTitle = false) => {
 			if (!positions || positions.length === 0) {
 				return <div className="shelf-cell shelf-cell--empty" />;
@@ -1018,6 +1050,7 @@ const InstructApp = () => {
 				{generateLayout(bays)}
 				{renderShelfBeforeAfterPages()}
 				{renderFinalInstructionImagePage()}
+				{renderKohlsFinalInstructionImagePage()}
 			</>
 		);
 	};
