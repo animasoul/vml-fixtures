@@ -787,7 +787,7 @@ const InstructApp = () => {
 						className="final-instruction-image-page__image"
 					/>
 				</div>
-				<div className="final-instruction-image-page__custom-footer final-instruction-image-page__custom-footer--kohls">
+				<div className="print-only-flex final-instruction-image-page__custom-footer final-instruction-image-page__custom-footer--kohls">
 					<img
 						src={allianceMarketingLogoUrl}
 						alt="Alliance Marketing"

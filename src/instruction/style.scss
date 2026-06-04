@@ -477,7 +477,8 @@
 		}
 	}
 	.print-only,
-	.print-only-inline {
+	.print-only-inline,
+	.print-only-flex {
 		display: none;
 	}
 
@@ -922,6 +923,9 @@
 	}
 	.print-only-inline {
 		display: inline;
+	}
+	.print-only-flex {
+		display: flex !important;
 	}
 	.instruction-print-blank-page {
 		display: block !important;
