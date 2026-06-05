@@ -29,11 +29,11 @@ const getLogoUrl = (logo) => {
 const finalInstructionImageUrl =
 	"/wp-content/plugins/vml-fixtures/build/images/Instruction-sheet-pdf-image.jpg";
 const kohlsFinalInstructionImageUrl =
-	"/wp-content/plugins/vml-fixtures/assets/images/Instruction-sheet-pdf-image-khols.jpg";
+	"/wp-content/plugins/vml-fixtures/build/images/Instruction-sheet-pdf-image-khols.jpg";
 const kohlsHeaderLogoUrl =
 	"https://online.vmlogistics.com/wp-content/uploads/2023/03/TWR28.png";
 const allianceMarketingLogoUrl =
-	"/wp-content/plugins/vml-fixtures/assets/images/alliance-marketing-logo.jpg";
+	"/wp-content/plugins/vml-fixtures/build/images/alliance-marketing-logo.jpg";
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);

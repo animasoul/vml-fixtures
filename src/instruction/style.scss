@@ -12,7 +12,6 @@
 
 .wp-block-vml-fixtures-instruct {
 	.admin-fixture {
-		background-color: #fff;
 		clear: both;
 	}
 	.printButton {
@@ -521,6 +520,7 @@
 	.scale {
 		float: right;
 		text-align: center;
+		padding-bottom: 1rem;
 	}
 	.react-pdf__Document {
 		width: 200px;
@@ -857,6 +857,31 @@
 		font-size: 0.72em;
 		line-height: 1.1;
 		white-space: nowrap;
+	}
+}
+
+@media screen {
+	.wp-block-vml-fixtures-instruct {
+		background: #f2f2f2;
+		padding: 1.25rem clamp(1rem, 3vw, 2rem);
+	}
+
+	.wp-block-vml-fixtures-instruct .face-data-display,
+	.wp-block-vml-fixtures-instruct .bays-panels-row,
+	.wp-block-vml-fixtures-instruct
+		.admin-fixture:not(.admin-fixture--two-up)
+		> .panel-data-display,
+	.shelf-update-pages .shelf-update,
+	.execution-instructions-page,
+	.final-instruction-image-page {
+		max-width: 21cm;
+		margin: 1.25rem auto;
+		padding-right: clamp(1rem, 3vw, 0.6cm);
+		padding-left: clamp(1rem, 3vw, 0.6cm);
+		padding-bottom: clamp(1rem, 3vw, 0.6cm);
+		background: #fff;
+		box-shadow: 0 0.25rem 1.2rem rgba(0, 0, 0, 0.12);
+		box-sizing: border-box;
 	}
 }
 
