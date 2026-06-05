@@ -405,7 +405,7 @@
 	}
 
 	textarea {
-		width: 60%;
+		width: 100%;
 		margin: 1em auto 0 auto;
 	}
 	.print-header {
@@ -498,16 +498,9 @@
 			}
 		}
 	}
-	.textInput p,
-	.uploadPdf p {
+	.textInput p {
 		font-weight: bold;
 		margin-top: 1em;
-	}
-	.onlyprint {
-		display: none;
-	}
-	.instruction-print-blank-page {
-		display: none;
 	}
 	.face-data-display,
 	.panel-data-display {
@@ -518,12 +511,8 @@
 		border: 2px solid #000;
 	}
 	.scale {
-		float: right;
-		text-align: center;
+		text-align: right;
 		padding-bottom: 1rem;
-	}
-	.react-pdf__Document {
-		width: 200px;
 	}
 	.face-data-display {
 		padding-top: 20px;
@@ -758,10 +747,159 @@
 	}
 }
 
+.instruction-print-blank-page {
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	min-height: 18cm;
+	padding: 20px 0 1.2cm;
+	box-sizing: border-box;
+	background: #fff;
+
+	&__body {
+		display: grid;
+		flex: 1 1 auto;
+		min-height: 14cm;
+		width: 100%;
+	}
+
+	&--vertical > &__body {
+		grid-template-rows: auto auto auto;
+		grid-template-columns: 1fr;
+		align-content: center;
+		justify-items: center;
+	}
+
+	&--horizontal > &__body {
+		grid-template-columns: auto auto auto;
+		grid-template-rows: auto;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&__slot {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35rem;
+		width: fit-content;
+		max-width: 100%;
+		height: fit-content;
+		min-height: 12cm;
+		min-width: 0;
+	}
+
+	&--vertical &__slot {
+		width: 100%;
+	}
+
+	&__image {
+		display: block;
+		width: auto;
+		height: auto;
+		object-fit: contain;
+	}
+
+	&__scale {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+	}
+
+	&__scale-value {
+		min-width: 3.25rem;
+		font-size: 0.92em;
+		font-weight: 600;
+		text-align: center;
+	}
+
+	&__slot-controls {
+		display: flex;
+		flex: 0 0 auto;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35rem;
+	}
+
+	&__divider {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background-color: #000;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	&--vertical &__divider {
+		width: calc(100% - 0.2cm);
+		height: 1px;
+		min-height: 1px;
+		border: 1px solid #000;
+		margin: 0.3cm 0.65cm;
+		justify-self: center;
+		align-self: center;
+	}
+
+	&--horizontal &__divider {
+		width: 2px;
+		min-width: 2px;
+		height: auto;
+		border: 1px solid #000;
+		margin: 0.65cm 0.3cm;
+		justify-self: center;
+		align-self: stretch;
+	}
+
+	&__layout-control {
+		margin-top: 0.75rem;
+	}
+
+	&__layout-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.92em;
+		cursor: pointer;
+	}
+
+	&__upload-label {
+		display: inline-flex;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	&__upload-text {
+		display: inline-block;
+		padding: 0.35rem 0.75rem;
+		border: 1px solid #c3c4c7;
+		border-radius: 3px;
+		background: #f6f7f7;
+		font-size: 0.92em;
+		line-height: 1.4;
+	}
+
+	&__upload-input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+}
+
 .execution-instructions-page {
+	display: flex;
+	flex-direction: column;
 	margin: 0;
 	padding: 20px 0 0 0;
 	min-height: 18cm;
+	box-sizing: border-box;
 
 	&__heading-row {
 		display: grid;
@@ -793,8 +931,12 @@
 	}
 
 	&__content {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-height: 0;
 		margin: 0.45cm 0 0;
-		max-width: 18cm;
+		width: 100%;
 		font-size: 0.92em;
 		line-height: 1.35;
 	}
@@ -803,8 +945,95 @@
 		margin: 0 0 0.18cm;
 	}
 
-	&__line--overview {
-		font-weight: 700;
+	&__content-display {
+		margin-bottom: 0.45rem;
+	}
+
+	&__content-hint {
+		margin: 0 0 0.35rem;
+		font-size: 0.85em;
+		color: #50575e;
+	}
+
+	&__content-textarea {
+		display: block;
+		width: 100%;
+		min-height: 14em;
+		margin: 0 0 0.45rem;
+		padding: 0.45rem 0.55rem;
+		border: 1px solid #8c8f94;
+		border-radius: 3px;
+		font: inherit;
+		line-height: 1.35;
+		resize: vertical;
+		box-sizing: border-box;
+	}
+
+	&__content-actions,
+	&__edit-actions,
+	&__image-upload {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		margin-top: 0.35rem;
+	}
+
+	&__image-upload-label {
+		display: inline-flex;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	&__image-upload-text {
+		display: inline-block;
+		padding: 0.35rem 0.75rem;
+		border: 1px solid #c3c4c7;
+		border-radius: 3px;
+		background: #f6f7f7;
+		font-size: 0.92em;
+		line-height: 1.4;
+	}
+
+	&__image-input {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	&__image-section {
+		display: flex;
+		flex: 1 1 auto;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		min-height: 0;
+		margin-top: 0.45cm;
+	}
+
+	&__image-frame {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		max-width: 18cm;
+		max-height: min(14cm, 50vh);
+		overflow: hidden;
+	}
+
+	&__image {
+		display: block;
+		max-width: 100%;
+		max-height: min(14cm, 50vh);
+		width: auto;
+		height: auto;
+		object-fit: contain;
+		margin: 0 auto;
 	}
 }
 
@@ -841,6 +1070,7 @@
 		width: auto;
 		min-height: 0.8cm;
 		background: #fff;
+		left: 7cm;
 	}
 
 	&__custom-footer-logo {
@@ -866,6 +1096,7 @@
 		padding: 1.25rem clamp(1rem, 3vw, 2rem);
 	}
 
+	.wp-block-vml-fixtures-instruct .instruction-print-blank-page,
 	.wp-block-vml-fixtures-instruct .face-data-display,
 	.wp-block-vml-fixtures-instruct .bays-panels-row,
 	.wp-block-vml-fixtures-instruct
@@ -940,28 +1171,88 @@
 		object-fit: contain;
 	}
 
-	.onlyprint {
+	.print-only {
 		display: block !important;
 	}
-	.print-only {
-		display: block;
-	}
 	.print-only-inline {
-		display: inline;
+		display: inline !important;
 	}
 	.print-only-flex {
 		display: flex !important;
 	}
 	.instruction-print-blank-page {
-		display: block !important;
 		position: relative;
-		height: 18cm;
+		min-height: 18cm;
 		padding-bottom: 1.2cm;
 		box-sizing: border-box;
 		background: #fff !important;
 		break-after: page;
 		page-break-after: always;
 		padding-top: 0;
+
+		&__body {
+			display: grid !important;
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		&--vertical > .instruction-print-blank-page__body {
+			grid-template-rows: auto auto auto !important;
+			grid-template-columns: 1fr !important;
+			align-content: center !important;
+			justify-items: center !important;
+		}
+
+		&--horizontal > .instruction-print-blank-page__body {
+			grid-template-columns: auto auto auto !important;
+			grid-template-rows: auto !important;
+			align-items: center !important;
+			justify-content: center !important;
+		}
+
+		.instruction-print-blank-page__slot {
+			width: fit-content !important;
+			max-width: 100% !important;
+			height: fit-content !important;
+			max-height: 12cm !important;
+		}
+
+		.instruction-print-blank-page--vertical
+			.instruction-print-blank-page__slot {
+			width: 100% !important;
+		}
+
+		&--no-images .instruction-print-blank-page__body {
+			display: none !important;
+		}
+
+		&__divider {
+			display: block !important;
+			background-color: #000 !important;
+			border: 0 !important;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+
+		&--vertical .instruction-print-blank-page__divider {
+			width: calc(100% - 2.2cm) !important;
+			height: 2px !important;
+			min-height: 2px;
+			margin: 0.65cm 1.1cm !important;
+		}
+
+		&--horizontal .instruction-print-blank-page__divider {
+			width: 2px !important;
+			min-width: 2px;
+			height: auto !important;
+			align-self: stretch !important;
+			margin: 0.65cm 0.3cm !important;
+		}
+
+		&__image {
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
 	}
 	body {
 		background-color: white !important;
@@ -973,11 +1264,6 @@
 		padding: 0.5cm;
 		padding-top: 1.2cm;
 		padding-bottom: 1.4cm;
-
-		.react-pdf__Document {
-			margin-top: 3em;
-			width: 100% !important;
-		}
 
 		.face-data-display,
 		.panel-data-display {
@@ -1196,6 +1482,16 @@
 			padding-bottom: 1.4cm;
 			break-inside: avoid;
 			page-break-inside: avoid;
+		}
+
+		.execution-instructions-page__image-frame,
+		.execution-instructions-page__image {
+			max-height: 12cm;
+		}
+
+		.execution-instructions-page__image {
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
 		}
 
 		.execution-instructions-page__heading-row {

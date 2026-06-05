@@ -2,7 +2,6 @@
 import { Fragment, createPortal, useEffect, useMemo, useState } from "@wordpress/element";
 import Loader from "../components/Loader";
 import { fetchOptionData } from "../services/getOptionService";
-import UploadPdf from "./UploadPdf";
 import "./style-index.css";
 import {
 	getUniqueValues,
@@ -32,8 +31,59 @@ const kohlsFinalInstructionImageUrl =
 	"/wp-content/plugins/vml-fixtures/build/images/Instruction-sheet-pdf-image-khols.jpg";
 const kohlsHeaderLogoUrl =
 	"https://online.vmlogistics.com/wp-content/uploads/2023/03/TWR28.png";
-const allianceMarketingLogoUrl =
-	"/wp-content/plugins/vml-fixtures/build/images/alliance-marketing-logo.jpg";
+
+const parseExecutionInstructionBoldSegments = (text) => {
+	const segments = [];
+	const pattern = /\*\*(.+?)\*\*/g;
+	let lastIndex = 0;
+	let match = pattern.exec(text);
+
+	while (match) {
+		if (match.index > lastIndex) {
+			segments.push({ text: text.slice(lastIndex, match.index), bold: false });
+		}
+		segments.push({ text: match[1], bold: true });
+		lastIndex = match.index + match[0].length;
+		match = pattern.exec(text);
+	}
+
+	if (lastIndex < text.length) {
+		segments.push({ text: text.slice(lastIndex), bold: false });
+	}
+
+	if (segments.length === 0) {
+		segments.push({ text, bold: false });
+	}
+
+	return segments;
+};
+
+const renderExecutionInstructionBoldText = (text) =>
+	parseExecutionInstructionBoldSegments(text).map((segment, index) =>
+		segment.bold ? (
+			<strong key={`bold-${index}`}>{segment.text}</strong>
+		) : (
+			<Fragment key={`text-${index}`}>{segment.text}</Fragment>
+		)
+	);
+
+const getExecutionInstructionsSheetKey = (entry) => {
+	const entryKey = entry.panelType || entry.shelf;
+	return `${entry.bay}-${entryKey}`;
+};
+
+const EXECUTION_INSTRUCTION_LINES = [
+	{ labelKey: "executionInstructionStep1Label", bodyKey: "executionInstructionStep1Body" },
+	{ labelKey: "executionInstructionStep2Label", bodyKey: "executionInstructionStep2Body" },
+	{ bodyKey: "executionInstructionStep2Note" },
+	{ labelKey: "executionInstructionStep3Label", bodyKey: "executionInstructionStep3Body" },
+	{ labelKey: "executionInstructionStep4Label", bodyKey: "executionInstructionStep4Body" },
+	{ labelKey: "executionInstructionStep5Label", bodyKey: "executionInstructionStep5Body" },
+	{ labelKey: "executionInstructionStep6Label", bodyKey: "executionInstructionStep6Body" },
+	{ labelKey: "executionInstructionStep7Label", bodyKey: "executionInstructionStep7Body" },
+	{ labelKey: "executionInstructionStep8Label", bodyKey: "executionInstructionStep8Body" },
+	{ bodyKey: "executionInstructionOverview", isOverview: true },
+];
 
 const InstructApp = () => {
 	const [data, setData] = useState(null);
@@ -97,6 +147,15 @@ const InstructApp = () => {
 	const [updateSeason, setUpdateSeason] = useState("");
 	const [executionWeek, setExecutionWeek] = useState("");
 	const [branding, setBranding] = useState("");
+	const [executionInstructionsOverrides, setExecutionInstructionsOverrides] = useState({});
+	const [executionInstructionsImages, setExecutionInstructionsImages] = useState({});
+	const [blankPageImages, setBlankPageImages] = useState({ first: null, second: null });
+	const [blankPageImageScales, setBlankPageImageScales] = useState({ first: 0, second: 0 });
+	const [blankPageHorizontalLayout, setBlankPageHorizontalLayout] = useState(false);
+
+	const BLANK_PAGE_IMAGE_SCALE_STEP = 0.1;
+	const BLANK_PAGE_IMAGE_SCALE_MIN = 0.5;
+	const BLANK_PAGE_IMAGE_SCALE_MAX = 2;
 
 	// Update dynamic fields based on user selection
 	useEffect(() => {
@@ -111,6 +170,195 @@ const InstructApp = () => {
 
 	const handlePrint = () => {
 		window.print();
+	};
+
+	const handleBlankPageImageChange = (slot, event) => {
+		const file = event.target.files?.[0];
+		if (!file || !file.type.startsWith("image/")) {
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onload = (loadEvent) => {
+			const imageUrl = loadEvent.target?.result;
+			if (typeof imageUrl !== "string") {
+				return;
+			}
+
+			setBlankPageImages((prev) => ({
+				...prev,
+				[slot]: imageUrl,
+			}));
+		};
+		reader.readAsDataURL(file);
+	};
+
+	const removeBlankPageImage = (slot) => {
+		setBlankPageImages((prev) => ({
+			...prev,
+			[slot]: null,
+		}));
+		setBlankPageImageScales((prev) => ({
+			...prev,
+			[slot]: 0,
+		}));
+	};
+
+	const getBlankPageImageScale = (slot) => 1 + (blankPageImageScales[slot] || 0);
+
+	const getBlankPageImageScalePercent = (slot) =>
+		Math.round(getBlankPageImageScale(slot) * 100);
+
+	const adjustBlankPageImageScale = (slot, delta) => {
+		setBlankPageImageScales((prev) => {
+			const currentScale = 1 + (prev[slot] || 0);
+			const nextScale = Math.min(
+				BLANK_PAGE_IMAGE_SCALE_MAX,
+				Math.max(BLANK_PAGE_IMAGE_SCALE_MIN, currentScale + delta)
+			);
+
+			return {
+				...prev,
+				[slot]: nextScale - 1,
+			};
+		});
+	};
+
+	const getDefaultExecutionInstructionsText = () =>
+		EXECUTION_INSTRUCTION_LINES.map((line) => {
+			const body = t(line.bodyKey);
+			if (line.isOverview) {
+				return `**${body}**`;
+			}
+			if (line.labelKey) {
+				return `**${t(line.labelKey)}** ${body}`;
+			}
+			return body;
+		}).join("\n");
+
+	const getExecutionInstructionsText = (sheetKey) =>
+		executionInstructionsOverrides[sheetKey] ?? getDefaultExecutionInstructionsText();
+
+	const handleExecutionInstructionsChange = (sheetKey, value) => {
+		setExecutionInstructionsOverrides((prev) => ({
+			...prev,
+			[sheetKey]: value,
+		}));
+	};
+
+	const resetExecutionInstructions = (sheetKey) => {
+		setExecutionInstructionsOverrides((prev) => {
+			const next = { ...prev };
+			delete next[sheetKey];
+			return next;
+		});
+	};
+
+	const handleExecutionInstructionsImageChange = (sheetKey, event) => {
+		const file = event.target.files?.[0];
+		if (!file || !file.type.startsWith("image/")) {
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onload = (loadEvent) => {
+			const imageUrl = loadEvent.target?.result;
+			if (typeof imageUrl !== "string") {
+				return;
+			}
+
+			setExecutionInstructionsImages((prev) => ({
+				...prev,
+				[sheetKey]: imageUrl,
+			}));
+		};
+		reader.readAsDataURL(file);
+	};
+
+	const removeExecutionInstructionsImage = (sheetKey) => {
+		setExecutionInstructionsImages((prev) => {
+			const next = { ...prev };
+			delete next[sheetKey];
+			return next;
+		});
+	};
+
+	const renderExecutionInstructionsContent = (sheetKey) => {
+		const displayText = getExecutionInstructionsText(sheetKey);
+		const displayLines = displayText.split("\n");
+		const hasOverride = executionInstructionsOverrides[sheetKey] !== undefined;
+		const imageUrl = executionInstructionsImages[sheetKey];
+
+		return (
+			<>
+				<div className="print-only execution-instructions-page__content-display">
+					{displayLines.map((line, index) => (
+						<p key={`${index}-${line}`} className="execution-instructions-page__line">
+							{renderExecutionInstructionBoldText(line)}
+						</p>
+					))}
+				</div>
+				<div className="execution-instructions-page__content-edit noprint">
+					<p className="execution-instructions-page__content-hint">
+						{t("executionInstructionsBoldHint")}
+					</p>
+					<textarea
+						className="execution-instructions-page__content-textarea"
+						value={displayText}
+						onChange={(event) =>
+							handleExecutionInstructionsChange(sheetKey, event.target.value)
+						}
+						rows={12}
+					/>
+					{hasOverride && (
+						<div className="execution-instructions-page__content-actions">
+							<button
+								type="button"
+								className="ui-button ui-widget ui-corner-all ui-button-text-only"
+								onClick={() => resetExecutionInstructions(sheetKey)}
+							>
+								{t("resetInstructionLine")}
+							</button>
+						</div>
+					)}
+					<div className="execution-instructions-page__image-upload">
+						<label className="execution-instructions-page__image-upload-label">
+							<span className="execution-instructions-page__image-upload-text">
+								{t("executionInstructionUploadImage")}
+							</span>
+							<input
+								type="file"
+								accept="image/*"
+								className="execution-instructions-page__image-input"
+								onChange={(event) =>
+									handleExecutionInstructionsImageChange(sheetKey, event)
+								}
+							/>
+						</label>
+						{imageUrl && (
+							<button
+								type="button"
+								className="ui-button ui-widget ui-corner-all ui-button-text-only"
+								onClick={() => removeExecutionInstructionsImage(sheetKey)}
+							>
+								{t("executionInstructionRemoveImage")}
+							</button>
+						)}
+					</div>
+				</div>
+				{imageUrl && (
+					<div className="execution-instructions-page__image-section">
+						<div className="execution-instructions-page__image-frame">
+							<img
+								src={imageUrl}
+								alt={t("executionInstructionImageAlt")}
+								className="execution-instructions-page__image"
+							/>
+						</div>
+					</div>
+				)}
+			</>
+		);
 	};
 
 	// Render the footer as a direct child of <body> via a portal. On the
@@ -524,6 +772,142 @@ const InstructApp = () => {
 			</div>
 		);
 
+		const renderBlankPageSlotControls = (slot, label, imageUrl) => (
+			<div className="noprint instruction-print-blank-page__slot-controls">
+				<label className="instruction-print-blank-page__upload-label">
+					<span className="instruction-print-blank-page__upload-text">{label}</span>
+					<input
+						type="file"
+						accept="image/*"
+						className="instruction-print-blank-page__upload-input"
+						onChange={(event) => handleBlankPageImageChange(slot, event)}
+					/>
+				</label>
+				{imageUrl && (
+					<>
+						<div className="instruction-print-blank-page__scale">
+							<button
+								type="button"
+								className="ui-button ui-widget ui-corner-all ui-button-text-only"
+								onClick={() =>
+									adjustBlankPageImageScale(slot, -BLANK_PAGE_IMAGE_SCALE_STEP)
+								}
+							>
+								-
+							</button>
+							<span className="instruction-print-blank-page__scale-value">
+								{getBlankPageImageScalePercent(slot)}%
+							</span>
+							<button
+								type="button"
+								className="ui-button ui-widget ui-corner-all ui-button-text-only"
+								onClick={() =>
+									adjustBlankPageImageScale(slot, BLANK_PAGE_IMAGE_SCALE_STEP)
+								}
+							>
+								+
+							</button>
+						</div>
+						<button
+							type="button"
+							className="ui-button ui-widget ui-corner-all ui-button-text-only"
+							onClick={() => removeBlankPageImage(slot)}
+						>
+							{t("executionInstructionRemoveImage")}
+						</button>
+					</>
+				)}
+			</div>
+		);
+
+		const renderBlankPageImage = (slot, imageUrl, label) => {
+			const scale = getBlankPageImageScale(slot);
+			const imageStyle = blankPageHorizontalLayout
+				? {
+						width: "auto",
+						height: "auto",
+						maxHeight: `${scale * 12}cm`,
+						maxWidth: `${scale * 100}%`,
+					}
+				: {
+						width: `${scale * 100}%`,
+						height: "auto",
+						maxWidth: `${scale * 100}%`,
+						maxHeight: `${scale * 12}cm`,
+					};
+
+			return (
+				<img
+					src={imageUrl}
+					alt={label}
+					className="instruction-print-blank-page__image"
+					style={imageStyle}
+				/>
+			);
+		};
+
+		const renderBlankPage = () => {
+			const hasImages = blankPageImages.first || blankPageImages.second;
+			const layoutClass = blankPageHorizontalLayout
+				? "instruction-print-blank-page--horizontal"
+				: "instruction-print-blank-page--vertical";
+			const firstImageLabel = blankPageHorizontalLayout
+				? t("blankPageLeftImage")
+				: t("blankPageTopImage");
+			const secondImageLabel = blankPageHorizontalLayout
+				? t("blankPageRightImage")
+				: t("blankPageBottomImage");
+
+			return (
+				<div
+					className={`instruction-print-blank-page ${layoutClass}${hasImages ? "" : " instruction-print-blank-page--no-images"}`}
+				>
+					{renderPrintHeader()}
+					<div className="instruction-print-blank-page__body">
+						<div className="instruction-print-blank-page__slot">
+							{blankPageImages.first &&
+								renderBlankPageImage(
+									"first",
+									blankPageImages.first,
+									firstImageLabel
+								)}
+							{renderBlankPageSlotControls(
+								"first",
+								firstImageLabel,
+								blankPageImages.first
+							)}
+						</div>
+						<hr className="instruction-print-blank-page__divider" aria-hidden="true" />
+						<div className="instruction-print-blank-page__slot">
+							{blankPageImages.second &&
+								renderBlankPageImage(
+									"second",
+									blankPageImages.second,
+									secondImageLabel
+								)}
+							{renderBlankPageSlotControls(
+								"second",
+								secondImageLabel,
+								blankPageImages.second
+							)}
+						</div>
+					</div>
+					<div className="noprint instruction-print-blank-page__layout-control">
+						<label className="instruction-print-blank-page__layout-toggle">
+							<input
+								type="checkbox"
+								checked={blankPageHorizontalLayout}
+								onChange={(event) =>
+									setBlankPageHorizontalLayout(event.target.checked)
+								}
+							/>
+							<span>{t("blankPageLeftRightLayout")}</span>
+						</label>
+					</div>
+				</div>
+			);
+		};
+
 		const renderGraphicKeyCode = (modifier = "") => (
 			<div className={`graphic-key-code${modifier ? ` graphic-key-code--${modifier}` : ""}`}>
 				<span className="graphic-key-code__label">{t("keyCodeLabel")}</span>
@@ -710,12 +1094,12 @@ const InstructApp = () => {
 			return (
 				<div className="shelf-update-pages">
 					{beforeAfterPrintSequence.map((entry) => {
-						const entryKey = entry.panelType || entry.shelf;
+						const sheetKey = getExecutionInstructionsSheetKey(entry);
 						return (
-							<Fragment key={`shelf-update-${entry.bay}-${entryKey}`}>
+							<Fragment key={`shelf-update-${sheetKey}`}>
 								{renderShelfBeforeAfterPage(entry, "before")}
 								{renderShelfBeforeAfterPage(entry, "after")}
-								{renderExecutionInstructionsPage()}
+								{renderExecutionInstructionsPage(entry)}
 							</Fragment>
 						);
 					})}
@@ -723,43 +1107,24 @@ const InstructApp = () => {
 			);
 		};
 
-		const renderExecutionInstructionsPage = () => (
-			<div className="execution-instructions-page">
-				{renderPrintHeader()}
-				<div className="execution-instructions-page__heading-row">
-					<h2 className="execution-instructions-page__title">
-						{t("executionInstructions")}
-					</h2>
-					{renderGraphicKeyCode("execution-instructions")}
+		const renderExecutionInstructionsPage = (entry) => {
+			const sheetKey = getExecutionInstructionsSheetKey(entry);
+
+			return (
+				<div className="execution-instructions-page">
+					{renderPrintHeader()}
+					<div className="execution-instructions-page__heading-row">
+						<h2 className="execution-instructions-page__title">
+							{t("executionInstructions")}
+						</h2>
+						{renderGraphicKeyCode("execution-instructions")}
+					</div>
+					<div className="execution-instructions-page__content">
+						{renderExecutionInstructionsContent(sheetKey)}
+					</div>
 				</div>
-				<div className="execution-instructions-page__content">
-					{[
-						{ labelKey: "executionInstructionStep1Label", bodyKey: "executionInstructionStep1Body" },
-						{ labelKey: "executionInstructionStep2Label", bodyKey: "executionInstructionStep2Body" },
-						{ bodyKey: "executionInstructionStep2Note" },
-						{ labelKey: "executionInstructionStep3Label", bodyKey: "executionInstructionStep3Body" },
-						{ labelKey: "executionInstructionStep4Label", bodyKey: "executionInstructionStep4Body" },
-						{ labelKey: "executionInstructionStep5Label", bodyKey: "executionInstructionStep5Body" },
-						{ labelKey: "executionInstructionStep6Label", bodyKey: "executionInstructionStep6Body" },
-						{ labelKey: "executionInstructionStep7Label", bodyKey: "executionInstructionStep7Body" },
-						{ labelKey: "executionInstructionStep8Label", bodyKey: "executionInstructionStep8Body" },
-						{ bodyKey: "executionInstructionOverview", isOverview: true },
-					].map(({ labelKey, bodyKey, isOverview }) => (
-						<p
-							key={`${labelKey || ""}${bodyKey}`}
-							className={`execution-instructions-page__line${isOverview ? " execution-instructions-page__line--overview" : ""}`}
-						>
-							{labelKey && (
-								<>
-									<strong>{t(labelKey)}</strong>{" "}
-								</>
-							)}
-							{t(bodyKey)}
-						</p>
-					))}
-				</div>
-			</div>
-		);
+			);
+		};
 
 		const renderFinalInstructionImagePage = () => (
 			<div className="final-instruction-image-page">
@@ -770,6 +1135,11 @@ const InstructApp = () => {
 						alt={t("instructionSheetFinalGraphic")}
 						className="final-instruction-image-page__image"
 					/>
+				</div>
+				<div className="print-only-flex final-instruction-image-page__custom-footer final-instruction-image-page__custom-footer--kohls">
+					<span className="final-instruction-image-page__custom-footer-text">
+						{t("cleanInstructions")}
+					</span>
 				</div>
 			</div>
 		);
@@ -788,11 +1158,6 @@ const InstructApp = () => {
 					/>
 				</div>
 				<div className="print-only-flex final-instruction-image-page__custom-footer final-instruction-image-page__custom-footer--kohls">
-					<img
-						src={allianceMarketingLogoUrl}
-						alt="Alliance Marketing"
-						className="final-instruction-image-page__custom-footer-logo"
-					/>
 					<span className="final-instruction-image-page__custom-footer-text">
 						{t("cleanInstructions")}
 					</span>
@@ -1044,9 +1409,7 @@ const InstructApp = () => {
 		// per-shelf BEFORE/AFTER pages.
 		return (
 			<>
-				<div className="instruction-print-blank-page">
-					{renderPrintHeader()}
-				</div>
+				{renderBlankPage()}
 				{generateLayout(bays)}
 				{renderShelfBeforeAfterPages()}
 				{renderFinalInstructionImagePage()}
@@ -1219,7 +1582,6 @@ const InstructApp = () => {
 					</div>
 				</div>
 			</div>
-			<UploadPdf />
 			<div className="noprint scale">
 				<div className="scale-wrapper">
 					<p>

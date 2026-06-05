@@ -81,9 +81,12 @@ function vml_fixtures_get_instruction_text_strings() {
 		'branding' => __('Branding', 'vml-fixtures'),
 		'enlargeReduceImageSizes' => __('Enlarge/reduce image sizes', 'vml-fixtures'),
 		'toFitPrinterOutput' => __('to fit printer output', 'vml-fixtures'),
-		'uploadPdfFirstPage' => __('Upload PDF of the first page', 'vml-fixtures'),
-		'uploadPdf' => __('Upload PDF', 'vml-fixtures'),
 		'loading' => __('Loading...', 'vml-fixtures'),
+		'blankPageLeftRightLayout' => __('Display images left / right (unchecked: top / bottom)', 'vml-fixtures'),
+		'blankPageTopImage' => __('Top image', 'vml-fixtures'),
+		'blankPageBottomImage' => __('Bottom image', 'vml-fixtures'),
+		'blankPageLeftImage' => __('Left image', 'vml-fixtures'),
+		'blankPageRightImage' => __('Right image', 'vml-fixtures'),
 		'executionInstructions' => __('EXECUTION INSTRUCTIONS:', 'vml-fixtures'),
 		'executionInstructionStep1Label' => __('Step 1:', 'vml-fixtures'),
 		'executionInstructionStep1Body' => __('Remove and set aside products and components from shelf.', 'vml-fixtures'),
@@ -103,6 +106,16 @@ function vml_fixtures_get_instruction_text_strings() {
 		'executionInstructionStep8Label' => __('Step 8:', 'vml-fixtures'),
 		'executionInstructionStep8Body' => __('Insert existing products and components back onto shelf.', 'vml-fixtures'),
 		'executionInstructionOverview' => __('Refer to the overview on the previous page to ensure graphics are placed in the proper order.', 'vml-fixtures'),
+		'editInstructionLine' => __('Edit', 'vml-fixtures'),
+		'saveInstructionLine' => __('Save', 'vml-fixtures'),
+		'cancelInstructionLine' => __('Cancel', 'vml-fixtures'),
+		'resetInstructionLine' => __('Reset Text', 'vml-fixtures'),
+		'executionInstructionStepLabelField' => __('Step label', 'vml-fixtures'),
+		'executionInstructionStepBodyField' => __('Instruction text', 'vml-fixtures'),
+		'executionInstructionsBoldHint' => __('Wrap text in **double asterisks** to make it bold. Each line is a separate instruction.', 'vml-fixtures'),
+		'executionInstructionUploadImage' => __('Upload image', 'vml-fixtures'),
+		'executionInstructionRemoveImage' => __('Remove image', 'vml-fixtures'),
+		'executionInstructionImageAlt' => __('Execution instruction reference image', 'vml-fixtures'),
 		'instructionSheetFinalGraphic' => __('Instruction Sheet Final Graphic', 'vml-fixtures'),
 		'showSkuLabels' => __('Show SKU labels', 'vml-fixtures'),
 	);
@@ -261,42 +274,6 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
 	} else {
 		// Handle the case where VIZMERCH_Custom is not available
 		return new WP_Error('missing_dependency', 'VIZMERCH Custom class not found', array('status' => 500));
-	}
-}
-
-function register_custom_routes() {
-	register_rest_route('vml-fixtures/v1', '/upload-pdf', array(
-		'methods' => 'POST',
-		'callback' => 'handle_pdf_upload',
-		'permission_callback' => '__return_true',
-		// Removed 'args' for direct $_FILES checking
-	));
-}
-add_action('rest_api_init', 'register_custom_routes');
-
-function handle_pdf_upload($request) {
-	// Assuming a file was uploaded via a form with the name 'file'
-	$file = $_FILES['file'];
-
-	// Specify the custom directory relative to WordPress's upload directory
-	$upload_dir = wp_upload_dir();
-	$custom_dir = $upload_dir['basedir'] . '/instruction_pdfs';
-
-	// Ensure the directory exists
-	if (!file_exists($custom_dir)) {
-		wp_mkdir_p($custom_dir);
-	}
-
-	// Construct the path where file should be saved
-	$target_file = $custom_dir . '/' . basename($file['name']);
-
-	// Move the uploaded file
-	if (move_uploaded_file($file['tmp_name'], $target_file)) {
-		// Return the URL to access the uploaded file
-		$file_url = $upload_dir['baseurl'] . '/instruction_pdfs/' . basename($file['name']);
-		return new WP_REST_Response(array('url' => $file_url), 200);
-	} else {
-		return new WP_Error('upload_failed', 'Failed to move uploaded file.', array('status' => 500));
 	}
 }
 
