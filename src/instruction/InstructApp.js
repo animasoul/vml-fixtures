@@ -150,12 +150,7 @@ const InstructApp = () => {
 	const [executionInstructionsOverrides, setExecutionInstructionsOverrides] = useState({});
 	const [executionInstructionsImages, setExecutionInstructionsImages] = useState({});
 	const [blankPageImages, setBlankPageImages] = useState({ first: null, second: null });
-	const [blankPageImageScales, setBlankPageImageScales] = useState({ first: 0, second: 0 });
 	const [blankPageHorizontalLayout, setBlankPageHorizontalLayout] = useState(false);
-
-	const BLANK_PAGE_IMAGE_SCALE_STEP = 0.1;
-	const BLANK_PAGE_IMAGE_SCALE_MIN = 0.5;
-	const BLANK_PAGE_IMAGE_SCALE_MAX = 2;
 
 	// Update dynamic fields based on user selection
 	useEffect(() => {
@@ -198,30 +193,6 @@ const InstructApp = () => {
 			...prev,
 			[slot]: null,
 		}));
-		setBlankPageImageScales((prev) => ({
-			...prev,
-			[slot]: 0,
-		}));
-	};
-
-	const getBlankPageImageScale = (slot) => 1 + (blankPageImageScales[slot] || 0);
-
-	const getBlankPageImageScalePercent = (slot) =>
-		Math.round(getBlankPageImageScale(slot) * 100);
-
-	const adjustBlankPageImageScale = (slot, delta) => {
-		setBlankPageImageScales((prev) => {
-			const currentScale = 1 + (prev[slot] || 0);
-			const nextScale = Math.min(
-				BLANK_PAGE_IMAGE_SCALE_MAX,
-				Math.max(BLANK_PAGE_IMAGE_SCALE_MIN, currentScale + delta)
-			);
-
-			return {
-				...prev,
-				[slot]: nextScale - 1,
-			};
-		});
 	};
 
 	const getDefaultExecutionInstructionsText = () =>
@@ -784,67 +755,24 @@ const InstructApp = () => {
 					/>
 				</label>
 				{imageUrl && (
-					<>
-						<div className="instruction-print-blank-page__scale">
-							<button
-								type="button"
-								className="ui-button ui-widget ui-corner-all ui-button-text-only"
-								onClick={() =>
-									adjustBlankPageImageScale(slot, -BLANK_PAGE_IMAGE_SCALE_STEP)
-								}
-							>
-								-
-							</button>
-							<span className="instruction-print-blank-page__scale-value">
-								{getBlankPageImageScalePercent(slot)}%
-							</span>
-							<button
-								type="button"
-								className="ui-button ui-widget ui-corner-all ui-button-text-only"
-								onClick={() =>
-									adjustBlankPageImageScale(slot, BLANK_PAGE_IMAGE_SCALE_STEP)
-								}
-							>
-								+
-							</button>
-						</div>
-						<button
-							type="button"
-							className="ui-button ui-widget ui-corner-all ui-button-text-only"
-							onClick={() => removeBlankPageImage(slot)}
-						>
-							{t("executionInstructionRemoveImage")}
-						</button>
-					</>
+					<button
+						type="button"
+						className="ui-button ui-widget ui-corner-all ui-button-text-only"
+						onClick={() => removeBlankPageImage(slot)}
+					>
+						{t("executionInstructionRemoveImage")}
+					</button>
 				)}
 			</div>
 		);
 
-		const renderBlankPageImage = (slot, imageUrl, label) => {
-			const scale = getBlankPageImageScale(slot);
-			const imageStyle = blankPageHorizontalLayout
-				? {
-						width: "auto",
-						height: "auto",
-						maxHeight: `${scale * 12}cm`,
-						maxWidth: `${scale * 100}%`,
-					}
-				: {
-						width: `${scale * 100}%`,
-						height: "auto",
-						maxWidth: `${scale * 100}%`,
-						maxHeight: `${scale * 12}cm`,
-					};
-
-			return (
-				<img
-					src={imageUrl}
-					alt={label}
-					className="instruction-print-blank-page__image"
-					style={imageStyle}
-				/>
-			);
-		};
+		const renderBlankPageImage = (imageUrl, label) => (
+			<img
+				src={imageUrl}
+				alt={label}
+				className="instruction-print-blank-page__image"
+			/>
+		);
 
 		const renderBlankPage = () => {
 			const hasImages = blankPageImages.first || blankPageImages.second;
@@ -859,52 +787,49 @@ const InstructApp = () => {
 				: t("blankPageBottomImage");
 
 			return (
-				<div
-					className={`instruction-print-blank-page ${layoutClass}${hasImages ? "" : " instruction-print-blank-page--no-images"}`}
-				>
-					{renderPrintHeader()}
-					<div className="instruction-print-blank-page__body">
-						<div className="instruction-print-blank-page__slot">
-							{blankPageImages.first &&
-								renderBlankPageImage(
+				<>
+					<h2 className="noprint">
+						{selectedFixtureType} - {selectedRegion}
+					</h2>
+					<div
+						className={`instruction-print-blank-page ${layoutClass}${hasImages ? "" : " instruction-print-blank-page--no-images"}`}
+					>
+						{renderPrintHeader()}
+						<div className="instruction-print-blank-page__body">
+							<div className="instruction-print-blank-page__slot">
+								{blankPageImages.first &&
+									renderBlankPageImage(blankPageImages.first, firstImageLabel)}
+								{renderBlankPageSlotControls(
 									"first",
-									blankPageImages.first,
-									firstImageLabel
+									firstImageLabel,
+									blankPageImages.first
 								)}
-							{renderBlankPageSlotControls(
-								"first",
-								firstImageLabel,
-								blankPageImages.first
-							)}
-						</div>
-						<hr className="instruction-print-blank-page__divider" aria-hidden="true" />
-						<div className="instruction-print-blank-page__slot">
-							{blankPageImages.second &&
-								renderBlankPageImage(
+							</div>
+							<hr className="instruction-print-blank-page__divider" aria-hidden="true" />
+							<div className="instruction-print-blank-page__slot">
+								{blankPageImages.second &&
+									renderBlankPageImage(blankPageImages.second, secondImageLabel)}
+								{renderBlankPageSlotControls(
 									"second",
-									blankPageImages.second,
-									secondImageLabel
+									secondImageLabel,
+									blankPageImages.second
 								)}
-							{renderBlankPageSlotControls(
-								"second",
-								secondImageLabel,
-								blankPageImages.second
-							)}
+							</div>
+						</div>
+						<div className="noprint instruction-print-blank-page__layout-control">
+							<label className="instruction-print-blank-page__layout-toggle">
+								<input
+									type="checkbox"
+									checked={blankPageHorizontalLayout}
+									onChange={(event) =>
+										setBlankPageHorizontalLayout(event.target.checked)
+									}
+								/>
+								<span>{t("blankPageLeftRightLayout")}</span>
+							</label>
 						</div>
 					</div>
-					<div className="noprint instruction-print-blank-page__layout-control">
-						<label className="instruction-print-blank-page__layout-toggle">
-							<input
-								type="checkbox"
-								checked={blankPageHorizontalLayout}
-								onChange={(event) =>
-									setBlankPageHorizontalLayout(event.target.checked)
-								}
-							/>
-							<span>{t("blankPageLeftRightLayout")}</span>
-						</label>
-					</div>
-				</div>
+				</>
 			);
 		};
 
@@ -1362,9 +1287,6 @@ const InstructApp = () => {
 			if (isTwoUp) {
 				return (
 					<>
-						<h2 className="noprint">
-							{selectedFixtureType} - {selectedRegion}
-						</h2>
 						<div className="admin-fixture admin-fixture--two-up" id={id}>
 							<div className={`face-data-display ${titleSuffix ? "page-break" : ""}`}>
 								{renderPrintHeader()}
@@ -1383,9 +1305,6 @@ const InstructApp = () => {
 
 			return (
 				<>
-					<h2 className="noprint">
-						{selectedFixtureType} - {selectedRegion}
-					</h2>
 					{sortedBayEntries.map(([bayNumber, bayData]) => (
 						<div className="admin-fixture" id={id} key={bayNumber}>
 							<div className={`face-data-display ${titleSuffix ? "page-break" : ""}`}>
