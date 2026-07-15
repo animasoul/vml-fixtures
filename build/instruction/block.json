@@ -3,10 +3,10 @@
   "apiVersion": 3,
   "name": "vml-fixtures/instruct",
   "version": "0.3.0",
-  "title": "VM Logistics Fixtures for Instruction Sheet",
+  "title": "vmLogistics Fixtures for Instruction Sheet",
   "category": "widgets",
   "icon": "smiley",
-  "description": "VM Logistics Fixtures Instruction Sheet Block",
+  "description": "vmLogistics Fixtures Instruction Sheet Block",
   "example": {},
   "supports": {
     "html": false

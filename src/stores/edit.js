@@ -5,7 +5,7 @@ import "./editor.scss";
 export default function Edit() {
 	return (
 		<p {...useBlockProps()}>
-			{__("VM Logistics Fixtures Gutenburg Block – Stores", "vml-fixtures")}
+			{__("vmLogistics Fixtures Gutenburg Block – Stores", "vml-fixtures")}
 		</p>
 	);
 }

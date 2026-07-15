@@ -1,4 +1,4 @@
-=== VM Logistics Fixtures Wordpress plugin ===
+=== vmLogistics Fixtures Wordpress plugin ===
 Contributors:      Abel Rogers
 Tags:              block
 Tested up to:      6.1

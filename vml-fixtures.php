@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name:       VM Logistics Fixtures Dynamic Block
- * Description:       Add VM Logistics Fixtures to a page or post.
+ * Plugin Name:       vmLogistics Fixtures Dynamic Block
+ * Description:       Add vmLogistics Fixtures to a page or post.
  * Requires at least: 6.1
  * Requires PHP:      7.0
  * Version:           0.3.0
@@ -258,10 +258,10 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
 		$user_roles = ['customer'];
 	}
 	
-	// Ensure that VIZMERCH_Custom class is loaded
-	if (class_exists('VIZMERCH_Custom')) {
-		$VizMerchCustom = VIZMERCH_Custom::get_instance();
-		$promo_wizard = $VizMerchCustom->get_cosmetic_promotion($customer, $promo);
+	// Ensure that VMLOGISTICS class is loaded
+	if (class_exists('VMLOGISTICS')) {
+		$vmLogistics = VMLOGISTICS::get_instance();
+		$promo_wizard = $vmLogistics->get_cosmetic_promotion($customer, $promo);
 
 		return new WP_REST_Response([
 			'data' => $promo_wizard, 
@@ -272,8 +272,8 @@ function vml_fixtures_get_option(WP_REST_Request $request) {
 			'userRoles' => $user_roles
 		], 200);
 	} else {
-		// Handle the case where VIZMERCH_Custom is not available
-		return new WP_Error('missing_dependency', 'VIZMERCH Custom class not found', array('status' => 500));
+		// Handle the case where VMLOGISTICS is not available
+		return new WP_Error('missing_dependency', 'VMLOGISTICS class not found', array('status' => 500));
 	}
 }
 

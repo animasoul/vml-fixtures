@@ -6,7 +6,7 @@ export default function Edit() {
 	return (
 		<p {...useBlockProps()}>
 			{__(
-				"VM Logistics Instructions Sheet Gutenburg Block – Admin",
+				"vmLogistics Instructions Sheet Gutenburg Block – Admin",
 				"vml-fixtures",
 			)}
 		</p>

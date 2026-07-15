@@ -3,10 +3,10 @@
 	"apiVersion": 3,
 	"name": "vml-fixtures/stores",
 	"version": "0.3.0",
-	"title": "VM Logistics Fixtures for Stores",
+	"title": "vmLogistics Fixtures for Stores",
 	"category": "widgets",
 	"icon": "smiley",
-	"description": "VM Logistics Fixtures Stores Block",
+	"description": "vmLogistics Fixtures Stores Block",
 	"example": {},
 	"supports": {
 		"html": false

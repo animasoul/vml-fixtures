@@ -1,4 +1,4 @@
-# VM Logistics Fixtures Wordpress Plugin
+# vmLogistics Fixtures Wordpress Plugin
 
 ![AJ Partners Ltd. Logo](https://www.ajpartnersltd.com/wp-content/uploads/2023/03/aj-partners-ltd-low-resolution-logo-color-on-transparent-background2.png)
 
@@ -13,7 +13,7 @@
 
 ## Description
 
-This plugin compliments current plugins made for VM Logistics Wordpress website to manage the graphics for the various customers/stores
+This plugin compliments current plugins made for vmLogistics Wordpress website to manage the graphics for the various customers/stores
 
 This plugin provides a graphical representation/interface of the physical fixtures present in the stores for clients to order new graphics.
 

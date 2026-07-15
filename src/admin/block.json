@@ -3,10 +3,10 @@
 	"apiVersion": 3,
 	"name": "vml-fixtures/admin",
 	"version": "0.3.0",
-	"title": "VM Logistics Fixtures for Admin",
+	"title": "vmLogistics Fixtures for Admin",
 	"category": "widgets",
 	"icon": "smiley",
-	"description": "VM Logistics Fixtures Admin Block",
+	"description": "vmLogistics Fixtures Admin Block",
 	"example": {},
 	"supports": {
 		"html": false

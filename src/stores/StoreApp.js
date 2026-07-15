@@ -97,7 +97,7 @@ const StoreApp = () => {
 		// gather all the required data for example..
 
 		const makePermanent = {
-			action: "vizmerch_cosmetic_switch_fixture",
+			action: "vml_cosmetic_switch_fixture",
 			brand: data.Customer,
 			promo: data.PromoCode,
 			store: selectedStore,

@@ -37,7 +37,7 @@ function serializeProducts(products) {
  */
 export async function addToCart(productInfoArray) {
 	const serializedProducts = serializeProducts(productInfoArray);
-	const formData = `action=vizmerch_add_to_cart&${serializedProducts}`;
+	const formData = `action=vml_add_to_cart&${serializedProducts}`;
 
 	try {
 		// Using Promise.race to race between fetch and timeout
